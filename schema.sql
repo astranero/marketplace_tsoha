@@ -17,7 +17,7 @@ CREATE TABLE posts (
     user_id FOREIGN KEY REFERENCES users ON DELETE CASCADE
 );
 
-CREATE TABLE images(
+CREATE TABLE post_images(
     image_id SERIAL PRIMARY KEY,
     user_name TEXT NOT NULL,
     image_blob,
@@ -40,4 +40,9 @@ CREATE TABLE post_likes(
 CREATE TABLE comment_likes(
     comment_id FOREIGN KEY REFERENCES posts ON DELETE CASCADE,
     comment_like BOOLEAN
+)
+
+CREATE table visitors(
+    post_id FOREIGN KEY REFERENCES posts ON DELETE CASCADE,
+    visitor_id TIMESTAMP
 )
