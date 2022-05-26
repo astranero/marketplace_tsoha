@@ -8,7 +8,7 @@ marketplace = Blueprint("marketplace", __name__)
 def home():
     return render_template("index.html")
 
-
-@marketplace.route("/marketplace")
+@views.route("/marketplace")
+@views.route("/market")
 def marketplace():
-    return render_template("marketplace.html")
+    return render_template("marketplace.html", items="Phone")

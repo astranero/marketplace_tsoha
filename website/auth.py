@@ -2,17 +2,17 @@ from flask import Flask, Blueprint, render_template, request, session, redirect,
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_sqlalchemy import SQLAlchemy
 
+
 auth = Blueprint("auth", __name__)
 
 @auth.route("/login", methods=["POST"])
 def login():
-    username = request.form["username"]
-    password = request.form["password"]
-
-    hash_value = "blank for now, fetch from db"
-    if check_password_hash(hash_value, password):
-        pass
-
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+        hash_value = "blank for now, fetch from db"
+        if check_password_hash(hash_value, password): pass
+    return render_template("/login.html", title="Login")
     ## Tarkista käyttäjänimi & salasana
 
 @auth.route("/logout")
@@ -39,10 +39,7 @@ def register():
 
 
 @auth.before_app_request
-def load_logged_in_useR():
+def load_logged_in_user():
     username = session.get("username")
-
-    if username is None: g.user = None
-    else:
-        g.user = get_db().execute("SELECT * FROM user WHERE username=? " (username,)).fetchone()
+    pass
     
