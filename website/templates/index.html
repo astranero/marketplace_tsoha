@@ -1,9 +1,12 @@
-{% extends "base.html" %}
+{% extends "base.html" %} 
 
-{% block head %} 
+{% block head %}
+<title>Home</title>
+{% endblock %} 
 
-{% endblock %}
-
-{% block body %} 
-
+{% block body %}
+<h1>Home page</h1>
+{%for shit in values%}
+<p>{{shit}}</p>
+{% endfor %} 
 {% endblock %}

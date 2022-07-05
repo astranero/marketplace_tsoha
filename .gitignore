@@ -2,3 +2,4 @@ venv
 __pycache__
 /website/.env
 /website/__pycache__
+.env

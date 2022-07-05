@@ -1,11 +1,15 @@
 
 CREATE TABLE IF NOT EXISTS user(
     id SERIAL Primary Key,
-    username TEXT Unique NOT NULL,
+    email TEXT Unique NOT NULL,
     password TEXT NOT NULL,
     first_name TEXT,
     last_name TEXT,
-    email TEXT,
+    street_address TEXT,
+    phone_number TEXT NOT NULL,
+    city TEXT,
+    state_prov TEXT,
+    postal_code TEXT,
     birth_date DATE NOT NULL
 );
 
