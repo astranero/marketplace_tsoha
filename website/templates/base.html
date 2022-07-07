@@ -36,8 +36,7 @@
 
     
     <div class="container-fluid" style="background-color: rgb(148, 252, 188)">
-      
-      <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+      <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-4 mb-4 border-bottom">
       <a href="{{ url_for('views.marketplace') }}" class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
         <h1>Marketplace</h1>
       </a>
@@ -55,7 +54,15 @@
         <button type="button" class="btn btn-outline-success me-2"><a href="{{ url_for('auth.login') }}" class="nav-link"> Log In </a></button>
         <button type="button" class="btn btn-success"><a href="{{ url_for('auth.register') }}" class="nav-link"> Sign-Up </a></button>
       </div>
-
+    </div>
+    <div class="container-fluid">
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for msg in messages %}
+          <p><b style="color: red;" class="justify-content-center justify-content-md-between col-md-auto"> {{msg}}</b></p>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
     </div>
 
     {% block body %}{% endblock body %}
@@ -65,7 +72,7 @@
         © 2022 Copyright:<a class="text-black">Marketplace</a>
       </div>
     </footer>  
-    
+
   </body>
 </html>
 

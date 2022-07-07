@@ -1,5 +1,5 @@
 
-CREATE TABLE IF NOT EXISTS user(
+CREATE TABLE IF NOT EXISTS users(
     id SERIAL Primary Key,
     email TEXT Unique NOT NULL,
     password TEXT NOT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS user(
     birth_date DATE NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS post(
+CREATE TABLE IF NOT EXISTS posts(
     id SERIAL PRIMARY KEY,
     title TEXT NOT NULL,
     price REAL NOT NULL,
@@ -21,14 +21,14 @@ CREATE TABLE IF NOT EXISTS post(
     user_id REFERENCES users(id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS post_image(
+CREATE TABLE IF NOT EXISTS post_images(
     id SERIAL PRIMARY KEY,
     image_name TEXT NOT NULL Unique,
     publication_date timestamptz,
     post_id REFERENCES posts(id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS comment(
+CREATE TABLE IF NOT EXISTS comments(
     id SERIAL PRIMARY KEY,
     user_comment TEXT,
     publication_date timestamptz NOT NULL,
@@ -36,19 +36,19 @@ CREATE TABLE IF NOT EXISTS comment(
     user_id REFERENCES users(id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS post_like(
+CREATE TABLE IF NOT EXISTS post_likes(
     id  SERIAL Primary Key,
     post_id REFERENCES posts(id) ON DELETE CASCADE,
     post_like BOOLEAN
 );
 
-CREATE TABLE IF NOT EXISTS comment_like(
+CREATE TABLE IF NOT EXISTS comment_likes(
     id  SERIAL Primary Key,
     comment_id REFERENCES comment(id) ON DELETE CASCADE,
     comment_like BOOLEAN
 );
 
-CREATE table IF NOT EXISTS visitor(
+CREATE table IF NOT EXISTS visitors(
     id SERIAL PRIMARY KEY,
     post_id FOREIGN KEY(id) REFERENCES posts(id) ON DELETE CASCADE, 
     user_id REFERENCES users(id) ON DELETE SET NULL  

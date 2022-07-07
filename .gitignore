@@ -3,3 +3,4 @@ __pycache__
 /website/.env
 /website/__pycache__
 .env
+test.rest
