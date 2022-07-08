@@ -1,90 +1,106 @@
 {% extends "base.html" %} {% block body %}
-<form action="/register" method="post">
 
-  <section class="vh-100" style="background-color: rgb(138, 230, 173);">
-    <div class="container-fluid h-100">
-      <div class="row d-flex justify-content-center align-items-center h-100">
-        <div class="col-lg-12 col-xl-12 py-1 my-1">
-          <div class="card text-black" style="border-radius: 25px;">
-            <div class="card-body p-0">
+<form action="/register" method="post">
+  <section">
+    <div class="container-fluid">
+      <div class="row d-flex justify-content-center align-items-center">
+        <div class="col-lg-12 col-xl-12 py-2 my-2">
+          <div class="card text-dark" style="border-radius: 25px;">
+            <div class="card-body p-4">
               <div class="row justify-content-center">
                 <div class="col-md-6 col-lg-6 col-xl-6 order-2 order-lg-1">
 
                   <p class="text-center h1 fw-bold mb-4 mx-4 mx-md-2 mt-4">Sign up</p>
                   
                   <div class="form-floating">
-                    <input type="first_name" class="form-control" id="first_name" name="first_name" placeholder="">
+                    {{form.first_name(class="form-control",type="first_name",id="first_name",placeholder="")}}
                     <i class="fas fa-user fa-lg me-3 fa-fw"></i>
-                    <label for="first_name">Your First Name</label>
+                    <label for="first_name" class="form-label">Your First Name</label>
+                    {% for error in form.first_name.errors %}
+                      <p style="color: red;">{{ error }}</p>
+                    {% endfor %}
                   </div>
 
                   <div class="form-floating">
-                    <input type="last_name" class="form-control" id="last_name" name="last_name" placeholder="">
+                    {{form.last_name(class="form-control",type="last_name",id="last_name",placeholder="")}}
                     <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                     <label for="last_name">Your Last Name</label>
+                    {% for error in form.last_name.errors %}
+                      <p style="color: red;">{{ error }}</p>
+                    {% endfor %}
                   </div>
 
                   <div class="form-floating">
-                    <input type="email" class="form-control" id="email" name="email" placeholder="email">
+                    {{form.email(class="form-control",type="email", id="email",placeholder="")}}
                     <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                     <label for="email">Your Email</label>
                   </div>
 
                   <div class="form-floating">
-                    <input type="password" class="form-control" id="password" name="password" placeholder="">
+                    {{form.password(type="password",class="form-control",id="password",placeholder="")}}
                     <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                     <label for="password">Password</label>
+                    {% for error in form.password.errors %}
+                    <p style="color: red;">{{ error }}</p>
+                  {% endfor %}
                   </div>
 
                   <div class="form-floating">
-                    <input type="password" class="form-control" id="repeat_password" name="repeat_password" placeholder="">
+                    {{form.sec_password(type="password",class="form-control",id="repeat_password",placeholder="")}} 
                     <label for="repeat_password">Repeat your password</label>
+                    {% for error in form.sec_password.errors %}
+                    <p style="color: red;">{{ error }}</p>
+                    {% endfor %}
                   </div>
 
                   <br>
                   
                   <p>
-                    <label for="date"> &nbsp; Date of Birth: &nbsp;</label>
-                    <input type="date" id="date" name="date" required />
+                    <label for="date">Date of Birth: </label>
+                    {{form.birth_date(type="date",class="form-control",id="date",placeholder="")}}
+                    <div class="class=notification is-danger">
+                      {% for error in date %}
+                        {{Error}}
+                      {% endfor %}</div>
                   </p>
 
                   <div class="form-floating">
-                      <input type="tel" class="form-control" id="tel" name="tel" placeholder="">
-                      <i class="fas fa-user fa-lg me-3 fa-fw"></i>
-                      <label for="tel">Phone Number</label>
+                    {{form.phone_number(type="tel",class="form-control",id="tel",placeholder="")}} 
+                    <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                    <label for="tel">Phone Number</label>
                   </div>
 
                   <div class="form-floating">
-                    <input type="text" id="street_address" class="form-control" name="street_address" placeholder="">
+                    {{form.street_address(type="street_address",class="form-control",id="street_address",placeholder="")}} 
                     <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                     <label for="street_address">Street Address</label>
                   </div>
 
                   <div class="form-floating">
-                    <input type="text" id="state_prov" name="state_prov" class="form-control" placeholder="">
+                    {{form.state_prov(type="state_prov",class="form-control",id="state_prov",placeholder="")}} 
                     <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                     <label for="state_prov">State / Province</label>
                   </div>
 
                   <div class="form-floating">
-                    <input type="text" id="postal_code" name="postal_code" class="form-control" placeholder="">
+                    {{form.postal_code(type="postal_code",class="form-control",id="postal_code",placeholder="")}} 
                     <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                     <label for="postal_code">Postal Code / Zip Code</label>
                   </div>
 
                   <div class="form-floating">
-                    <input type="text" id="city" name="city" class="form-control" placeholder="">
+                    {{form.city(type="city",class="form-control",id="city",placeholder="")}} 
                     <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                     <label for="city">City</label>
                   </div>
 
                   <div class="d-flex justify-content-center">
                     <input type="submit"
-                      class="btn btn-success btn-block btn-lg gradient-custom-4 text-body" value="Register">
+                      class="btn btn-success btn-block btn-lg text-body" value="Register">
                   </div>
   
                   <p class="text-center text-muted mt-5 mb-0">Have already an account? <a href="{{ url_for('auth.login') }}"
-                      class="fw-bold text-body"><u>Login here</u></a></p>
+                      class="fw-bold text-body">Login here</a></p>
                   <br>
 
                 </div>

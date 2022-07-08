@@ -6,7 +6,6 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
-    
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
 
     <!-- Bootstrap CSS -->
@@ -55,11 +54,12 @@
         <button type="button" class="btn btn-success"><a href="{{ url_for('auth.register') }}" class="nav-link"> Sign-Up </a></button>
       </div>
     </div>
+    
     <div class="container-fluid">
     {% with messages = get_flashed_messages() %}
       {% if messages %}
         {% for msg in messages %}
-          <p><b style="color: red;" class="justify-content-center justify-content-md-between col-md-auto"> {{msg}}</b></p>
+          <p><b style="color: rgb(243, 148, 5);" class="justify-content-center justify-content-md-between col-md-auto"> {{msg}}</b></p>
         {% endfor %}
       {% endif %}
     {% endwith %}
