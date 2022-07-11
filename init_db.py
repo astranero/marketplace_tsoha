@@ -12,7 +12,6 @@ cur = conn.cursor()
 
 cur.execute('''DROP TABLE IF EXISTS users''')
 cur.execute('CREATE TABLE IF NOT EXISTS users('
-    'id SERIAL Primary Key,'
     'email TEXT Unique NOT NULL,'
     'password TEXT NOT NULL,'
     'first_name TEXT,'
@@ -24,6 +23,17 @@ cur.execute('CREATE TABLE IF NOT EXISTS users('
     'postal_code TEXT,'
     'birth_date DATE NOT NULL);')
 
+cur.execute('''DROP TABLE IF EXISTS sessions''')
+cur.execute('CREATE TABLE IF NOT EXISTS sessions('
+    'user_id TEXT NOT NULL,'
+    'email TEXT,'
+    'password TEXT,'
+    'first_name TEXT,'
+    'last_name TEXT,'
+    'active BOOLEAN,'
+    'authenticated BOOLEAN,'
+    'is_banned BOOLEAN);')
+    
 cur.execute('''DROP TABLE IF EXISTS posts''')
 cur.execute('CREATE TABLE IF NOT EXISTS posts('
     'id SERIAL PRIMARY KEY,'

@@ -1,43 +1,71 @@
-{% extends "base.html" %} 
-
-
+{% extends "base.html" %}
 {% block body %}
-
-<section>
-  <div class="container-fluid">
-    <div class="row d-flex justify-content-center align-items-center h-100">
-      <div class="col-lg-12 col-xl-12 py-1 my-1">
-        <div class="card text-black" style="border-radius: 25px;">
-          <div class="card-body">
-            <div class="row justify-content-center">
-              <div class="col-md-6 col-lg-6 col-xl-6 order-2 order-lg-1">
-                <i class="fas fa-user fa-lg me-3 fa-fw"></i>
-
-                <form action="/login" method="get">
-                  
-                  <div class="form-floating">
-                    <input name="username" id="username" class="form-control" placeholder="" required />
-                    <i class="fas fa-user fa-lg me-3 fa-fw"></i>
-                    <label for="username">Username</label>
-                  </div>
-
-                  <div class="form-floating">
-                    <input type="password" name="password" id="password" class="form-control" placeholder="" required />
-                    <label for="password">Password</label>
-                  </div>
-
-                  <br>
-                  <div class="d-flex justify-content-center">
-                    <input type="submit" class="btn btn-success btn-block btn-lg text-body" value="Log In" />
-                  </div>
-                </form>
-                <br>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+<form class="form-signin" method="POST">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
-</section>
-
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+    {{ form.csrf_token }}
+    <section>
+        <div class="container-fluid">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-lg-12 col-xl-12 py-1 my-1">
+                    <div class="card text-black" style="border-radius: 25px;">
+                        <div class="card-body">
+                            <div class="row justify-content-center">
+                                <div class="col-md-6 col-lg-6 col-xl-6 order-2 order-lg-1">
+                                    <p class="text-center h1 fw-bold mb-4 mx-4 mx-md-2 mt-4">Login Account</p>
+                                    <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                                    {% for error in form.email.errors %}
+                                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                        {{ error }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    {% endfor %}
+                                    <div class="form-floating">
+                                        {{form.email(class="form-control",type="email", id="email",placeholder="")}}
+                                        <label for="email">Your Email</label>
+                                    </div>
+                                    <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                                    <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                                    {% for error in form.password.errors %}
+                                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                        {{ error }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    {% endfor %}
+                                    <div class="form-floating">
+                                        {{form.password(type="password",class="form-control",id="password",placeholder="")}}
+                                        <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                                        <label for="password">Password</label>
+                                    </div>
+                                    <div class="checkbox mb-3">
+                                        <label>
+                                          <input type="checkbox" value="remember-me"> Remember me
+                                        </label>
+                                      </div>
+                                    <br>
+                                    <div class="d-flex justify-content-center">
+                                        <input type="submit" class="btn btn-success btn-block btn-lg"
+                                            value="Log In">
+                                    </div>
+                                    <div style="height: 700px"></div>
+                                    <br>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</form>
 {% endblock body %}
