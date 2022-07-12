@@ -2,7 +2,7 @@
 {% block head %}
 {% endblock %}
 {% block body %}
-<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+<form method="post">
     <main class="px-3" style="height:800px">
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -15,5 +15,5 @@
         {% endif %}
         {% endwith %}
     </main>
-</div>
+</form>
 {% endblock %}

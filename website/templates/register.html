@@ -66,14 +66,14 @@
                                         <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                                         <label for="password">Password*</label>
                                     </div>
-                                    {% for error in form.sec_password.errors %}
+                                    {% for error in form.confirm_password.errors %}
                                     <div class="alert alert-warning alert-dismissible fade show" role="alert">
                                         {{ error }}
                                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                     </div>
                                     {% endfor %}
                                     <div class="form-floating">
-                                        {{form.sec_password(type="password",class="form-control",id="repeat_password",placeholder="")}}
+                                        {{form.confirm_password(type="password",class="form-control",id="repeat_password",placeholder="")}}
                                         <label for="repeat_password">Confirm password*</label>
                                     </div>
                                     <br>
@@ -83,11 +83,11 @@
                                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                     </div>
                                     {% endfor %}
-                                    <div>
-                                        <label for="date">Date of Birth*: </label>
+                                    <div style="text-align:left;">
+                                        <label for="date"> Date of Birth*: </label>
                                         <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                                         {{form.birth_date(type="date", format="%m-%d-%Y",
-                                        class="form-control",id="date",placeholder="")}}
+                                        class="form-control",id="date",placeholder="", value="2001-01-01")}}
                                     </div>
                                     <br>
                                     {% for error in form.phone_number.errors %}
@@ -147,7 +147,7 @@
                                     </div>
                                     <div class="d-flex justify-content-center">
                                         <input type="submit" class="btn btn-success btn-block btn-lg"
-                                            value="Register">
+                                            value="Submit">
                                     </div>
 
                                     <p class="text-center text-muted mt-5 mb-0">Have already an account? <a

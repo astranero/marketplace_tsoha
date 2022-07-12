@@ -3,7 +3,17 @@
 {% endblock %}
 {% block body %}
 <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-    <main class="px-3" style="height:700px">
+    <main class="px-3" style="height:800px">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
         <h1>About.</h1>
     </main>
 </div>

@@ -16,6 +16,7 @@ cur.execute('CREATE TABLE IF NOT EXISTS users('
     'password TEXT NOT NULL,'
     'first_name TEXT,'
     'last_name TEXT,'
+    'profile_picture_id TEXT,'
     'street_address TEXT,'
     'phone_number TEXT NOT NULL,'
     'city TEXT,'
@@ -30,6 +31,7 @@ cur.execute('CREATE TABLE IF NOT EXISTS sessions('
     'password TEXT,'
     'first_name TEXT,'
     'last_name TEXT,'
+    'profile_picture_id TEXT,'
     'active BOOLEAN,'
     'authenticated BOOLEAN,'
     'is_banned BOOLEAN);')
@@ -38,37 +40,44 @@ cur.execute('''DROP TABLE IF EXISTS posts''')
 cur.execute('CREATE TABLE IF NOT EXISTS posts('
     'id SERIAL PRIMARY KEY,'
     'title TEXT NOT NULL,'
+    'post_text TEXT NOT NULL,'
     'price REAL NOT NULL,'
     'publication_date timestamptz);')
 
 cur.execute('DROP TABLE IF EXISTS post_images')
 cur.execute('''CREATE TABLE IF NOT EXISTS post_images(
-    id SERIAL PRIMARY KEY,
-    image_name TEXT NOT NULL Unique,
+    image_id TEXT NOT NULL Unique,
     publication_date timestamptz);''')
 
 cur.execute('''DROP TABLE IF EXISTS comments''')
 cur.execute('''CREATE TABLE IF NOT EXISTS comments(
     id SERIAL PRIMARY KEY,
+    user_id TEXT, 
     user_comment TEXT,
     publication_date timestamptz NOT NULL
 );''')
 
-cur.execute('''DROP TABLE IF EXISTS post_likes''')
-cur.execute('''CREATE TABLE IF NOT EXISTS post_likes(
+cur.execute('''DROP TABLE IF EXISTS likes''')
+cur.execute('''CREATE TABLE IF NOT EXISTS likes(
     id  SERIAL Primary Key,
-    post_like BOOLEAN);
+    user_email TEXT,
+    post_id TEXT,
+    like BOOLEAN);
 ''')
 
-cur.execute('''DROP TABLE IF EXISTS comment_likes''')
-cur.execute('''CREATE TABLE IF NOT EXISTS comment_likes(
+cur.execute('''DROP TABLE IF EXISTS messages''')
+cur.execute('''CREATE TABLE IF NOT EXISTS messages(
     id  SERIAL Primary Key,
-    comment_like BOOLEAN);
+    receiver TEXT,
+    sender TEXT,
+    message TEXT,
+    );
 ''')
 
 cur.execute('''DROP TABLE IF EXISTS visitor''')
 cur.execute('''CREATE table IF NOT EXISTS visitors(
-    id SERIAL PRIMARY KEY
+    id SERIAL PRIMARY KEY,
+    visitor_id TEXT,
 );
 ''')
 

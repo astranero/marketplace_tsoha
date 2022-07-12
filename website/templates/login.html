@@ -11,6 +11,7 @@
     {% endfor %}
     {% endif %}
     {% endwith %}
+    {{ form.hidden_tag() }}
     {{ form.csrf_token }}
     <section>
         <div class="container-fluid">
@@ -22,7 +23,7 @@
                                 <div class="col-md-6 col-lg-6 col-xl-6 order-2 order-lg-1">
                                     <p class="text-center h1 fw-bold mb-4 mx-4 mx-md-2 mt-4">Login Account</p>
                                     <i class="fas fa-user fa-lg me-3 fa-fw"></i>
-                                    {% for error in form.email.errors %}
+                                    {% for error in (form.email.errors or form.password.errors) %}
                                     <div class="alert alert-warning alert-dismissible fade show" role="alert">
                                         {{ error }}
                                         <button type="button" class="btn-close" data-bs-dismiss="alert"
@@ -35,27 +36,15 @@
                                     </div>
                                     <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                                     <i class="fas fa-user fa-lg me-3 fa-fw"></i>
-                                    {% for error in form.password.errors %}
-                                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                                        {{ error }}
-                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                            aria-label="Close"></button>
-                                    </div>
-                                    {% endfor %}
                                     <div class="form-floating">
                                         {{form.password(type="password",class="form-control",id="password",placeholder="")}}
                                         <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                                         <label for="password">Password</label>
                                     </div>
-                                    <div class="checkbox mb-3">
-                                        <label>
-                                          <input type="checkbox" value="remember-me"> Remember me
-                                        </label>
-                                      </div>
+
                                     <br>
-                                    <div class="d-flex justify-content-center">
-                                        <input type="submit" class="btn btn-success btn-block btn-lg"
-                                            value="Log In">
+                                    <div class="d-flex inline-block justify-content-center">
+                                        <input type="submit" class="btn btn-success btn-block btn-lg" value="Submit">
                                     </div>
                                     <div style="height: 700px"></div>
                                     <br>

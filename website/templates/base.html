@@ -36,9 +36,10 @@
             class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-4 mb-4 ">
             <div class="container">
                 <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-                  
-                    <a href="{{ url_for('views.marketplace') }}"
-                        class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
+
+                    <a {% if current_user.is_anonymous %} href="{{ url_for('views.home') }}" {% else %}
+                        href="{{ url_for('views.marketplace') }}" {% endif %}
+                        class="d-flex align-items-center col-md-3 mb-2 text-dark text-decoration-none">
                         <h1>Marketplace</h1>
                     </a>
 
@@ -51,7 +52,7 @@
                         </li>
 
                         <li class="nav-item w3-bar-itemm">
-                            <h5><a href="{{ url_for('views.home') }}" class="nav-link w3-button w3-bar-item"
+                            <h5><a href="{{ url_for('views.profile') }}" class="nav-link w3-button w3-bar-item"
                                     style="color:#030e12"> Profile
                                 </a></h5>
                         </li>
@@ -62,16 +63,21 @@
                         </li>
                     </ul>
                     {% else %}
-                    <div class="col-md-4 justify-content-end">
-                        <button type="button" class="btn btn-success me-3"><a href="{{ url_for('views.login') }}"
-                                class="nav-link"> Log In </a></button>
-                        <button type="button" class="btn btn-success me-3"><a href="{{ url_for('views.register') }}"
-                                class="nav-link"> Sign-Up </a></button>
+                    <div class="nav col-15 md-5 justify-content-end">
+                        <h5><a href="{{ url_for('views.login') }}" class="nav-link w3-button w3-bar-item"
+                                style="color:#030e12"> Log In
+                            </a></h5>
+                        <h5><a href="{{ url_for('views.register') }}" class="nav-link w3-button w3-bar-item"
+                                style="color:#030e12"> Sign Up
+                            </a></h5>
                     </div>
                     {% endif %}
-                    <div class="nav col-15 mb-2 justify-content-end mb-md-0">
-                        <h5><a href="{{ url_for('views.logout') }}" class="nav-link w3-button w3-bar-item"
+                    <div class="nav col-15 md-5 justify-content-end">
+                        <h5><a href="{{ url_for('views.about') }}" class="nav-link w3-button w3-bar-item"
                                 style="color:#030e12"> About us
+                            </a></h5>
+                        <h5><a href="{{ url_for('views.contact') }}" class="nav-link w3-button w3-bar-item"
+                                style="color:#030e12"> Contact us
                             </a></h5>
                     </div>
                 </div>
@@ -80,16 +86,18 @@
 
     </div>
     {% block body %}{% endblock body %}
-
-    <footer>
-        <div class="text-center text-black p-3" style="background-color: #5bccf6;">
-            © 2022 Copyright:<a class="text-black">Marketplace</a>
-            <h5><a href="{{ url_for('views.logout') }}" class="nav-link w3-button w3-bar-item" style="color:#030e12">
-                    Contact Us
-                </a></h5>
-        </div>
-    </footer>
-
 </body>
+<footer>
+    <div class="text-center text-black p-1" style="background-color: #5bccf6;">
+        © 2022 Copyright: <a class="text-black">Marketplace</a>
+        <ul class="nav col-15 mb-2 justify-content-center mb-md-0">
+            <li>
+                <a href="{{ url_for('views.contact') }}" class="nav-link w3-button w3-bar-item" style="color:#030e12">
+                    Contact Us
+                </a>
+            </li>
+        </ul>
+    </div>
+</footer>
 
 </html>

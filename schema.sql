@@ -22,8 +22,7 @@ CREATE TABLE IF NOT EXISTS posts(
 );
 
 CREATE TABLE IF NOT EXISTS post_images(
-    id SERIAL PRIMARY KEY,
-    image_name TEXT NOT NULL Unique,
+    id PRIMARY KEY,
     publication_date timestamptz,
     post_id REFERENCES posts(id) ON DELETE CASCADE
 );

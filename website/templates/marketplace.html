@@ -4,204 +4,53 @@
 {% endblock %}
 
 {% block body %}
-<div class="container d-flex w-100 h-100 p-3 mx-auto flex-column">
-    <main class="px-3" style="height:900px">
+<div class="cover-container container-fluid d-flex w-100 h-100 p-5 flex-column">
+    <main class="px-4" style="height: 800px">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
         <h1>Marketplace.</h1>
         <p class="lead">Treasures are waiting for you...</p>
-        <div class="container">
-            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-                <form class="form">
-                    <form class="form-inline">
+        <hr class="my-4">
+        <div class="container-m">
+            <div class="">
+                <div class="jumbotron">
+                    <p class="lead">
                         <a href="#" class="btn btn-lg btn-secondary fw-bold border-white bg-black">Add item</a>
-                    </form> 
-                    <form class="form-inline" method="get">
-                            <input type="search" class="form-control mr-sm-2" placeholder="Search..."
-                                aria-label="Search">
-                    </form>
-                </form>
-                
-                <div class="row pb-5 mb-4">
-                    <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
-                      <!-- Card-->
-                      <div class="card rounded shadow-sm border-0">
-                        <div class="card-body p-4"><img src="https://bootstrapious.com/i/snippets/sn-cards/shoes-1_gthops.jpg" alt="" class="img-fluid d-block mx-auto mb-3">
-                          <h5> <a href="#" class="text-dark">Awesome product</a></h5>
-                          <p class="small text-muted font-italic">Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
-                          <ul class="list-inline small">
-                            <li class="list-inline-item m-0"><i class="fa fa-star text-success"></i></li>
-                            <li class="list-inline-item m-0"><i class="fa fa-star text-success"></i></li>
-                            <li class="list-inline-item m-0"><i class="fa fa-star text-success"></i></li>
-                            <li class="list-inline-item m-0"><i class="fa fa-star text-success"></i></li>
-                            <li class="list-inline-item m-0"><i class="fa fa-star-o text-success"></i></li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
-                        <!-- Card-->
-                        <div class="card rounded shadow-sm border-0">
-                          <div class="card-body p-4"><img src="https://bootstrapious.com/i/snippets/sn-cards/shoes-2_g4qame.jpg" alt="" class="img-fluid d-block mx-auto mb-3">
-                            <h5> <a href="#" class="text-dark">Awesome product</a></h5>
-                            <p class="small text-muted font-italic">Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
-                            <ul class="list-inline small">
-                              <li class="list-inline-item m-0"><i class="fa fa-star text-success"></i></li>
-                              <li class="list-inline-item m-0"><i class="fa fa-star text-success"></i></li>
-                              <li class="list-inline-item m-0"><i class="fa fa-star text-success"></i></li>
-                              <li class="list-inline-item m-0"><i class="fa fa-star-o text-success"></i></li>
-                              <li class="list-inline-item m-0"><i class="fa fa-star-o text-success"></i></li>
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
-                        <!-- Card-->
-                        <div class="card rounded shadow-sm border-0">
-                            <div class="card-body p-4"><img
-                                    src="https://bootstrapious.com/i/snippets/sn-cards/shoes-2_g4qame.jpg" alt=""
-                                    class="img-fluid d-block mx-auto mb-3">
-                                <h5> <a href="#" class="text-dark">Awesome product</a></h5>
-                                <p class="small text-muted font-italic">Lorem ipsum dolor sit amet, consectetur
+                        <a href="#" class="btn btn-lg btn-secondary fw-bold border-white bg-black">Add item</a>
+                        <input type="search" class="fw-bold border-white bg-black text-white mt-2"
+                            placeholder="Search..." aria-label="Search">
+                    </p>
+                </div>
+                <div class="row pb-7 mb-lg-2 mr-1">
+                    <div class="col-lg-3 col-md-2 mb-2 mb-lg-2 mr-1">
+                        <div class="card rounded shadow-lg border-0">
+                            <div class="card-body p-4">
+                                <a href="#"><img src="https://bootstrapious.com/i/snippets/sn-cards/shoes-1_gthops.jpg"
+                                        alt="" class="img-fluid img-thumbnail shadow-sm d-block mx-auto mb-2">
+                                </a>
+                                <div class="jumbotron">
+                                    <h5> <a href="#" class="btn btn-secondary text-dark">Buy product</a></h5>
+                                    <h5> <a href="#" class="btn btn-secondary text-dark">Check product</a></h5>
+                                </div>
+                                <p class="small text-muted">Lorem ipsum dolor sit amet, consectetur
                                     adipisicing elit.</p>
                                 <ul class="list-inline small">
-                                    <li class="list-inline-item m-0"><i class="fa fa-star text-success"></i></li>
-                                    <li class="list-inline-item m-0"><i class="fa fa-star text-success"></i></li>
-                                    <li class="list-inline-item m-0"><i class="fa fa-star text-success"></i></li>
-                                    <li class="list-inline-item m-0"><i class="fa fa-star-o text-success"></i></li>
-                                    <li class="list-inline-item m-0"><i class="fa fa-star-o text-success"></i></li>
+                                    <li class="list-inline-item m-0">1<i class="fa fa-star text-success"></i></li>
+                                    <li class="list-inline-item m-0">2<i class="fa fa-star text-success"></i></li>
                                 </ul>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
-                        <!-- Card-->
-                        <div class="card rounded shadow-sm border-0">
-                            <div class="card-body p-4"><img
-                                    src="https://bootstrapious.com/i/snippets/sn-cards/shoes-2_g4qame.jpg" alt=""
-                                    class="img-fluid d-block mx-auto mb-3">
-                                <h5> <a href="#" class="text-dark">Awesome product</a></h5>
-                                <p class="small text-muted font-italic">Lorem ipsum dolor sit amet, consectetur
-                                    adipisicing elit.</p>
-                                <ul class="list-inline small">
-                                    <li class="list-inline-item m-0"><i class="fa fa-star text-success"></i></li>
-                                    <li class="list-inline-item m-0"><i class="fa fa-star text-success"></i></li>
-                                    <li class="list-inline-item m-0"><i class="fa fa-star text-success"></i></li>
-                                    <li class="list-inline-item m-0"><i class="fa fa-star-o text-success"></i></li>
-                                    <li class="list-inline-item m-0"><i class="fa fa-star-o text-success"></i></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
-                        <!-- Card-->
-                        <div class="card rounded shadow-sm border-0">
-                            <div class="card-body p-4"><img
-                                    src="https://bootstrapious.com/i/snippets/sn-cards/shoes-2_g4qame.jpg" alt=""
-                                    class="img-fluid d-block mx-auto mb-3">
-                                <h5> <a href="#" class="text-dark">Awesome product</a></h5>
-                                <p class="small text-muted font-italic">Lorem ipsum dolor sit amet, consectetur
-                                    adipisicing elit.</p>
-                                <ul class="list-inline small">
-                                    <li class="list-inline-item m-0"><i class="fa fa-star text-success"></i></li>
-                                    <li class="list-inline-item m-0"><i class="fa fa-star text-success"></i></li>
-                                    <li class="list-inline-item m-0"><i class="fa fa-star text-success"></i></li>
-                                    <li class="list-inline-item m-0"><i class="fa fa-star-o text-success"></i></li>
-                                    <li class="list-inline-item m-0"><i class="fa fa-star-o text-success"></i></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
-                        <!-- Card-->
-                        <div class="card rounded shadow-sm border-0">
-                            <div class="card-body p-4"><img
-                                    src="https://bootstrapious.com/i/snippets/sn-cards/shoes-2_g4qame.jpg" alt=""
-                                    class="img-fluid d-block mx-auto mb-3">
-                                <h5> <a href="#" class="text-dark">Awesome product</a></h5>
-                                <p class="small text-muted font-italic">Lorem ipsum dolor sit amet, consectetur
-                                    adipisicing elit.</p>
-                                <ul class="list-inline small">
-                                    <li class="list-inline-item m-0"><i class="fa fa-star text-success"></i></li>
-                                    <li class="list-inline-item m-0"><i class="fa fa-star text-success"></i></li>
-                                    <li class="list-inline-item m-0"><i class="fa fa-star text-success"></i></li>
-                                    <li class="list-inline-item m-0"><i class="fa fa-star-o text-success"></i></li>
-                                    <li class="list-inline-item m-0"><i class="fa fa-star-o text-success"></i></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div><div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
-                        <!-- Card-->
-                        <div class="card rounded shadow-sm border-0">
-                            <div class="card-body p-4"><img
-                                    src="https://bootstrapious.com/i/snippets/sn-cards/shoes-2_g4qame.jpg" alt=""
-                                    class="img-fluid d-block mx-auto mb-3">
-                                <h5> <a href="#" class="text-dark">Awesome product</a></h5>
-                                <p class="small text-muted font-italic">Lorem ipsum dolor sit amet, consectetur
-                                    adipisicing elit.</p>
-                                <ul class="list-inline small">
-                                    <li class="list-inline-item m-0"><i class="fa fa-star text-success"></i></li>
-                                    <li class="list-inline-item m-0"><i class="fa fa-star text-success"></i></li>
-                                    <li class="list-inline-item m-0"><i class="fa fa-star text-success"></i></li>
-                                    <li class="list-inline-item m-0"><i class="fa fa-star-o text-success"></i></li>
-                                    <li class="list-inline-item m-0"><i class="fa fa-star-o text-success"></i></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div><div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
-                        <!-- Card-->
-                        <div class="card rounded shadow-sm border-0">
-                            <div class="card-body p-4"><img
-                                    src="https://bootstrapious.com/i/snippets/sn-cards/shoes-2_g4qame.jpg" alt=""
-                                    class="img-fluid d-block mx-auto mb-3">
-                                <h5> <a href="#" class="text-dark">Awesome product</a></h5>
-                                <p class="small text-muted font-italic">Lorem ipsum dolor sit amet, consectetur
-                                    adipisicing elit.</p>
-                                <ul class="list-inline small">
-                                    <li class="list-inline-item m-0"><i class="fa fa-star text-success"></i></li>
-                                    <li class="list-inline-item m-0"><i class="fa fa-star text-success"></i></li>
-                                    <li class="list-inline-item m-0"><i class="fa fa-star text-success"></i></li>
-                                    <li class="list-inline-item m-0"><i class="fa fa-star-o text-success"></i></li>
-                                    <li class="list-inline-item m-0"><i class="fa fa-star-o text-success"></i></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div><div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
-                        <!-- Card-->
-                        <div class="card rounded shadow-sm border-0">
-                            <div class="card-body p-4"><img
-                                    src="https://bootstrapious.com/i/snippets/sn-cards/shoes-2_g4qame.jpg" alt=""
-                                    class="img-fluid d-block mx-auto mb-3">
-                                <h5> <a href="#" class="text-dark">Awesome product</a></h5>
-                                <p class="small text-muted font-italic">Lorem ipsum dolor sit amet, consectetur
-                                    adipisicing elit.</p>
-                                <ul class="list-inline small">
-                                    <li class="list-inline-item m-0"><i class="fa fa-star text-success"></i></li>
-                                    <li class="list-inline-item m-0"><i class="fa fa-star text-success"></i></li>
-                                    <li class="list-inline-item m-0"><i class="fa fa-star text-success"></i></li>
-                                    <li class="list-inline-item m-0"><i class="fa fa-star-o text-success"></i></li>
-                                    <li class="list-inline-item m-0"><i class="fa fa-star-o text-success"></i></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
-                        <!-- Card-->
-                        <div class="card rounded shadow-sm border-0">
-                            <div class="card-body p-4"><img
-                                    src="https://bootstrapious.com/i/snippets/sn-cards/shoes-2_g4qame.jpg" alt=""
-                                    class="img-fluid d-block mx-auto mb-3">
-                                <h5> <a href="#" class="text-dark">Awesome product</a></h5>
-                                <p class="small text-muted font-italic">Lorem ipsum dolor sit amet, consectetur
-                                    adipisicing elit.</p>
-                                <ul class="list-inline small">
-                                    <li class="list-inline-item m-0"><i class="fa fa-star text-success"></i></li>
-                                    <li class="list-inline-item m-0"><i class="fa fa-star text-success"></i></li>
-                                    <li class="list-inline-item m-0"><i class="fa fa-star text-success"></i></li>
-                                    <li class="list-inline-item m-0"><i class="fa fa-star-o text-success"></i></li>
-                                    <li class="list-inline-item m-0"><i class="fa fa-star-o text-success"></i></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+
+                </div>
             </div>
         </div>
     </main>
