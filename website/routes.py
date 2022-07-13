@@ -1,6 +1,7 @@
 import re
 from flask_login import current_user, login_required, login_user, logout_user
 from flask import Blueprint, render_template, redirect, flash, url_for
+from requests import post
 from werkzeug.security import generate_password_hash
 from uuid import uuid4
 from flask import Flask, request
@@ -20,12 +21,12 @@ app.config["SQLALCHEMY_DATABASE_URI"]= environ.get("SQLALCHEMY_DATABASE_URI")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config[" TEMPLATES_AUTO_RELOAD"] = True
 app.permanent_session_lifetime = timedelta(hours=2)
-db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.login_view = 'views.login'
-login_manager.init_app(app)
 login_manager.session_protection = "strong"
 login_manager.login_message_category = 'info'
+db = SQLAlchemy(app)
+login_manager.init_app(app)
 csrf = CSRFProtect(app)
 app.wsgi_app = ProxyFix(app.wsgi_app)
 from entity import User
@@ -33,6 +34,7 @@ from entity import User
 views = Blueprint("views", __name__)
 @views.route("/login", methods=["GET", "POST"])
 def login():
+    post_form = PostForm()
     if current_user.is_authenticated:
         return redirect(url_for("views.home"))
     form = LoginForm() 
@@ -44,20 +46,22 @@ def login():
         login_user(user, remember=True)
         User.create_session(user)
         return redirect(url_for("views.home"))
-    return render_template("/login.html", form=form)
+    return render_template("/login.html", form=form, post_form=post_form)
 
 @views.route("/logout")
 @login_required
 def logout():
+    post_form = PostForm()
     User.delete_session(current_user)
     logout_user()
     flash("You have logged out.", category="success")
     return redirect(url_for("views.login"))
 
-from authentication_models import RegistrationForm, LoginForm
+from authentication_models import RegistrationForm, LoginForm, PostForm
 @views.route("/signup", methods=["GET", "POST"])
 @views.route("/register", methods=["GET", "POST"])
 def register():
+    post_form = PostForm()
     form = RegistrationForm()
     if form.validate_on_submit():
         hash=generate_password_hash(form.password.data)
@@ -80,43 +84,54 @@ def register():
         login_user(user, remember=True)
         flash("Congratulations, your registration is complete.", category="success")
         return redirect(url_for("views.home"))
-    return render_template("/register.html", form=form)
+    return render_template("/register.html", form=form, post_form=post_form)
 
-@views.route("/")
-@views.route("/home")
+@views.route("/", methods=["GET", "POST"])
+@views.route("/home", methods=["GET", "POST"])
 def home():
+    post_form = PostForm()
     if current_user.is_anonymous:
-        return render_template("index.html")
-    return render_template("index.html", name=current_user.first_name)
+        return render_template("index.html", post_form=post_form)
+    return render_template("index.html", name=current_user.first_name, post_form=post_form)
 
-@views.route("/marketplace")
-@views.route("/market")
+@views.route("/marketplace", methods=["GET", "POST"])
+@views.route("/market", methods=["GET", "POST"])
 @login_required
 def marketplace():
-    return render_template("marketplace.html", items="Phone")
+    post_form = PostForm()    
+    return render_template("marketplace.html", post_form=post_form)
 
-@views.route("/profile")
+@views.route("/profile", methods=["POST", "GET"])
 @login_required
 def profile():
-    return render_template("profile.html")
+    post_form = PostForm()
+    return render_template("profile.html", post_form=post_form)
 
 @views.route("/about")
 def about():
-    return render_template("about.html")
+    post_form = PostForm()
+    return render_template("about.html", post_form=post_form)
 
-@views.route("/contact")
+@views.route("/contact", methods=["POST"])
 def contact():
-    return render_template("contact.html")
+    post_form = PostForm()
+    flash("Your message has been sent.")
+    return redirect(url_for("views.home"))
+
+@views.route("/uploader", methods=["POST"])
 
 @app.errorhandler(404)
 def error_404(error):
-    return render_template("404.html"), 404
+    post_form = PostForm()
+    return render_template("404.html", post_form=post_form), 404
     
 @app.errorhandler(500)
 def error_500(error):
-    return render_template("500.html"), 500
+    post_form = PostForm()
+    return render_template("500.html", post_form=post_form), 500
 
 @login_manager.unauthorized_handler
 def unauthorized():
+    post_form = PostForm()
     flash("Please login to see this page.")
     return redirect(url_for('views.login'))

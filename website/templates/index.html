@@ -18,8 +18,9 @@
         {% if current_user.is_anonymous %}
         <div class="jumbotron">
             <h1 class="display-4">Welcome home.</h1>
-            <p class="lead">This is a place where dreams come true.</p>
+            <p class="lead">This is the place where dreams come true.</p>
             <hr class="my-4">
+            <div class="jumbotron">
             <p class="lead">
                 <a href="{{url_for('views.marketplace')}}"
                     class="btn btn-lg btn-secondary fw-bold border-white bg-black">The marketplace</a>
@@ -30,7 +31,7 @@
         {% else %}
         <div class="jumbotron">
             <h1 class="display-4">Welcome home, {{name}}.</h1>
-            <p class="lead">This is a place where dreams come true.</p>
+            <p class="lead">This is the place where dreams come true.</p>
             <hr class="my-4">
             <p class="lead">
                 <a href="{{url_for('views.marketplace')}}"
