@@ -14,125 +14,177 @@
         {% endfor %}
         {% endif %}
         {% endwith %}
+        
         <div class="container" style="min-width:75%;">
             <div class="col-lg-12 rounded-top text-white d-flex flex-row"
                 style="background-color:#030e12; height:auto;">
                 <div class="inner ms-4 mt-3 mb-2 d-flex flex-column" style="width: 120px;">
-                    <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
-                        alt="Generic placeholder image" class="img-fluid rounded img-thumbnail mt-2 mb-2"
-                        style="width: 150px; z-index: 2">
+                    <img src="{{url_for('static', filename='images/default.jpg')}}" alt="Generic placeholder image"
+                        class="img-fluid rounded img-thumbnail mt-2 mb-2" style="width: 150px; z-index: 2">
                 </div>
-                <div class="inner d-flex flex-column ms-5 mt-5">
-                    <h3 class="pt-2 ml-0 pl-2"> {{current_user.first_name}} {{current_user.last_name}}</h3>
-                    <a href="#" class="btn btn-sm btn-secondary fw-bold border-white bg-black">Edit profile picture</a>
+                <div class="inner d-flex flex-column ms-4 mt-4">
+                    <h3 class="pt-2 ml-0 pl-2"> {{current_user.username}}</h3>
+                    <a href="#" class="btn btn-sm btn-secondary fw-bold border-white bg-black">Edit profile
+                        picture</a>
                 </div>
             </div>
-
-
             {% with data=current_user.get_user_information() %}
-            <div class="row">
-                <div class="col-md-9 mr-0 pr-0">
-                    <div class="card mr-0 pr-0">
-                        <div class="card-body rounded-bottom">
-                            <div class="card-title ">
-                                <h5 class="lead mb-2 mt-2">
+            <form action="{{url_for('views.profile')}}" method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <div class="row">
+                    <div class="col-12 mr-0 pl-0">
+                        <div class="card ">
+                            <div class="card-header ">
+                                <h4 class="lead mb-2 mt-2">
                                     Profile information
-                                </h5>
+                                </h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="card-body">
+                                    <div class="card">
+                                        <div class="row">
+                                            <div class="row m-6 mt-3">
+                                                {% for error in profile_form.first_name.errors %}
+                                                <div class="alert alert-warning alert-dismissible fade show"
+                                                    role="alert">
+                                                    {{ error }}
+                                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                {% endfor %}
+                                                <br>
+                                                <div class="col-sm-2">
+                                                    <h6 class="mt-2">First Name</h6>
+                                                </div>
+                                                <div class="col-sm-2 text-secondary">
+                                                    <input type="text" class="form-control mb-2" placeholder=""
+                                                        value="{{ data.first_name }}">
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <h6 class="mt-2">Last Name</h6>
+                                                </div>
+                                                <div class="col-sm-2 text-secondary">
+                                                    <input type="text" class="form-control mb-2" placeholder=""
+                                                        value="{{ data.last_name }}">
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-3">
+                                                        <h6 class="mt-2">Email Address</h6>
+                                                    </div>
+                                                    <div class="col-sm-5 text-secondary">
+                                                        <input type="email" class="form-control mb-2" placeholder=""
+                                                            value="{{ data.email }}" required>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-3">
+                                                        <h6 class="mt-3">Phone Number</h6>
+                                                    </div>
+                                                    <div class="col-5 text-secondary mb-2">
+                                                        <input type="tel" class="form-control mb-3 mt-2" placeholder=""
+                                                            value="{{ data.phone_number }}">
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-3">
+                                                        <h6 class="mt-2">Street Address</h6>
+                                                    </div>
+                                                    <div class="col-5 text-secondary mb-2">
+                                                        <input type="text" class="form-control mb-2" placeholder=""
+                                                            value="{{ data.street_address }}">
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-3">
+                                                        <h6 class="mt-2">Province</h6>
+                                                    </div>
+                                                    <div class="col-sm-3 text-secondary mb-2">
+                                                        <input type="text" class="form-control mb-2" placeholder=""
+                                                            value="{{ data.province }}">
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <h6 class="mt-2">Postal Code</h6>
+                                                    </div>
+                                                    <div class="col-sm-3 text-secondary mb-2">
+                                                        <input type="text" class="form-control mb-2" placeholder=""
+                                                            value="{{ data.postal_code }}">
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <h6 class="mt-2">Country</h6>
+                                                    </div>
+                                                    <div class="col-sm-3 text-secondary mb-2">
+                                                        <input type="text" class="form-control mb-2" placeholder=""
+                                                            value="{{ data.country }}">
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <h6 class="mt-2">City</h6>
+                                                    </div>
+                                                    <div class="col-sm-3 text-secondary mb-2">
+                                                        <input type="text" class="form-control mb-2" placeholder=""
+                                                            value="{{ data.city }}">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <button type="submit" class="btn btn-primary">Update Profile</button>
+                                </div>
+                            </div>
+                        </div>
+                        {% endwith %}
+                    </div>
+                </div>
+            </form>
+            <form action="{{url_for('views.profile')}}" method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <div class="row">
+                    <div class="col-12" style="justify-content:end;">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="lead mb-2 mt-2"> Password change </h4>
+                            </div>
+                            <div class="card-body justify-content-center">
+                                <div class="card">
+                                    <div class="col-sm-9 mt-3 mb-3">
+                                        <div class="row m-3">
+                                            <div class="col-sm-3">
+                                                <p>Current Password *</p>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <input type="text" class="form-control mb-2" , id="current_password" required>
+                                            </div>
+                                        </div>
+                                        <div class="row m-3">
+                                            <div class="col-sm-3">
+                                                <p class="mb-2"> New Password *</p>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <input type="text" class="form-control mb-2" id="new_password" required>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <p class="mb-2">Confirm Password *</p>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <input type="text" class="form-control mb-2" id="confirm_new_password" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div clas="row">
+                                <input type="submit" class="btn btn-primary border-white" value="Change Password">
+                                <br>
                                 <br>
                             </div>
-                            <div class="row">
-                                <hr>
-                                <div class="col-sm-3">
-                                    <h6 class="mt-2">First Name</h6>
-                                </div>
-                                <div class="col-sm-9 text-secondary mb-2">
-                                    <input type="text" class="form-control" placeholder=""
-                                        value="{{ current_user.first_name }}">
-                                </div>
-                                <hr>
-                                <div class="col-sm-3">
-                                    <h6 class="mt-2">Last Name</h6>
-                                </div>
-                                <div class="col-sm-9 text-secondary mb-2">
-                                    <input type="text" class="form-control mb-2" placeholder=""
-                                        value="{{ current_user.last_name }}">
-                                </div>
-                                <hr>
-                                <div class="col-sm-3">
-                                    <h6 class="mt-2">Email Address</h6>
-                                </div>
-                                <div class="col-sm-9 text-secondary mb-2">
-                                    <input type="text" class="form-control mb-2" placeholder=""
-                                        value="{{ current_user.email }}">
-                                </div>
-                                <hr>
-                                <div class="col-sm-3">
-                                    <h6 class="mt-2">Phone Number</h6>
-                                </div>
-                                <div class="col-sm-9 text-secondary mb-2">
-                                    <input type="text" class="form-control mb-2" placeholder=""
-                                        value="{{ data.phone }}">
-                                </div>
-                                <hr>
-                                <div class="col-sm-3">
-                                    <h6 class="mt-2">Street Address</h6>
-                                </div>
-                                <div class="col-sm-9 text-secondary mb-2">
-                                    <input type="text" class="form-control mb-2" placeholder=""
-                                        value="{{ data.state_prov }}">
-                                </div>
-                                <hr>
-                                <div class="col-sm-3">
-                                    <h6 class="mt-2">Postal Code</h6>
-                                </div>
-                                <div class="col-sm-9 text-secondary mb-2">
-                                    <input type="text" class="form-control mb-2" placeholder=""
-                                        value="{{ data.postal_code }}">
-                                </div>
-                                <hr>
-                                <div class="col-sm-3">
-                                    <h6 class="mt-2">Province</h6>
-                                </div>
-                                <div class="col-sm-9 text-secondary mb-2">
-                                    <input type="text" class="form-control mb-2" placeholder=""
-                                        value="{{ data.state_prov }}">
-                                </div>
-                                <hr>
-                                <div class="col-sm-3">
-                                    <h6 class="mt-2">City</h6>
-                                </div>
-                                <div class="col-sm-9 text-secondary mb-2">
-                                    <input type="text" class="form-control mb-2" placeholder="" value="{{ data.city }}">
-                                </div>
-                                <hr>
-
-                                <div class="d-md-flex justify-content-center text-center">
-                                    <button type="button" class="btn btn-primary btn">Update profile</button>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3 ml-0 pl-0">
-                    <div class="card mb-6">
-                        <div class="card-title">
-                            <h5 class="lead ml-0 mb-2 mt-4">Bobby</h5>
-                            <br>
-                        </div>
-                        <div class="row">
-
-                            <div class="col-md-3">
-                                
-                            </div>
-                            <div class="col-md-3">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% endwith %}
+            </form>
+        </div>
     </main>
 </div>
-
-
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 {% endblock %}

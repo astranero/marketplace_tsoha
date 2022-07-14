@@ -5,67 +5,72 @@ from flask import flash
 from routes import db
 
 class User(UserMixin):
-    def __init__(self, user_id, username, password, first_name, last_name, active=True, authenticated=True):
+    def __init__(self, user_id, username, password, first_name, profile_picture_id="default.jpg", active=True, authenticated=True):
         self.user_id = user_id
-        self.user_name = username
+        self.username = username
+        self.profile_picture_id = profile_picture_id
         self.password = password
         self.first_name = first_name
-        self.last_name = last_name
         self.authenticated = authenticated
         self.active = active
     
-    def create_user(self, street_address, phone_number, city, state_prov, postal_code, birth_date):
+    def create_user(self, email, last_name, street_address, phone_number, country, city, province, postal_code, birthday):
         try:
-            SQL = """INSERT INTO users (username, email, password, first_name, last_name,street_address,phone_number, city, state_prov, postal_code, birth_date)
-                VALUES (:email, :password, :first_name, :last_name, :street_address, :phone_number,
-                :city, :state_prov, :postal_code, :birth_date)"""
+            SQL = """INSERT INTO users (username, email, password, first_name, last_name, street_address, phone_number, country, city, province, postal_code, birthday)
+                VALUES (:username, :email, :password, :first_name, :last_name, :street_address, :phone_number,
+                :country, :city, :province, :postal_code, :birthday)"""
 
-            db.session.execute(SQL, {"username": self.username,"email": self.email, "password": self.password,
-                                "first_name": self.first_name, "last_name": self.last_name, "street_address": street_address,
-                                "phone_number": phone_number, "city": city, "state_prov": state_prov, "postal_code": postal_code, "birth_date": birth_date})
+            db.session.execute(SQL, {"username": self.username,"email": email, "password": self.password,
+                                "first_name": self.first_name, "last_name": last_name, "street_address": street_address,
+                                "phone_number": phone_number, "country":country, "city": city, "province": province, "postal_code": postal_code, "birthday": birthday})
             db.session.commit()
-        except:
+            return True
+        except Exception as error:
             db.session.rollback()
-            flash("Something went wrong with user creation, please report it.")
+            flash(f"Something went wrong with user creation: {error}")
     
     def get_user_information(self):
         try:
-            SQL  = """SELECT email, street_address, phone, country, city, province, postal_code FROM users WHERE username=:username;"""
-            data = db.session.execute(SQL, {"email":self.username}).fetchone()
+            SQL  = """SELECT first_name, last_name, email, street_address, phone_number, country, city, province, postal_code FROM users WHERE username=:username;"""
+            data = db.session.execute(SQL, {"username":self.username}).fetchone()
             if data:
-                response_object = { "email": data[0], 
-                "street_address": data[1],
-                "phone": data[2],
-                "country": data[3], 
-                "province": data[4]
+                response_object = { 
+                "first_name": data[0],
+                "last_name": data[1],
+                "email": data[2], 
+                "street_address": data[3],
+                "phone_number": data[4],
+                "country": data[5], 
+                "city": data[6],
+                "province": data[7],
+                "postal_code": data[8]
                 }
-                return json.dumps(response_object)
+                return response_object
         except Exception as error:
             db.session.rollback()
-            flash(f"{error}")
+            flash(f"Something went wrong with fetching user data: {error}.")
     
     def fetch_user(username):
         try:
-            SQL = """SELECT password, first_name, last_name FROM users WHERE username=:username;"""
-            data = db.session.execute(SQL, {"username":username}).fetchone()
+            SQL = """SELECT password, first_name FROM users WHERE username=:username;"""
+            data = db.session.execute(SQL, {"username":username.lower()}).fetchone()
             if data:
                 password = data[0]
                 first_name = data[1]
-                last_name = data[2]
-                return User(user_id=uuid4(),username=username,password=password,first_name=first_name,last_name=last_name)
-        except:
+                return User(user_id=uuid4(),username=username,password=password,first_name=first_name)
+        except Exception as error:
             db.session.rollback()
-            flash("Something went wrong, please try again.")
+            flash(f"Something went wrong fetching user: {error}.")
     
     def get_password(username):
         try:
             SQL = """SELECT password FROM users WHERE username=:username;"""
-            hash = db.session.execute(SQL, {"email": username}).fetchone()[0]
+            hash = db.session.execute(SQL, {"username": username.lower()}).fetchone()[0]
             db.session.commit()
             return hash
-        except:
+        except Exception as error:
             db.session.rollback()
-            flash("Something went wrong, please try again.")
+            flash(f"Something went wrong fetching password: {error}.")
     
     def check_email(email):
         try:
@@ -75,45 +80,44 @@ class User(UserMixin):
             if db_email:
                 return True
             return False
-        except:
+        except Exception as error:
             db.session.rollback()
-            flash("Something went wrong: Are you sure user exists?")
+            flash(f"Something went wrong checking email: {error}")
     
     def check_username(username):
         try:
             SQL = "SELECT EXISTS(SELECT username FROM users WHERE username=:username);"
-            username = db.session.execute(SQL, {"email": username}).fetchone()[0]
+            db_username = db.session.execute(SQL, {"username": username.lower()}).fetchone()[0]
             db.session.commit()
-            if username:
+            if db_username:
                 return True
             return False
-        except:
+        except Exception as error:
             db.session.rollback()
-            flash("Something went wrong: Are you sure user exists?")
+            flash(f"Something went wrong checking username: {error}")
 
     def create_session(user):
         try:
-            SQL = """INSERT INTO sessions (user_id, password, first_name, last_name, active, authenticated, is_banned)
-            VALUES (:user_id, :email, :password, :first_name, :last_name, :active, :authenticated, :is_banned);"""
-            db.session.execute(SQL, {"user_id":user.user_id, "email":user.email, "password":user.password, "first_name":user.first_name,
-            "last_name":user.last_name, "active":user.active, "authenticated":user.authenticated, "is_banned":user.is_banned})
+            SQL = """INSERT INTO sessions (user_id, username, password, first_name, active, authenticated)
+            VALUES (:user_id, :username, :password, :first_name, :active, :authenticated );"""
+            db.session.execute(SQL, {"user_id":user.user_id, "username":user.username, "password":user.password, "first_name":user.first_name, "active":user.active, "authenticated":user.authenticated})
             db.session.commit()
-        except:
+        except Exception as error:
             db.session.rollback()
-            flash("Something went wrong with session creation.")
+            flash(f"Something went wrong session creation: {error}")
     
     def delete_session(user):
         try:
             SQL = """DELETE FROM sessions WHERE user_id=user_id;"""
             db.session.execute(SQL, {"user_id":user.user_id})
             db.session.commit()
-        except:
+        except Exception as error:
             db.session.rollback()
-            flash("Something went wrong with session deletion.")
-    
+            flash(f"Something went wrong deleting session: {error}")
+
     def get(user_id):
         try:
-            SQL = """SELECT user_id, username, password, first_name, last_name, active, authenticated, is_banned FROM sessions WHERE
+            SQL = """SELECT user_id, username, password, first_name, active, authenticated FROM sessions WHERE
             user_id=:user_id"""
             data = db.session.execute(SQL, {"user_id":user_id}).fetchone()
             db.session.commit()
@@ -123,12 +127,11 @@ class User(UserMixin):
                 username = data[1]
                 password = data[2]
                 first_name = data[3]
-                last_name = data[4]
-                active = data[5]
-                authenticated = data[6]
-                is_banned = data[7]
-                return User(user_id, username, password, first_name, last_name, active=active, authenticated=authenticated, is_banned=is_banned)
-        except:
+                active = data[4]
+                authenticated = data[5]
+                return User(user_id, username, password, first_name, active=active, authenticated=authenticated)
+        except Exception as error:
+            flash(f"Something went wrong with fetching user object: {error}")
             return None
 
     def get_id(self):
@@ -139,4 +142,4 @@ class User(UserMixin):
     
     def is_active(self):
         return self.active
-    
+

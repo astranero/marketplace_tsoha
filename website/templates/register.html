@@ -69,7 +69,7 @@
                                     <div class="form-floating">
                                         {{form.email(class="form-control",type="email", id="email",placeholder="")}}
                                         <i class="fas fa-user fa-lg me-3 fa-fw"></i>
-                                        <label for="email">Your Email</label>
+                                        <label for="email">Your Email *</label>
                                     </div>
 
                                     {% for error in form.password.errors %}
@@ -96,7 +96,7 @@
                                         <label for="repeat_password">Confirm password*</label>
                                     </div>
                                     <br>
-                                    {% for error in form.birth_date.errors %}
+                                    {% for error in form.birthday.errors %}
                                     <div class="alert alert-warning alert-dismissible fade show" role="alert">
                                         {{ error }}
                                         <button type="button" class="btn-close" data-bs-dismiss="alert"
@@ -106,8 +106,8 @@
                                     <div style="text-align:left;">
                                         <label for="date"> Date of Birth*: </label>
                                         <i class="fas fa-user fa-lg me-3 fa-fw"></i>
-                                        {{form.birth_date(type="date", format="%m-%d-%Y",
-                                        class="form-control",id="date",placeholder="", value="2001-01-01")}}
+                                        {{form.birthday(type="date", format="%m-%d-%Y",
+                                        class="form-control",id="birthday",placeholder="", value="2001-01-01")}}
                                     </div>
                                     <br>
                                     {% for error in form.phone_number.errors %}
@@ -134,7 +134,7 @@
                                         <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                                         <label for="street_address">Street Address</label>
                                     </div>
-                                    {% for error in form.state_prov.errors %}
+                                    {% for error in form.province.errors %}
                                     <div class="alert alert-warning alert-dismissible fade show" role="alert">
                                         {{ error }}
                                         <button type="button" class="btn-close" data-bs-dismiss="alert"
@@ -142,9 +142,9 @@
                                     </div>
                                     {% endfor %}
                                     <div class="form-floating">
-                                        {{form.state_prov(type="state_prov",class="form-control",id="state_prov",placeholder="")}}
+                                        {{form.province(type="province",class="form-control",id="province",placeholder="")}}
                                         <i class="fas fa-user fa-lg me-3 fa-fw"></i>
-                                        <label for="state_prov">State / Province</label>
+                                        <label for="province">Province</label>
                                     </div>
                                     {% for error in form.postal_code.errors %}
                                     <div class="alert alert-warning alert-dismissible fade show" role="alert">
@@ -156,7 +156,19 @@
                                     <div class="form-floating">
                                         {{form.postal_code(type="postal_code",class="form-control",id="postal_code",placeholder="")}}
                                         <i class="fas fa-user fa-lg me-3 fa-fw"></i>
-                                        <label for="postal_code">Postal Code / Zip Code</label>
+                                        <label for="postal_code">Postal Code</label>
+                                    </div>
+                                    {% for error in form.country.errors %}
+                                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                        {{ error }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    {% endfor %}
+                                    <div class="form-floating">
+                                        {{form.country(type="country",class="form-control",id="country",placeholder="")}}
+                                        <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                                        <label for="country">Country</label>
                                     </div>
                                     {% for error in form.city.errors %}
                                     <div class="alert alert-warning alert-dismissible fade show" role="alert">

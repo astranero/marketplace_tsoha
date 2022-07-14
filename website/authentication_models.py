@@ -1,13 +1,15 @@
-from datetime import date, timedelta
+from datetime import date
 import re
 from flask_wtf import FlaskForm
 from wtforms import BooleanField, StringField, PasswordField, validators, DateField, TelField, ValidationError, EmailField, TextAreaField
 from flask_login import current_user
 from entity import User
 from werkzeug.security import check_password_hash
-
+from markupsafe import Markup
+from message_manager import MessageManager
 
 class RegistrationForm(FlaskForm):
+    username = StringField("Username", [validators.DataRequired(), validators.Length(min=4, max=99)])
     first_name = StringField("First Name", [validators.Length(min=2, max=40)])
     last_name = StringField("Last Name", [validators.Length(min=2, max=40)])
     email = EmailField("Email Address", [validators.Length(
@@ -16,18 +18,24 @@ class RegistrationForm(FlaskForm):
                                               validators.EqualTo("confirm_password", message="Passwords don't match.")])
     confirm_password = PasswordField(
         "Repeat Password", [validators.DataRequired()])
-    birth_date = DateField("Date of Birth", [validators.InputRequired(
+    birthday = DateField("Date of Birth", [validators.InputRequired(
         message="Your Date of Birth is required.")], format="%Y-%m-%d")
-    phone_number = TelField("Your Phone Number")
+    phone_number = TelField("Phone Number")
     street_address = StringField("Street Address")
-    state_prov = StringField("State/Province")
-    postal_code = StringField("Postal/Zip Code")
+    province = StringField("Province")
+    postal_code = StringField("Zip Code")
+    country = StringField("Country")
     city = StringField("City")
 
     def validate_email(self, email):
         email_exists = User.check_email(email.data)
         if email_exists:
             raise ValidationError("This email address is already in use.")
+    
+    def validate_username(self, username):
+        username_exists = User.check_username(username.data)
+        if username_exists:
+            raise ValidationError("This username is already taken.")
 
     def validate_password(self, password):
         if re.fullmatch(r"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{1,}$", password.data) is None:
@@ -42,29 +50,31 @@ class RegistrationForm(FlaskForm):
         if re.fullmatch(r"^(\s)*[A-Za-z]+((\s)?((\'|\-|\.)?([A-Za-z])+))*(\s)*$", last_name.data) is None:
             raise ValidationError("Please insert a last name.")
         
-    def validate_birth_date(self, birth_date):
+    def validate_birthday(self, birth_date):
         age = date.today().year - birth_date.data.year
         if age <= 12:
             raise ValidationError("Children's Online Privacy Protection Act limits the age of users to be over 13.")
 
 class LoginForm(FlaskForm):
-    email = StringField("Email", [validators.Length(
-        min=4, max=40), validators.Email(message="Email address format is incorrect."), validators.DataRequired()])
+    username = StringField("Username", [validators.Length(
+        min=4, max=99), validators.DataRequired()])
     password = PasswordField("Password", [validators.DataRequired()])
 
-    def validate_email(self, email):
-            email_exists = User.check_email(email.data)
-            if not email_exists:
-                raise ValidationError("User is not registered. <a href={{'url_for(views.register)'}}>Register here</a>")
-
-    def validate_password(self, password):
+    def validate_username(self, username):
+            username_exists = User.check_username(username.data)
+            if not username_exists:
+                raise ValidationError(Markup("<p> User is not registered. <a href=register> Register here</a></p>"))
+            else:
+                self.password_validation(self.password)
+                
+    def password_validation(self, password):
         try:
-            hash = User.get_password(self.email.data)
+            hash = User.get_password(self.username.data)
             if not check_password_hash(hash, password.data):
-                raise ValidationError("Your email or password is incorrect.")
-        except: raise ValidationError("Your email or password is incorrect.")
+                raise ValidationError("Your username or password is incorrect.")
+        except: raise ValidationError("Your username or password is incorrect.")
 
-class ProfileForm(FlaskForm):
+class PasswordChangeForm(FlaskForm):
     current_password = PasswordField("current_password", [validators.DataRequired()])
     new_password = PasswordField("New Password", [validators.DataRequired(), validators.Length(min=8),
                                               validators.EqualTo("sec_password", message="Passwords don't match.")])
@@ -81,8 +91,24 @@ class ProfileForm(FlaskForm):
         if not check_password_hash(hash, current_password.data):
             raise ValidationError("Your email or password is incorrect.")
 
+class ProfileForm(FlaskForm):
+    first_name = StringField("First Name", [validators.Length(min=2, max=40)])
+    last_name = StringField("Last Name", [validators.Length(min=2, max=40)])
+    email = EmailField("Email Address", [validators.Length(
+        min=10, max=40), validators.Email(message="This is not a valid email address."), validators.DataRequired()])
+    phone_number = TelField("Phone Number")
+    street_address = StringField("Street Address")
+    province = StringField("Province")
+    postal_code = StringField("Zip Code")
+    country = StringField("Country")
+    city = StringField("City")
+
 class PostForm(FlaskForm):
     email = StringField("Email", [validators.Length(
         min=4, max=40), validators.Email(message="Email address format is incorrect."), validators.DataRequired()])
     message = TextAreaField("message", [validators.Length(
         min=4)])
+    
+    def send_contact_us_message(self, sender, message):
+        message = MessageManager(sender, message)
+        message.insert_contact_us_message()
