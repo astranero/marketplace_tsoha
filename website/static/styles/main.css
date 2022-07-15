@@ -1,11 +1,11 @@
 body {
-    font-family: "Gill Sans Extrabold", sans-serif;
+    font-family: "Actor';font-size: 12px";
     height: 100%;
     text-align: center;
     font-size: medium;
     background: #eed46c;
     min-height: 75%;
-    text-shadow: 0 .025rem .1rem rgba(0, 0, 0, 0.445);
+    text-shadow: 0 .020rem .05rem rgba(0, 0, 0, 0.445);
     box-shadow: inset 0 0 3rem rgba(0, 0, 0, .5);
     position: relative;
     overflow: auto;

@@ -1,3 +1,4 @@
+from fileinput import filename
 import re
 from flask_login import current_user, login_required, login_user, logout_user
 from flask import Blueprint, render_template, redirect, flash, url_for
@@ -100,12 +101,26 @@ def home():
 @views.route("/market", methods=["GET", "POST"])
 @login_required
 def marketplace():
-    return render_template("marketplace.html")
+    data = db.session.execute("SELECT * FROM products;").fetchall()
+    return render_template("marketplace.html", products=data)
 
-@views.route("/profile", methods=["POST", "GET"])
+@views.route("/profile/<username>", methods=["POST", "GET"])
 @login_required
-def profile():
-    return render_template("profile.html")
+def profile(username):
+    return render_template("profile.html", username=username)
+
+@views.route("/profile/edit/<username>", methods=["POST", "GET"])
+@login_required
+def profile_edit(username):
+    if username == current_user.username:
+        return render_template("profile/edit.html")
+    flash("You can't edit other user's profile.")
+    return redirect(url_for("views.home"))
+
+@views.route("/product/", methods=["POST","GET"])
+@login_required
+def product(item_id):
+    return render_template("product.html")
 
 @views.route("/about")
 def about():

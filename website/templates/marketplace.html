@@ -16,64 +16,111 @@
         {% endwith %}
 
         <div class="jumbotron ">
-            <h1 class="display-4">Marketplace.</h1>
+            <h1 class="display-4">AsraMarket.</h1>
             <p class="lead">Treasures are waiting for you...</p>
-            <div class="row">
+            <hr class="my-2">
+            <div class=" row">
                 <div class="col-sm-3">
-                    <a href="#" class="btn btn-m form-control btn-secondary fw-bold border-white bg-black">Add item</a>
+                    <a href="#" class="btn btn-m form-control btn-secondary fw-bold border-white bg-black"
+                        data-bs-toggle="modal" data-bs-target="#add-item">Add
+                        item</a>
                 </div>
-                <div class="col-sm-3">
+                <div class="col-sm-6">
                     <input type="search" class="fw-bold form-control border-white bg-black text-white"
                         placeholder="Search..." aria-label="Search">
                 </div>
                 <div class="col-sm-3">
                     <div class="dropdown">
-                        <button class="btn btn-secondary form-control fw-bold border-white bg-black dropdown-toggle" type="button" id="dropdownMenuButton"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <button class="btn btn-secondary form-control fw-bold border-white bg-black dropdown-toggle"
+                            type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                            aria-expanded="false">
                             Sort by
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="#">Action</a>
-                            <a class="dropdown-item" href="#">Another action</a>
-                            <a class="dropdown-item" href="#">Something else here</a>
+                            <a class="dropdown-item" href="#">Price</a>
+                            <a class="dropdown-item" href="#">A-Z</a>
+                            <a class="dropdown-item" href="#">Name</a>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="modal fade" tabindex="-1" id="add-item" role="dialog">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color:rgb(248, 232, 160);">
+                        <h5 class="modal-title">Add item</h5>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{{url_for('views.product')}}" method="POST">
+                            {{ post_form.csrf_token }}
 
-            <hr class="my-4">
-            <div class="container-m">
-                <div class="">
-                    <div class="row pb-6 mb-lg-2 mr-1">
-                        <div class="col-lg-3 col-md-2 mb-2 mr-2">
-                            <div class="card rounded shadow-lg border-2">
-                                <div class="card-body p-4">
-                                    <div class="hovereffect">
-                                        <img class="img-responsive shadow-1-strong img-fluid img-thumbnail shadow-sm d-block mx-auto mb-2"
-                                            src="https://bootstrapious.com/i/snippets/sn-cards/shoes-1_gthops.jpg"
-                                            alt="">
-                                        <div class="overlay">
-                                            <h2>Title</h2>
-                                            <a class="info" href="#">Check it out!</a>
-                                        </div>
+                            <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn close btn-primary">Add</button>
+                                <button type="button" class="btn close btn-danger"
+                                    data-bs-dismiss="modal">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="card" style="background-color: #eed46c; box-shadow: inset 0 0 5rem #856c0a(229, 233, 4, 0.877);">
+            {% for data in products %}
+            <div class="row mb-lg-2">
+                <div class="col-lg-3 m-1">
+                    <div class="card shadow-lg" style="background-color: #f3e4a6;">
+                        <div class="card-body p-2">
+                            <div class="hovereffect">
+                                <img class="img-responsive shadow-1-strong img-fluid img-thumbnail shadow-sm d-block mx-auto mb-2"
+                                    src="https://bootstrapious.com/i/snippets/sn-cards/shoes-1_gthops.jpg" alt="">
+                                <div class="overlay">
+                                    <h2>{{ data.title }}</h2>
+                                    <a class="info" href="#">Check it out!</a>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <p class="fw-bold">{{ data.title.capitalize() }}</a>
+                            </div>
+                            <div class="card" style="background-color:antiquewhite;">
+                                <div class="row mt-2" style="justify-content:center; ">
+                                    <div class="col-sm-6">
+                                        <p class="medium">Price: {{ data.price }} € </a>
                                     </div>
-                                    <br>
-                                    <p class="text-dark">Title</a>
-                                    <p class="text-dark">Price: 2,50€</a>
-                                    <p class="highest bid">Bid</p>
-                                    <a href="#" class="btn btn-sm btn-secondary text-dark">Buy product</a>
-                                    <a href="#" class="btn btn-sm btn-secondary text-dark">Give an offer</a>
-                                    <a href="#" class="btn btn-sm btn-secondary text-dark">Check details</a>
-                                    <br>
-                                    <br>
-                                    <p class="small text-muted">Lorem ipsum dolor sit amet, consectetur
-                                        adipisicing elit.</p>
+                                    <div class="col-sm-6">
+                                        <p class="small"> Best offer: {{ data.offer }} € </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <a href="#"><button class="btn btn-sm btn-success fw-bold">
+                                    Buy product</button></a>
+                            <a href="#"><button class="btn btn-sm btn-primary fw-bold">Give an
+                                    offer</button></a>
+                            <a href="{{ url_for('views.product')}}{{data.id}}"><button
+                                    class="btn btn-sm btn-secondary fw-bold">Check
+                                    details</button></a>
+                            <br>
+                            <br>
+                            <div class="card" style="justify-content:center; background-color:antiquewhite;">
+                                <div class="row mt-2">
+                                    <div class="col-sm-6">
+                                        <p class="small">Seller: {{data.username}}</p>
+                                    </div>
+                                    <div class="col-sm-6 ">
+                                        <p class="small">Condition: {{ data.condition.capitalize() }}</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                {% endfor %}
             </div>
+        </div>
     </main>
 </div>
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
