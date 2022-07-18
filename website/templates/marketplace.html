@@ -45,27 +45,6 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade" tabindex="-1" id="add-item" role="dialog">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header" style="background-color:rgb(248, 232, 160);">
-                        <h5 class="modal-title">Add item</h5>
-                    </div>
-                    <div class="modal-body">
-                        <form action="{{url_for('views.product')}}" method="POST">
-                            {{ post_form.csrf_token }}
-
-                            <i class="fas fa-user fa-lg me-3 fa-fw"></i>
-                            <div class="modal-footer">
-                                <button type="submit" class="btn close btn-primary">Add</button>
-                                <button type="button" class="btn close btn-danger"
-                                    data-bs-dismiss="modal">Cancel</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
         <br>
         <div class="card" style="background-color: #eed46c; box-shadow: inset 0 0 5rem #856c0a(229, 233, 4, 0.877);">
             {% for data in products %}
@@ -96,14 +75,16 @@
                                 </div>
                             </div>
                             <br>
-                            <a href="#"><button class="btn btn-sm btn-success fw-bold">
+                            <a href="#"><button class="btn btn-sm btn-success fw-bold" data-toggle="confirmation">
                                     Buy product</button></a>
                             <a href="#"><button class="btn btn-sm btn-primary fw-bold">Give an
                                     offer</button></a>
-                            <a href="{{ url_for('views.product')}}{{data.id}}"><button
+                            <a href="{{url_for('views.product', product_id=data.id)}}"><button
                                     class="btn btn-sm btn-secondary fw-bold">Check
                                     details</button></a>
                             <br>
+                            <a href="#"><button class="btn btn-sm btn-danger fw-bold m-2" data-toggle="confirmation">
+                                    Report product</button></a>
                             <br>
                             <div class="card" style="justify-content:center; background-color:antiquewhite;">
                                 <div class="row mt-2">
@@ -114,6 +95,28 @@
                                         <p class="small">Condition: {{ data.condition.capitalize() }}</p>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" tabindex="-1" id="add-item" role="dialog">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header" style="background-color:rgb(248, 232, 160);">
+                                <h5 class="modal-title">Add item</h5>
+                            </div>
+                            <div class="modal-body">
+                                <form action="/uploader" enctype="multipart/form-data" method="POST">
+                                    {{ post_form.csrf_token }}
+                                    <input type="file" name="product_pictures" multiple="True" autocomplete="off" required>
+        
+                                    <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn close btn-primary">Add</button>
+                                        <button type="button" class="btn close btn-danger"
+                                            data-bs-dismiss="modal">Cancel</button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
