@@ -3,7 +3,7 @@ import re
 from flask_wtf import FlaskForm
 from wtforms import BooleanField, StringField, PasswordField, validators, DateField, TelField, ValidationError, EmailField, TextAreaField
 from flask_login import current_user
-from entity import User
+from user_entity import User
 from werkzeug.security import check_password_hash
 from markupsafe import Markup
 from message_manager import MessageManager

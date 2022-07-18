@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% block body %}
+
+<form action="/edit_product" enctype="multipart/form-data" method="POST">
+    {{ post_form.csrf_token }}
+    <div class="card">
+        <div class="row">
+            <div class="col-3 mt-3">
+
+                <p class="product-box-text">Select product images: </p>
+            </div>
+            <div class="col-3 mt-3">
+                <input type="file" id="files" multiple name="product_pictures" multiple="multiple"
+                    accept="image/jpeg, image/png, image/jpg" placeholder="" required>
+                <output id="result"></output>
+            </div>
+        </div>
+        <div class="row">
+            {% for error in x %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                {{ error }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+            <div class="col-3">
+                <p class="product-box-text mt-2">Title:</p>
+            </div>
+            <div class="col-6 text-secondary">
+                <input type="text" id="title" name="title" minlength="3" class="form-control mb-2" rows="5" cols="30"
+                    placeholder="Title" value="" required>
+            </div>
+        </div>
+        <div class="row">
+            {% for error in x %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                {{ error }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+            <div class="col-3">
+                <p class="product-box-text mt-2">Details:</p>
+            </div>
+            <div class="col-6 text-secondary">
+                <textarea id="details" name="details" minlength="3" class="form-control mb-2" rows="5" cols="30"
+                    placeholder="Details" value="" required></textarea>
+            </div>
+        </div>
+        <div class="row">
+            {% for error in x %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                {{ error }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+            <div class="col-3">
+                <p class="product-box-text mt-2">Price (€):</p>
+            </div>
+            <div class="col-6 text-secondary">
+                <input type="number" id="price" name="price" minlength="3" class="form-control mb-2" rows="5" cols="30"
+                    placeholder="Price (€)" value="" required></input>
+            </div>
+        </div>
+        <div class="row">
+            {% for error in x %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                {{ error }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+            <div class="col-3">
+                <p class="product-box-text mt-2">Category:</p>
+            </div>
+            <div class="col-6 text-secondary">
+                <select class="form-control text-muted" id="condition-select">
+                    <option value="">Select a category</option>
+                    <option value="Electronics">Electronics</option>
+                    <option value="Health and skincare">Health and skincare</option>
+                    <option value="Clothes and Fashion">Clothes and Fashion</option>
+                    <option value="Jewelry">Jewelry</option>
+                    <option value="Hobby">Hobby</option>
+                    <option value="Toys">Toys</option>
+                    <option value="Pets">Pets</option>
+                    <option value="Food">Food</option>
+                    <option value="Other"> Other</option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            {% for error in x %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                {{ error }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+            <div class="col-3">
+                <p class="product-box-text mt-2">Condition:</p>
+            </div>
+            <div class="col-6 text-secondary">
+                <select class="form-control text-muted" id="condition-select">
+                    <option value="">Select a condition</option>
+                    <option value="New">New</option>
+                    <option value="Almost New">Used</option>
+                    <option value="Refurbished">Refurbished</option>
+                    <option value="Used - Poor Condition" text-muted>Used - Poor
+                        Condition</option>
+                </select>
+            </div>
+            <button type="submit" class="btn close btn-primary">Add</button>
+            <a href="{{request.url}}"><button type="button" class="btn close btn-danger"
+                    data-bs-dismiss="modal">Cancel</button></a>
+        </div>
+    </div>
+</form>
+{% endblock %}

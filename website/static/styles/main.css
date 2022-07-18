@@ -1,14 +1,15 @@
 body {
-    font-family: "Actor';font-size: 12px";
+    font-family: "'Open Sans',sans-serif";
     height: 100%;
     text-align: center;
-    font-size: medium;
-    background: #eed46c;
-    min-height: 75%;
+    font-size: 1rem;
+    background: #ffffff;
+    min-height: 90%;
     text-shadow: 0 .020rem .05rem rgba(0, 0, 0, 0.445);
-    box-shadow: inset 0 0 3rem rgba(0, 0, 0, .5);
+    justify-content: center;
     position: relative;
     overflow: auto;
+    background-image: none
 }
 
 .cover-container {
@@ -18,10 +19,13 @@ body {
     overflow: auto;
 }
 
-footer{
-    font-size: small;
-    position: relative;
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
     width: 100%;
+    color: white;
+    text-align: center;
 }
 
 .inner {
@@ -31,79 +35,200 @@ footer{
 .dropdown {
     position: relative;
 }
+
 .hovereffect {
-  width: 100%;
-  height: 100%;
-  float: left;
-  overflow: hidden;
-  position: relative;
-  text-align: center;
-  cursor: default;
+    width: 100%;
+    height: 100%;
+    float: left;
+    overflow: hidden;
+    position: relative;
+    text-align: center;
+    cursor: default;
 }
 
 .hovereffect .overlay {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  overflow: hidden;
-  top: 0;
-  left: 0;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    overflow: hidden;
+    top: 0;
+    left: 0;
 }
 
 .hovereffect img {
-  display: block;
-  position: relative;
-  -webkit-transition: all 0.4s ease-in;
-  transition: all 0.4s ease-in;
+    display: block;
+    position: relative;
+    -webkit-transition: all 0.4s ease-in;
+    transition: all 0.4s ease-in;
 }
 
 .hovereffect:hover img {
-  filter: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg"><filter id="filter"><feColorMatrix type="matrix" color-interpolation-filters="sRGB" values="0.2126 0.7152 0.0722 0 0 0.2126 0.7152 0.0722 0 0 0.2126 0.7152 0.0722 0 0 0 0 0 1 0" /><feGaussianBlur stdDeviation="3" /></filter></svg>#filter');
-  filter: grayscale(1) blur(3px);
-  -webkit-filter: grayscale(1) blur(3px);
-  -webkit-transform: scale(1.2);
-  -ms-transform: scale(1.2);
-  transform: scale(1.2);
+    filter: grayscale(1) blur(3px);
+    -webkit-filter: grayscale(1) blur(3px);
+    -webkit-transform: scale(1.2);
+    -ms-transform: scale(1.2);
+    transform: scale(1.2);
 }
 
 .hovereffect h2 {
-  text-transform: uppercase;
-  text-align: center;
-  position: relative;
-  font-size: 17px;
-  padding: 10px;
-  background: rgba(0, 0, 0, 0.6);
+    text-transform: uppercase;
+    text-align: center;
+    position: relative;
+    font-size: 17px;
+    padding: 10px;
+    background: rgba(65, 0, 0, 0.6);
 }
 
 .hovereffect a.info {
-  display: inline-block;
-  text-decoration: none;
-  padding: 7px 14px;
-  border: 1px solid #fff;
-  margin: 50px 0 0 0;
-  background-color: transparent;
+    display: inline-block;
+    text-decoration: none;
+    padding: 7px 14px;
+    border: 1px solid rgb(255, 255, 255);
+    margin: 50px 0 0 0;
+    background-color: transparent;
 }
 
 .hovereffect a.info:hover {
-  box-shadow: 0 0 5px #fff;
+    box-shadow: 0 0 5px rgb(255, 255, 255);
 }
 
-.hovereffect a.info, .hovereffect h2 {
-  -webkit-transform: scale(0.7);
-  -ms-transform: scale(0.7);
-  transform: scale(0.7);
-  -webkit-transition: all 0.4s ease-in;
-  transition: all 0.4s ease-in;
-  opacity: 0;
-  filter: alpha(opacity=0);
-  color: #fff;
-  text-transform: uppercase;
+.hovereffect a.info,
+.hovereffect h2 {
+    -webkit-transform: scale(0.7);
+    -ms-transform: scale(0.7);
+    transform: scale(0.7);
+    -webkit-transition: all 0.4s ease-in;
+    transition: all 0.4s ease-in;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    color: rgb(255, 255, 255);
+    text-transform: uppercase;
 }
 
-.hovereffect:hover a.info, .hovereffect:hover h2 {
-  opacity: 1;
-  filter: alpha(opacity=100);
-  -webkit-transform: scale(1);
-  -ms-transform: scale(1);
-  transform: scale(1);
+.hovereffect:hover a.info,
+.hovereffect:hover h2 {
+    opacity: 1;
+    filter: alpha(opacity=100);
+    -webkit-transform: scale(1);
+    -ms-transform: scale(1);
+    transform: scale(1);
+}
+
+.price {
+    color: rgb(0, 0, 0);
+    font-size: 20px;
+    text-align: center;
+}
+
+.offer-price {
+    color: rgb(2, 2, 2);
+    font-size: 18px;
+    text-align: center;
+}
+
+.product-box-text {
+    color: rgba(20, 20, 20, 0.671);
+    font-size: 14px;
+    text-align: center;
+}
+
+.title {
+    color: rgb(36, 36, 36);
+    font-size: 22px;
+    text-align: center;
+    padding: 0px;
+    margin: 0px;
+    text-transform: capitalize;
+}
+
+.card-shadow {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+.card {
+    min-height: 75%;
+    max-width: 90% !important;
+    line-height: 1.4;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+    box-sizing: border-box;
+    margin-left: 10%;
+    margin-right: 10%;
+    border-radius: 0;
+}
+.card .marketplace{
+    min-height: 75%;
+    max-width: 100% !important;
+    line-height: 1.4;
+    justify-content: center;
+    position: relative;
+    box-sizing: border-box;
+    border-radius: 0;
+}
+
+ul {
+    list-style-type: none;
+}
+
+.comment {
+    display: inline;
+    padding: 2px 2px 2px 2px;
+    font-size: 80%;
+}
+
+.comment img {
+    display: inline;
+    align-items: left;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid rgb(60, 255, 229);
+    margin-right: 0px;
+    padding-right: 0px;
+}
+.vl {
+    border-left: 1px solid rgb(182, 181, 181);
+    height: 900px;
+}
+.hr {
+    border-left: 0.5px solid rgb(136, 136, 136);
+    height: 100%;
+}
+  
+.comment p {
+    background-color: rgba(95, 247, 226, 0.295);
+    border-radius: 5px;
+    margin-top: 4px;
+    margin-bottom: 0px;
+    text-align: left;
+    font-size: 110%;
+    padding: 8px;
+}
+
+.username {
+    background-color: rgb(255, 255, 255);
+    border-radius: 10%;
+    text-align: left;
+    border: 1px solid rgb(255, 255, 255);
+    padding: 1px;
+    margin: 1px;
+    margin-left: 2px;
+    padding-left: 2px;
+    font-size: 90%;
+}
+
+.comment .thumbnail:hover {
+    box-shadow: 0 0 3px 1px rgb(32, 194, 180);
+}
+
+.comment div{
+    margin: 0;
+    padding: 0;
+    width: auto;
+    height: auto;
+    top:0;
+    left:0;
+    right: 0;
+    left: 0;
 }

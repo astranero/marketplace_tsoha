@@ -5,13 +5,14 @@ from routes import db
 
 
 class User(UserMixin):
-    def __init__(self, user_id, username, password, first_name, profile_picture_id="default.jpg", active=True, authenticated=True):
+    def __init__(self, user_id, username, password, first_name, profile_picture_id="default.jpg", issuperuser=False, active=True, authenticated=True):
         self.user_id = user_id
         self.username = username
         self.profile_picture_id = profile_picture_id
         self.password = password
         self.first_name = first_name
         self.authenticated = authenticated
+        self.issuperuser = issuperuser
         self.active = active
 
     def create_user(self, email, last_name, street_address, phone_number, country, city, province, postal_code, birthday):

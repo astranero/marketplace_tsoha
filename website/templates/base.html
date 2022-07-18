@@ -12,8 +12,7 @@
     <link href='https://fonts.googleapis.com/css?family=Gruppo' rel='stylesheet'>
     <style>
         body {
-            font-family: 'Actor';
-            font-size: 17px;
+            font-size: 12px;
         }
     </style>
     {% block head%}{% endblock head%}
@@ -34,8 +33,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js"
         integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy"
         crossorigin="anonymous"></script>
-        
-    <div class="container-fluid" style="background-color: #5bccf6">
+
+    <div class="container-fluid" style="background-color: #82d9f8">
         <header
             class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-4 mb-4 ">
             <div class="container">
@@ -103,14 +102,14 @@
                                         <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                                         <div class="form-floating">
                                             {{post_form.message(class="form-control border-2 shadow-m",type="text",
-                                            id="message",placeholder="")}}
+                                            id="message",placeholder="Your message here:*")}}
                                             <label for="message">Your message here:*</label>
                                         </div>
                                         <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                                         <div class="modal-footer">
                                             <button type="submit" class="btn close btn-primary">Send message</button>
-                                            <button type="button" class="btn close btn-danger"
-                                                data-bs-dismiss="modal">Cancel</button>
+                                            <a href="{{url_request}}"><button type="button" class="btn close btn-danger"
+                                                    data-bs-dismiss="modal">Cancel</button></a>
                                         </div>
                                     </form>
                                 </div>
@@ -123,17 +122,4 @@
     </div>
     {% block body %}{% endblock body %}
 </body>
-<footer>
-    <div class="text-center text-black p-1" style="background-color: #5bccf6;">
-        © 2022 Copyright: <a class="text-black">Marketplace</a>
-        <ul class="nav col-15 mb-2 justify-content-center mb-md-0">
-            <li>
-                <a href="{{ url_for('views.contact') }}" class="nav-link w3-button w3-bar-item" style="color:#030e12">
-                    Contact Us
-                </a>
-            </li>
-        </ul>
-    </div>
-</footer>
-
 </html>

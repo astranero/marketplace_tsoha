@@ -1,6 +1,19 @@
 {% extends 'base.html' %}
 {% block body %}
-{% if current_user.username==username %}
-    <a href="{{url_for('views.profile_edit', username=current_user.username)}}"><p>Edit</p></a>
-{% endif %}
+
+<div class="card">
+    <div class="row">
+        <div class="col-3 thumbnail">
+            <img src="{{url_for('static', filename='/images/'+current_user.profile_picture_id)}}"
+                class=" mt-2 mb-2" style="width: 200px; z-index: 4">
+        </div>
+        <div class="col-3 mt-2">
+
+        </div>
+        {% if current_user.username==username %}
+        <a href="{{url_for('views.profile_edit', username=current_user.username)}}"><button
+                class="btn btn-success mb-2">Edit</button></a>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

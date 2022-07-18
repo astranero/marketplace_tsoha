@@ -1,3 +1,4 @@
+from crypt import methods
 from fileinput import filename
 from flask_login import current_user, login_required, login_user, logout_user
 from flask import Blueprint, render_template, redirect, flash, url_for
@@ -21,7 +22,7 @@ app.config["UPLOAD_FOLDER"] = environ.get("UPLOAD_FOLDER")
 app.config["SQLALCHEMY_DATABASE_URI"]= environ.get("SQLALCHEMY_DATABASE_URI")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config[" TEMPLATES_AUTO_RELOAD"] = True
-app.permanent_session_lifetime = timedelta(hours=2)
+app.permanent_session_lifetime = timedelta(hours=24)
 login_manager = LoginManager()
 login_manager.login_view = 'views.login'
 login_manager.session_protection = "strong"
@@ -30,7 +31,7 @@ db = SQLAlchemy(app)
 login_manager.init_app(app)
 csrf = CSRFProtect(app)
 app.wsgi_app = ProxyFix(app.wsgi_app)
-from entity import User
+from user_entity import User
 
 views = Blueprint("views", __name__)
 @views.route("/login", methods=["GET", "POST"])
@@ -180,15 +181,25 @@ def contact():
         flash("Your message has been sent.")
     return redirect(url_for("views.home"))
 
+@views.route("/product/<int:product_id>/comment", methods=["POST"])
+@login_required
+def comment(product_id):
+    if request.method=="POST":
+        if "comment" in request.form():
+            product_add_comment()
+        return redirect(url_for("views.product", product_id=product_id))
+    return redirect(url_for("views.marketplace"))
+
+
+
+ALLOWED_PROFILE_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_PROFILE_EXTENSIONS
 
 @views.route("/uploader")
 @login_required
 def new_uploader():
     return redirect(url_for("views.profile", username=current_user.username))
-
-ALLOWED_PROFILE_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_PROFILE_EXTENSIONS
 
 @views.route("/uploader", methods=["POST"])
 @login_required

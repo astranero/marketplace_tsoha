@@ -2,394 +2,377 @@
 {% block head %}
 {% endblock %}
 {% block body %}
+<main class="px-3" style="height:800px">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
 
-<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-    <main class="px-3" style="height:800px">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-        {% for category, message in messages %}
-        <div class="alert alert-warning alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        {% endfor %}
-        {% endif %}
-        {% endwith %}
-
-        <div class="container" style="min-width:75%;">
-            <div class="col-lg-12 rounded-top text-white d-flex flex-row"
-                style="background-color:#030e12; height:auto;">
-                <div class="inner ms-4 mt-3 mb-2 d-flex flex-column" style="width: 120px;">
-                    <img src="{{url_for('static', filename='/images/'+current_user.profile_picture_id)}}" alt="Generic placeholder image"
-                        class="img-fluid rounded img-thumbnail mt-2 mb-2" style="width: 150px; z-index: 2">
-                </div>
-                <div class="inner d-flex flex-column ms-4 mt-4">
-                    <h3 class="pt-2 ml-0 pl-2"> {{current_user.username.capitalize()}}</h3>
-                    <a href="#" class="btn btn-sm btn-secondary fw-bold border-white bg-black" data-bs-toggle="modal" data-bs-target="#edit_picture">Edit profile
-                        picture</a>
-                </div>
-                <div class="modal fade" tabindex="-1" id="edit_picture" role="dialog">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header" style="background-color:rgb(248, 232, 160);">
-                                <h5 class="modal-title">Add item</h5>
-                            </div>
-                            <div class="modal-body">
-                                <form action="/uploader" enctype="multipart/form-data" method="POST">
-                                    {{ post_form.csrf_token }}
-                                    <input type="file" name="profile_picture" multiple="" autocomplete="off" required>
-        
-                                    <i class="fas fa-user fa-lg me-3 fa-fw"></i>
-                                    <div class="modal-footer">
-                                        <button type="submit" class="btn close btn-primary">Add</button>
-                                        <button type="button" class="btn close btn-danger"
-                                            data-bs-dismiss="modal">Cancel</button>
+    <div class="card">
+        <div class=" col-lg-12 rounded-top text-white d-flex flex-row" style="background-color:#030e12; height:auto;">
+            <div class="inner ms-4 mt-3 mb-2 d-flex flex-column" style="width: 120px;">
+                <img src="{{url_for('static', filename='/images/'+current_user.profile_picture_id)}}"
+                    alt="profile picture" class="img-fluid rounded img-thumbnail mt-2 mb-2"
+                    style="width: 150px; z-index: 2">
+            </div>
+            <div class="inner d-flex flex-column ms-4 mt-4">
+                <h3 class="pt-2 ml-0 pl-2"> {{current_user.username.capitalize()}}</h3>
+                <a href="#" class="btn btn-sm btn-secondary fw-bold border-white bg-black" data-bs-toggle="modal"
+                    data-bs-target="#edit_picture">Edit profile
+                    picture</a>
+            </div>
+            <div class="modal fade" tabindex="-1" id="edit_picture" role="dialog">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header"
+                            style="background-color:rgb(243, 216, 96); color:black; text-align: center;">
+                            <h5 class="modal-title">Change Profile Picture</h5>
+                        </div>
+                        <div class="modal-body justify-content-center">
+                            <form action="/uploader" enctype="multipart/form-data" method="POST">
+                                {{ post_form.csrf_token }}
+                                <div class="card">
+                                    <div class="row">
+                                        <div class="col-5">
+                                            <p class="product-box-text mt-3 mb-3"> Choose a new profile picture:</p>
+                                        </div>
+                                        <div class="col-2">
+                                            <input class="mt-3 mb-3" type="file" name="profile_picture" multiple=""
+                                                autocomplete="off" required>
+                                        </div>
                                     </div>
-                                </form>
-                            </div>
+                                </div>
+                                <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn close btn-primary">Add</button>
+                                    <a href="{{request_url}}"> <button type="button" class="btn close btn-danger"
+                                            data-bs-dismiss="modal">Cancel</button></a>
+
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
-            {% with data=current_user.get_user_information() %}
-            <form action="{{url_for('views.profile_edit', username=current_user.username)}}" method="POST">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                <div class="row">
-                    <div class="col-12 mr-0 pl-0">
-                        <div class="card ">
-                            <div class="card-header ">
-                                <h4 class="lead mb-2 mt-2">
-                                    Profile information
-                                </h4>
-                            </div>
-                            <div class="card-body">
-                                <div class="card-body">
-                                    <div class="card">
-                                        <div class="row">
-                                            <div class="row m-6 mt-3">
-                                                {% for error in profile_form.first_name.errors %}
-                                                <div class="alert alert-warning alert-dismissible fade show"
-                                                    role="alert">
-                                                    {{ error }}
-                                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                                        aria-label="Close"></button>
-                                                </div>
-                                                {% endfor %}
-                                                <br>
-                                                <div class="row">
-                                                    {% for error in profile_form.first_name.errors %}
-                                                    <div class="alert alert-warning alert-dismissible fade show"
-                                                        role="alert">
-                                                        {{ error }}
-                                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                                            aria-label="Close"></button>
-                                                    </div>
-                                                    {% endfor %}
-                                                    <div class="col-sm-3">
-                                                        <h6 class="mt-2">First Name</h6>
-                                                    </div>
-                                                    {% if profile_form.first_name.data!=None %}
-                                                    <div class="col-sm-3 text-secondary">
-                                                        <input type="text" id="first_name" name="first_name"
-                                                            minlength="2" class="form-control mb-2" placeholder=""
-                                                            value="{{ profile_form.first_name.data }}">
-                                                    </div>
-                                                    {% else %}
-                                                    <div class="col-sm-3 text-secondary">
-                                                        <input type="text" id="first_name" name="first_name"
-                                                            minlength="2" class="form-control mb-2" placeholder=""
-                                                            value="{{ data.first_name }}">
-                                                    </div>
-                                                    {% endif %}
-                                                    {% for error in profile_form.last_name.errors %}
-                                                    <div class="alert alert-warning alert-dismissible fade show"
-                                                        role="alert">
-                                                        {{ error }}
-                                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                                            aria-label="Close"></button>
-                                                    </div>
-                                                    {% endfor %}
-                                                    <div class="col-sm-3">
-                                                        <h6 class="mt-2">Last Name</h6>
-                                                    </div>
-                                                    {% if profile_form.last_name.data!=None%}
-                                                    <div class="col-sm-3 text-secondary">
-                                                        <input type="text" id="last_name" name="last_name" minlength="2"
-                                                            class="form-control mb-2" placeholder=""
-                                                            value="{{ profile_form.last_name.data }}">
-                                                    </div>
-                                                    {% else %}
-                                                    <div class="col-sm-3 text-secondary">
-                                                        <input type="text" id="last_name" name="last_name" minlength="2"
-                                                            class="form-control mb-2" placeholder=""
-                                                            value="{{ data.last_name }}">
-                                                    </div>
-                                                    {% endif %}
-                                                </div>
-                                                <div class="row">
-                                                    {% for error in profile_form.email.errors %}
-                                                    <div class="alert alert-warning alert-dismissible fade show"
-                                                        role="alert">
-                                                        {{ error }}
-                                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                                            aria-label="Close"></button>
-                                                    </div>
-                                                    {% endfor %}
-                                                    <div class="col-sm-3">
-                                                        <h6 class="mt-2">Email Address</h6>
-                                                    </div>
-                                                    {% if profile_form.email.data!=None %}
-                                                    <div class="col-sm-5 text-secondary">
-                                                        <input type="email" id="email" name="email" minlength="4"
-                                                            class="form-control mb-2" placeholder=""
-                                                            value="{{ profile_form.email.data }}">
-                                                    </div>
-                                                    {% else %}
-                                                    <div class="col-sm-5 text-secondary">
-                                                        <input type="email" id="email" name="email" minlength="4"
-                                                            class="form-control mb-2" placeholder=""
-                                                            value="{{ data.email }}">
-                                                    </div>
-                                                    {% endif %}
-                                                </div>
-                                                <div class="row">
-                                                    {% for error in profile_form.phone_number.errors %}
-                                                    <div class="alert alert-warning alert-dismissible fade show"
-                                                        role="alert">
-                                                        {{ error }}
-                                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                                            aria-label="Close"></button>
-                                                    </div>
-                                                    {% endfor %}
-                                                    <div class="col-sm-3">
-                                                        <h6 class="mt-5">Phone Number</h6>
-                                                    </div>
-                                                    {% if profile_form.phone_number.data!=None %}
-                                                    <div class="col-5 text-secondary mb-2">
-                                                        <small class="text-muted mt-1">Format: +44 1762 123456</small>
-                                                        <input type="tel" id="phone_number" name="phone_number"
-                                                            class="form-control mb-3 mt-2" placeholder=""
-                                                            value="{{ profile_form.phone_number.data }}"
-                                                            pattern="[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}">
-                                                    </div>
-                                                    {% else %}
-                                                    <div class="col-5 text-secondary mb-2">
-                                                        <small class="text-muted mt-1">Format: +44 1762 123456</small>
-                                                        <input type="tel" id="phone_number" name="phone_number"
-                                                            class="form-control mb-3 mt-2" placeholder=""
-                                                            value="{{ data.phone_number }}"
-                                                            pattern="[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}">
-                                                    </div>
-                                                    {% endif %}
-                                                </div>
-                                                <div class="row">
-                                                    {% for error in profile_form.street_address.errors %}
-                                                    <div class="alert alert-warning alert-dismissible fade show"
-                                                        role="alert">
-                                                        {{ error }}
-                                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                                            aria-label="Close"></button>
-                                                    </div>
-                                                    {% endfor %}
-                                                    {% if profile_form.street_address.data!=None %}
-                                                    <div class="col-3">
-                                                        <h6 class="mt-2">Street Address</h6>
-                                                    </div>
-                                                    <div class="col-5 text-secondary mb-2">
-                                                        <input type="text" id="street_address" name="street_address"
-                                                            class="form-control mb-2" placeholder=""
-                                                            value="{{ profile_form.street_address.data }}">
-                                                    </div>
-                                                    {% else %}
-                                                    <div class="col-3">
-                                                        <h6 class="mt-2">Street Address</h6>
-                                                    </div>
-                                                    <div class="col-5 text-secondary mb-2">
-                                                        <input type="text" id="street_address" name="street_address"
-                                                            class="form-control mb-2" placeholder=""
-                                                            value="{{ data.street_address }}">
-                                                    </div>
-                                                    {% endif %}
-                                                </div>
-                                                <div class="row">
-                                                    {% for error in profile_form.country.errors %}
-                                                    <div class="alert alert-warning alert-dismissible fade show"
-                                                        role="alert">
-                                                        {{ error }}
-                                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                                            aria-label="Close"></button>
-                                                    </div>
-                                                    {% endfor %}
-                                                    <div class="col-sm-3">
-                                                        <h6 class="mt-2">Country</h6>
-                                                    </div>
-                                                    {% if profile_form.country.data!=None %}
-                                                    <div class="col-sm-3 text-secondary mb-2">
-                                                        <input type="text" id="country" name="country"
-                                                            class="form-control mb-2" placeholder=""
-                                                            value="{{ profile_form.country.data }}">
-                                                    </div>
-                                                    {% else %}
-                                                    <div class="col-sm-3 text-secondary mb-2">
-                                                        <input type="text" id="country" name="country"
-                                                            class="form-control mb-2" placeholder=""
-                                                            value="{{ data.country }}">
-                                                    </div>
-                                                    {% endif %}
-                                                    {% for error in profile_form.city.errors %}
-                                                    <div class="alert alert-warning alert-dismissible fade show"
-                                                        role="alert">
-                                                        {{ error }}
-                                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                                            aria-label="Close"></button>
-                                                    </div>
-                                                    {% endfor %}
-                                                    <div class="col-sm-3">
-                                                        <h6 class="mt-2">City</h6>
-                                                    </div>
-                                                    {% if profile_form.city.data!=None %}
-                                                    <div class="col-sm-3 text-secondary mb-2">
-                                                        <input type="text" id="city" name="city"
-                                                            class="form-control mb-2" placeholder=""
-                                                            value="{{ profile_form.city.data }}">
-                                                    </div>
-                                                    {% else %}
-                                                    <div class="col-sm-3 text-secondary mb-2">
-                                                        <input type="text" id="city" name="city"
-                                                            class="form-control mb-2" placeholder=""
-                                                            value="{{ data.city }}">
-                                                    </div>
-                                                    {% endif %}
-                                                    {% for error in profile_form.province.errors %}
-                                                    <div class="alert alert-warning alert-dismissible fade show"
-                                                        role="alert">
-                                                        {{ error }}
-                                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                                            aria-label="Close"></button>
-                                                    </div>
-                                                    {% endfor %}
-                                                    <div class="col-sm-3">
-                                                        <h6 class="mt-2">Province</h6>
-                                                    </div>
-                                                    {% if profile_form.province.data %}
-                                                    <div class="col-sm-3 text-secondary mb-2">
-                                                        <input type="text" id="province" name="province"
-                                                            class="form-control mb-2" placeholder=""
-                                                            value="{{ profile_form.province.data }}">
-                                                    </div>
-                                                    {% else %}
-                                                    <div class="col-sm-3 text-secondary mb-2">
-                                                        <input type="text" id="province" name="province"
-                                                            class="form-control mb-2" placeholder=""
-                                                            value="{{ data.province }}">
-                                                    </div>
-                                                    {% endif %}
-                                                    {% for error in profile_form.postal_code.errors %}
-                                                    <div class="alert alert-warning alert-dismissible fade show"
-                                                        role="alert">
-                                                        {{ error }}
-                                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                                            aria-label="Close"></button>
-                                                    </div>
-                                                    {% endfor %}
-                                                    <div class="col-sm-3">
-                                                        <h6 class="mt-2">Postal Code</h6>
-                                                    </div>
-                                                    {% if profile_form.postal_code.data!=None %}
-                                                    <div class="col-sm-3 text-secondary mb-2">
-                                                        <input type="text" name="postal_code" id="postal_code"
-                                                            class="form-control mb-2" placeholder=""
-                                                            value="{{ profile_form.postal_code.data }}">
-                                                    </div>
-                                                    {% else %}
-                                                    <div class="col-sm-3 text-secondary mb-2">
-                                                        <input type="text" name="postal_code" id="postal_code"
-                                                            class="form-control mb-2" placeholder=""
-                                                            value="{{ data.postal_code }}">
-                                                    </div>
-                                                    {% endif %}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <br>
-                                    <button type="submit" class="btn btn-primary">Update Profile</button>
-                                </div>
-                            </div>
-                        </div>
-                        {% endwith %}
-                    </div>
-                </div>
-            </form>
-
-
-            <form action="{{url_for('views.profile_edit', username=current_user.username)}}" method="POST">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                <div class="row">
-                    <div class="col-12" style="justify-content:end;">
-                        <div class="card">
-                            <div class="card-header">
-                                <h4 class="lead mb-2 mt-2"> Password change </h4>
-                            </div>
-                            {% for error in password_change_form.current_password.errors %}
-                            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                                {{ error }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                    aria-label="Close"></button>
-                            </div>
-                            {% endfor %}
-                            {% for error in password_change_form.new_password.errors %}
-                            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                                {{ error }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                    aria-label="Close"></button>
-                            </div>
-                            {% endfor %}
-                            <div class="card-body justify-content-center">
-                                <div class="card">
-                                    <div class="col-sm-9 mt-3 mb-3">
-                                        <div class="row m-3">
-
-                                            <div class="col-sm-3">
-                                                <p>Current Password *</p>
-                                            </div>
-                                            <div class="col-sm-3">
-                                                <input type="password" name="current_password" class="form-control mb-2"
-                                                    , id="current_password" required>
-                                            </div>
-                                        </div>
-
-                                        <div class="row m-3">
-                                            <div class="col-sm-3">
-                                                <p class="mb-2"> New Password *</p>
-                                            </div>
-                                            <div class="col-sm-3">
-                                                <input type="password" class="form-control mb-2" name="new_password"
-                                                    id="new_password" required>
-                                            </div>
-                                            <div class="col-sm-3">
-                                                <p class="mb-2">Confirm Password *</p>
-                                            </div>
-                                            <div class="col-sm-3">
-                                                <input type="password" class="form-control mb-2"
-                                                    name="confirm_new_password" id="confirm_new_password" required>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div clas="row">
-                                <input type="submit" class="btn btn-primary border-white" value="Change Password">
-                                <br>
-                                <br>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </form>
         </div>
-    </main>
-</div>
+        {% with data=current_user.get_user_information() %}
+        <form action="{{url_for('views.profile_edit', username=current_user.username)}}" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <div class="row">
+                <div class="col-12 mr-0 pl-0">
+                    <div class="card-header ">
+                        <h4 class="lead mb-2 mt-2">
+                            Profile information
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="card">
+                            <div class="row">
+                                <div class="row m-6 mt-3">
+                                    {% for error in profile_form.first_name.errors %}
+                                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                        {{ error }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    {% endfor %}
+                                    <br>
+                                    <div class="row">
+                                        {% for error in profile_form.first_name.errors %}
+                                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                            {{ error }}
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        {% endfor %}
+                                        <div class="col-sm-3">
+                                            <h6 class="mt-2">First Name</h6>
+                                        </div>
+                                        {% if profile_form.first_name.data!=None %}
+                                        <div class="col-sm-3 text-secondary">
+                                            <input type="text" id="first_name" name="first_name" minlength="2"
+                                                class="form-control mb-2" placeholder=""
+                                                value="{{ profile_form.first_name.data }}">
+                                        </div>
+                                        {% else %}
+                                        <div class="col-sm-3 text-secondary">
+                                            <input type="text" id="first_name" name="first_name" minlength="2"
+                                                class="form-control mb-2" placeholder="" value="{{ data.first_name }}">
+                                        </div>
+                                        {% endif %}
+                                        {% for error in profile_form.last_name.errors %}
+                                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                            {{ error }}
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        {% endfor %}
+                                        <div class="col-sm-3">
+                                            <h6 class="mt-2">Last Name</h6>
+                                        </div>
+                                        {% if profile_form.last_name.data!=None%}
+                                        <div class="col-sm-3 text-secondary">
+                                            <input type="text" id="last_name" name="last_name" minlength="2"
+                                                class="form-control mb-2" placeholder=""
+                                                value="{{ profile_form.last_name.data }}">
+                                        </div>
+                                        {% else %}
+                                        <div class="col-sm-3 text-secondary">
+                                            <input type="text" id="last_name" name="last_name" minlength="2"
+                                                class="form-control mb-2" placeholder="" value="{{ data.last_name }}">
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="row">
+                                        {% for error in profile_form.email.errors %}
+                                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                            {{ error }}
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        {% endfor %}
+                                        <div class="col-sm-3">
+                                            <h6 class="mt-2">Email Address</h6>
+                                        </div>
+                                        {% if profile_form.email.data!=None %}
+                                        <div class="col-sm-5 text-secondary">
+                                            <input type="email" id="email" name="email" minlength="4"
+                                                class="form-control mb-2" placeholder=""
+                                                value="{{ profile_form.email.data }}">
+                                        </div>
+                                        {% else %}
+                                        <div class="col-sm-5 text-secondary">
+                                            <input type="email" id="email" name="email" minlength="4"
+                                                class="form-control mb-2" placeholder="" value="{{ data.email }}">
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="row">
+                                        {% for error in profile_form.phone_number.errors %}
+                                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                            {{ error }}
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        {% endfor %}
+                                        <div class="col-sm-3">
+                                            <h6 class="mt-5">Phone Number</h6>
+                                        </div>
+                                        {% if profile_form.phone_number.data!=None %}
+                                        <div class="col-5 text-secondary mb-2">
+                                            <small class="text-muted mt-1">Format: +44 1762 123456</small>
+                                            <input type="tel" id="phone_number" name="phone_number"
+                                                class="form-control mb-3 mt-2" placeholder=""
+                                                value="{{ profile_form.phone_number.data }}"
+                                                pattern="[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}">
+                                        </div>
+                                        {% else %}
+                                        <div class="col-5 text-secondary mb-2">
+                                            <small class="text-muted mt-1">Format: +44 1762 123456</small>
+                                            <input type="tel" id="phone_number" name="phone_number"
+                                                class="form-control mb-3 mt-2" placeholder=""
+                                                value="{{ data.phone_number }}"
+                                                pattern="[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}">
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="row">
+                                        {% for error in profile_form.street_address.errors %}
+                                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                            {{ error }}
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        {% endfor %}
+                                        {% if profile_form.street_address.data!=None %}
+                                        <div class="col-3">
+                                            <h6 class="mt-2">Street Address</h6>
+                                        </div>
+                                        <div class="col-5 text-secondary mb-2">
+                                            <input type="text" id="street_address" name="street_address"
+                                                class="form-control mb-2" placeholder=""
+                                                value="{{ profile_form.street_address.data }}">
+                                        </div>
+                                        {% else %}
+                                        <div class="col-3">
+                                            <h6 class="mt-2">Street Address</h6>
+                                        </div>
+                                        <div class="col-5 text-secondary mb-2">
+                                            <input type="text" id="street_address" name="street_address"
+                                                class="form-control mb-2" placeholder=""
+                                                value="{{ data.street_address }}">
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="row">
+                                        {% for error in profile_form.country.errors %}
+                                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                            {{ error }}
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        {% endfor %}
+                                        <div class="col-sm-3">
+                                            <h6 class="mt-2">Country</h6>
+                                        </div>
+                                        {% if profile_form.country.data!=None %}
+                                        <div class="col-sm-3 text-secondary mb-2">
+                                            <input type="text" id="country" name="country" class="form-control mb-2"
+                                                placeholder="" value="{{ profile_form.country.data }}">
+                                        </div>
+                                        {% else %}
+                                        <div class="col-sm-3 text-secondary mb-2">
+                                            <input type="text" id="country" name="country" class="form-control mb-2"
+                                                placeholder="" value="{{ data.country }}">
+                                        </div>
+                                        {% endif %}
+                                        {% for error in profile_form.city.errors %}
+                                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                            {{ error }}
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        {% endfor %}
+                                        <div class="col-sm-3">
+                                            <h6 class="mt-2">City</h6>
+                                        </div>
+                                        {% if profile_form.city.data!=None %}
+                                        <div class="col-sm-3 text-secondary mb-2">
+                                            <input type="text" id="city" name="city" class="form-control mb-2"
+                                                placeholder="" value="{{ profile_form.city.data }}">
+                                        </div>
+                                        {% else %}
+                                        <div class="col-sm-3 text-secondary mb-2">
+                                            <input type="text" id="city" name="city" class="form-control mb-2"
+                                                placeholder="" value="{{ data.city }}">
+                                        </div>
+                                        {% endif %}
+                                        {% for error in profile_form.province.errors %}
+                                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                            {{ error }}
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        {% endfor %}
+                                        <div class="col-sm-3">
+                                            <h6 class="mt-2">Province</h6>
+                                        </div>
+                                        {% if profile_form.province.data %}
+                                        <div class="col-sm-3 text-secondary mb-2">
+                                            <input type="text" id="province" name="province" class="form-control mb-2"
+                                                placeholder="" value="{{ profile_form.province.data }}">
+                                        </div>
+                                        {% else %}
+                                        <div class="col-sm-3 text-secondary mb-2">
+                                            <input type="text" id="province" name="province" class="form-control mb-2"
+                                                placeholder="" value="{{ data.province }}">
+                                        </div>
+                                        {% endif %}
+                                        {% for error in profile_form.postal_code.errors %}
+                                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                            {{ error }}
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        {% endfor %}
+                                        <div class="col-sm-3">
+                                            <h6 class="mt-2">Postal Code</h6>
+                                        </div>
+                                        {% if profile_form.postal_code.data!=None %}
+                                        <div class="col-sm-3 text-secondary mb-2">
+                                            <input type="text" name="postal_code" id="postal_code"
+                                                class="form-control mb-2" placeholder=""
+                                                value="{{ profile_form.postal_code.data }}">
+                                        </div>
+                                        {% else %}
+                                        <div class="col-sm-3 text-secondary mb-2">
+                                            <input type="text" name="postal_code" id="postal_code"
+                                                class="form-control mb-2" placeholder="" value="{{ data.postal_code }}">
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <button type="submit" class="btn btn-primary">Update Profile</button>
+                    </div>
+                </div>
+                {% endwith %}
+            </div>
+        </form>
+
+        <form action="{{url_for('views.profile_edit', username=current_user.username)}}" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <div class="row">
+                <div class="col-12" style="justify-content:end;">
+
+                    <div class="card-header">
+                        <h4 class="lead mb-2 mt-2"> Password change </h4>
+                    </div>
+                    {% for error in password_change_form.current_password.errors %}
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        {{ error }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+                    {% for error in password_change_form.new_password.errors %}
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        {{ error }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+                    <div class="card-body justify-content-center">
+                        <div class="card">
+                            <div class="col-sm-9 mt-3 mb-3">
+                                <div class="row m-3">
+
+                                    <div class="col-sm-3">
+                                        <p>Current Password *</p>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <input type="password" name="current_password" class="form-control mb-2" ,
+                                            id="current_password" required>
+                                    </div>
+                                </div>
+
+                                <div class="row m-3">
+                                    <div class="col-sm-3">
+                                        <p class="mb-2"> New Password *</p>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <input type="password" class="form-control mb-2" name="new_password"
+                                            id="new_password" required>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <p class="mb-2">Confirm Password *</p>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <input type="password" class="form-control mb-2" name="confirm_new_password"
+                                            id="confirm_new_password" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div clas="row">
+                        <input type="submit" class="btn btn-primary border-white" value="Change Password">
+                        <br>
+                        <br>
+                    </div>
+
+                </div>
+            </div>
+        </form>
+    </div>
+</main>
+
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
     integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
     crossorigin="anonymous"></script>

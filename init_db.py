@@ -42,7 +42,7 @@ def create_tables():
                 hidden BOOLEAN,
                 birthday DATE NOT NULL,
                 creation_date date DEFAULT NOW(),
-                profile_pic_id TEXT DEFAULT 'default.jpg' NOT NULL);
+                profile_picture_id TEXT DEFAULT 'default.jpg' NOT NULL);
                 """)
 
     cur.execute("""CREATE TABLE IF NOT EXISTS sessions(
@@ -61,9 +61,12 @@ def create_tables():
                 details TEXT NOT NULL,
                 condition TEXT,
                 price numeric NOT NULL CONSTRAINT positive_price CHECK (price > 0),
+                best_offer numeric DEFAULT None,
+                offerer TEXT,
                 creation_date timestamptz DEFAULT NOW(),
                 username TEXT,
                 FOREIGN KEY(username) REFERENCES users(username) ON DELETE CASCADE);
+                FOREIGN KEY(offerer) REFERENCES users(username) ON DELETE CASCADE);
                 """)
 
     cur.execute("""CREATE TABLE IF NOT EXISTS product_images(
