@@ -1,6 +1,4 @@
 from routes import db
-
-
 class MessageManager():
     def __init__(self, sender, message, receiver="admin"):
         self.sender = sender

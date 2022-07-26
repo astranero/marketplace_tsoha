@@ -1,19 +1,43 @@
 {% extends 'base.html' %}
 {% block body %}
+<main class="px-3" style="justify-content: center; margin-left: 10%;">
+    <div class="card m-0 p-0 profile-box">
+        <div class="row" style="font-weight: bold; color: #222222;">
+            <div class="col-3 m-0 p-0 thumbnail">
+                <img src="{{url_for('static', filename='/images/'+current_user.profile_picture_id)}}" class=" mt-2 mb-2"
+                    style="width: 200px; z-index: 4">
+            </div>
+            <div class="col-3 mt-5 m-0 p-0">
+                <h3>{{username.capitalize()}}</h3>
+                <h6>Last seen</h6>
+                <br>
+                <br>
+                {% if current_user.username==username %}
+                <a href="{{url_for('views.profile_edit', username=current_user.username)}}"><button
+                        class="btn btn-success mb-2">Edit</button></a>
+                {% endif %}
 
-<div class="card">
-    <div class="row">
-        <div class="col-3 thumbnail">
-            <img src="{{url_for('static', filename='/images/'+current_user.profile_picture_id)}}"
-                class=" mt-2 mb-2" style="width: 200px; z-index: 4">
+                <a href="{{url_for('views.profile_edit', username=current_user.username)}}"><button
+                        class="btn  btn-primary mb-2">Send message</button></a>
+            </div>
+            <div class="col-3 mt-5 m-0 p-0">
+                <p> Reputation: likes</p>
+                <p> Items sold: </p>
+               
+            </div>
+            <div class="col-3 mt-5 m-0 p-0">
+                <p> Like / dislike: </p>
+                <i class="fa fa-thumbs-down"></i>
+            </div>
         </div>
-        <div class="col-3 mt-2">
-
-        </div>
-        {% if current_user.username==username %}
-        <a href="{{url_for('views.profile_edit', username=current_user.username)}}"><button
-                class="btn btn-success mb-2">Edit</button></a>
-        {% endif %}
     </div>
-</div>
+    <div class="card m-0 p-0 profile-box" style="font-weight: bold; color: #000000;">
+        <div class="row">
+            <p> Currently selling</p>
+            <p> Items bought</p>
+        </div>
+    </div>
+    <script>
+    </script>
+</main>
 {% endblock %}

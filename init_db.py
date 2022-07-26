@@ -39,8 +39,9 @@ def create_tables():
                 city TEXT,
                 province TEXT,
                 postal_code TEXT,
-                hidden BOOLEAN,
                 birthday DATE NOT NULL,
+                last_seen DATE,
+                isAdmin BOOLEAN,
                 creation_date date DEFAULT NOW(),
                 profile_picture_id TEXT DEFAULT 'default.jpg' NOT NULL);
                 """)
@@ -65,7 +66,10 @@ def create_tables():
                 offerer TEXT,
                 creation_date timestamptz DEFAULT NOW(),
                 username TEXT,
-                FOREIGN KEY(username) REFERENCES users(username) ON DELETE CASCADE);
+                isSold BOOLEAN DEFAULT FALSE,
+                sold_to TEXT,
+                FOREIGN KEY(sold_to) REFERENCES users(username) ON DELETE CASCADE,
+                FOREIGN KEY(username) REFERENCES users(username) ON DELETE CASCADE,
                 FOREIGN KEY(offerer) REFERENCES users(username) ON DELETE CASCADE);
                 """)
 
@@ -112,14 +116,6 @@ def create_tables():
         creation_date timestamptz NOT NULL DEFAULT NOW(),
         message TEXT);
         """)
-
-    cur.execute("""CREATE table IF NOT EXISTS visitors(
-        id SERIAL PRIMARY KEY,
-        product_id INTEGER,
-        FOREIGN KEY(product_id) REFERENCES products(id) ON DELETE CASCADE,
-        visitor_id TEXT);
-        """)
-
 
 create_tables()
 conn.commit()

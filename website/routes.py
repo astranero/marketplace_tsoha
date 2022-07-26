@@ -1,13 +1,11 @@
-from crypt import methods
-from fileinput import filename
+import dotenv
 from flask_login import current_user, login_required, login_user, logout_user
 from flask import Blueprint, render_template, redirect, flash, url_for
-from requests import post
 from werkzeug.security import generate_password_hash
 from uuid import uuid4
 from flask import Flask, request
 from dotenv import load_dotenv
-from os import environ, remove
+from os import environ, remove, path
 from datetime import timedelta
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
@@ -208,16 +206,20 @@ def picture_uploader():
         if "profile_picture" in request.files:
             profile_picture = User.fetch_profile_picture(current_user.username)
             file = request.files.get("profile_picture")
+            if file.filename == '':
+                    flash('No selected file')
+                    return redirect(request.url)
             if file and allowed_file(file.filename):
                 filename = str(uuid4())
                 file_extension = file.filename.rsplit('.', 1)[1].lower()
                 file.filename = filename+"."+file_extension
-                filename = secure_filename(file.filename)
-                file.save(environ.get("UPLOAD_FOLDER")+"/images/"+filename)
-                User.update_profile_picture(current_user, current_user.username, filename)
+                secured_filename = secure_filename(file.filename)
+                file.save(path.join(app.root_path, "static/images/"+secured_filename))
+                User.update_profile_picture(current_user, current_user.username, secured_filename)
                 flash("Profile picture has been uploaded.")
                 if profile_picture != "default.jpg":
-                    remove(environ.get("UPLOAD_FOLDER")+"/images/"+profile_picture)
+                    remove(path.join(app.root_path, "static/images/"+profile_picture))
+                    
             else:
                 flash("Acceptable extensions are: png, jpg, jpeg and gif.")
     return redirect(request.url)

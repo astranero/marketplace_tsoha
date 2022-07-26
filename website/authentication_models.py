@@ -74,7 +74,7 @@ class LoginForm(FlaskForm):
 
     def password_validation(self, password):
         try:
-            hash = User.get_password(self.username.data)
+            hash = User.get_password(self.username.data.lower())
             if not check_password_hash(hash, password.data):
                 raise ValidationError(
                     "Your username or password is incorrect.")

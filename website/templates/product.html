@@ -5,7 +5,7 @@
         <div class="card-body">
             <div class="row" style="width: 100%;">
                 <div class="col-lg-6">
-                    <div id="product_carousel" class="carousel slide mr-0 ml-0 p-0" data-interval="false">
+                    <div id="product_carousel" class="carousel slide mr-2 ml-0 p-0" data-interval="false">
                         <div class="carousel-inner">
                             <div class="carousel-item active">
                                 <img class="img-fluid mt-2 mb-2" style="height:581.5px; width:1163px; "
@@ -34,7 +34,8 @@
                     <br>
                     <br>
                     <div
-                        style="background-color: #f2f2f2; min-height: 507px; height: auto; width: 485px; margin-left: 25%; padding: 30px; position: relative; text-align: center;">
+                        style="background-color: #f2f2f2; min-height: 520px; height: auto; width: 489px; margin-left: 10%; position: relative; text-align: center;">
+                        <br>
                         <p class="price" style="font-size: 32px;">9.99 €</p>
                         <p class="price text-muted" style="font-size: 18px;">Highest offer: 9.99 €</p>
                         <br>
@@ -66,49 +67,58 @@
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-lg-8 mt-2 p-0">
-            <div class="title" style="justify-content: center; position: relative;"> Leave a comment </div>
-            <br>
-            <form action="/product/{{product_id}}/comment" method="POST">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                <div class="row m-2">
-                    <div class="col-9">
-                        <textarea class="form-control" name="comment" id="comment" rows="1"
-                            placeholder="Add a comment..." required></textarea>
+    <div class="card m-0 p-0">
+        <div class="row">
+            <div class="col-lg-8 mt-2 p-0">
+                <div class="title" style="justify-content: center; position: relative;"> Leave a comment </div>
+                <br>
+                <form action="/product/{{product_id}}/comment" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                    <div class="row m-2 p-2">
+                        <div class="col-9 m-0">
+                            <textarea class="form-control" name="comment" id="comment" rows="1"
+                                placeholder="Add a comment..." required></textarea>
+                        </div>
+                        <div class="col-3 m-0">
+                            <button type="submit" class="btn btn-primary fw-bold">Submit</button>
+                        </div>
                     </div>
-                    <div class="col-3">
-                        <button type="submit" class="btn btn-primary fw-bold">Submit</button>
-                    </div>
-                </div>
-            </form>
-            <hr>
-            <div class="comment">
-                <ul>
-                    <li>
-                        <div class="row">
-                            <div class="col-3">
-                                <div class="" style="padding: 0px; margin:0px;">
-                                    <img class="img-fluid thumbnail" id="profile-image"
-                                        src="{{url_for('static', filename='/images/'+current_user.profile_picture_id)}}">
-                                    <label for="profile-image" class="username">Username</label><label
-                                        class="text-muted" style="font-size: 80%;"> 4 years ago </label>
+                </form>
+
+                <div class="comment">
+                    <ul>
+                        <li>
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="" style="padding: 0px; margin:0px;">
+                                        <img class="img-fluid thumbnail" id="profile-image"
+                                            src="{{url_for('static', filename='/images/'+current_user.profile_picture_id)}}">
+                                        <label for="profile-image" class="username">Username</label><label
+                                            class="text-muted" style="font-size: 80%;"> 4 years ago </label>
+                                    </div>
+                                </div>
+                                <div class="col-8" style="text-align: left; margin-top: 1px;">
+                                    <p> This is hossus possus teshis is hossus possus teshis is hossus possus teshis is
+                                        hossus possus teshis is hossus possus test</p>
                                 </div>
                             </div>
-                            <div class="col-8" style="text-align: left; margin-top: 1px;">
-                                <p> This is hossus possus teshis is hossus possus teshis is hossus possus teshis is
-                                    hossus possus teshis is hossus possus test</p>
-                            </div>
-                        </div>
-                        <hr>
-                    </li>
-                </ul>
+                            <hr>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </div>
-        <div class="col-lg-3 mt-2 p-0">
-            <div class="card text-muted">
-                <div class="card-title" style="justify-content: center; position: relative;">More from same user</div>
-                <p>Pää</p>
+
+            <div class="col-lg-4 mt-2 p-0">
+                <div class="card text-muted">
+                    <div class="card-title" style="justify-content: center; position: relative;">
+                        <br>
+                        <p class="title"> More from the same user </p>
+                    </div>
+                    <hr>
+                    <div class="card-body">
+                        <p>Pää</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -124,4 +134,7 @@
     integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
     crossorigin="anonymous"></script>
 <script src="{{url_for('static', filename='/javascript/snippets.js')}}"></script>
+
+
+
 {% endblock %}

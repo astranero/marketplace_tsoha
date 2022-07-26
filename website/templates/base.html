@@ -10,6 +10,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous" />
     <link href='https://fonts.googleapis.com/css?family=Gruppo' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
         body {
             font-size: 12px;
@@ -34,7 +35,7 @@
         integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy"
         crossorigin="anonymous"></script>
 
-    <div class="container-fluid" style="background-color: #82d9f8">
+    <div class="container-fluid" style="background-color: #b6dff3">
         <header
             class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-4 mb-4 ">
             <div class="container">
@@ -99,13 +100,13 @@
                                             id="email",placeholder="")}}
                                             <label for="email">Your Email:*</label>
                                         </div>
-                                        <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                                        <br>
                                         <div class="form-floating">
                                             {{post_form.message(class="form-control border-2 shadow-m",type="text",
                                             id="message",placeholder="Your message here:*")}}
                                             <label for="message">Your message here:*</label>
                                         </div>
-                                        <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                                        <br>
                                         <div class="modal-footer">
                                             <button type="submit" class="btn close btn-primary">Send message</button>
                                             <a href="{{url_request}}"><button type="button" class="btn close btn-danger"

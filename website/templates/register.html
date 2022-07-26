@@ -31,7 +31,7 @@
                                     {% endfor %}
                                     <div class="form-floating">
                                         {{form.first_name(class="form-control",type="first_name",id="first_name",placeholder="")}}
-                                        <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                                        <br>
                                         <label for="first_name" class="form-label">Your First Name*</label>
                                     </div>
                                     {% for error in form.last_name.errors %}
@@ -43,7 +43,7 @@
                                     {% endfor %}
                                     <div class="form-floating">
                                         {{form.last_name(class="form-control",type="last_name",id="last_name",placeholder="")}}
-                                        <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                                        <br>
                                         <label for="last_name">Your Last Name*</label>
                                     </div>
                                     {% for error in form.username.errors %}
@@ -56,7 +56,7 @@
                                     <div class="form-floating">
                                         {{form.username(class="form-control",type="username",
                                         id="username",placeholder="")}}
-                                        <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                                        <br>
                                         <label for="email">Username *</label>
                                     </div>
                                     {% for error in form.email.errors %}
@@ -68,7 +68,7 @@
                                     {% endfor %}
                                     <div class="form-floating">
                                         {{form.email(class="form-control",type="email", id="email",placeholder="")}}
-                                        <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                                        <br>
                                         <label for="email">Your Email *</label>
                                     </div>
 
@@ -81,7 +81,7 @@
                                     {% endfor %}
                                     <div class="form-floating">
                                         {{form.password(type="password",class="form-control",id="password",placeholder="")}}
-                                        <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                                        <br>
                                         <label for="password">Password*</label>
                                     </div>
                                     {% for error in form.confirm_password.errors %}
@@ -105,7 +105,7 @@
                                     {% endfor %}
                                     <div style="text-align:left;">
                                         <label for="date"> Date of Birth*: </label>
-                                        <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                                        <br>
                                         {{form.birthday(type="date", format="%m-%d-%Y",
                                         class="form-control",id="birthday",placeholder="", value="2001-01-01")}}
                                     </div>
@@ -119,7 +119,7 @@
                                     {% endfor %}
                                     <div class="form-floating">
                                         {{form.phone_number(type="tel",class="form-control",id="tel",placeholder="")}}
-                                        <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                                        <br>
                                         <label for="tel">Phone Number</label>
                                     </div>
                                     {% for error in form.street_address.errors %}
@@ -131,7 +131,7 @@
                                     {% endfor %}
                                     <div class="form-floating">
                                         {{form.street_address(type="street_address",class="form-control",id="street_address",placeholder="")}}
-                                        <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                                        <br>
                                         <label for="street_address">Street Address</label>
                                     </div>
                                     {% for error in form.province.errors %}
@@ -143,7 +143,7 @@
                                     {% endfor %}
                                     <div class="form-floating">
                                         {{form.province(type="province",class="form-control",id="province",placeholder="")}}
-                                        <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                                        <br>
                                         <label for="province">Province</label>
                                     </div>
                                     {% for error in form.postal_code.errors %}
@@ -155,7 +155,7 @@
                                     {% endfor %}
                                     <div class="form-floating">
                                         {{form.postal_code(type="postal_code",class="form-control",id="postal_code",placeholder="")}}
-                                        <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                                        <br>
                                         <label for="postal_code">Postal Code</label>
                                     </div>
                                     {% for error in form.country.errors %}
@@ -167,7 +167,7 @@
                                     {% endfor %}
                                     <div class="form-floating">
                                         {{form.country(type="country",class="form-control",id="country",placeholder="")}}
-                                        <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                                        <br>
                                         <label for="country">Country</label>
                                     </div>
                                     {% for error in form.city.errors %}
@@ -179,7 +179,7 @@
                                     {% endfor %}
                                     <div class="form-floating">
                                         {{form.city(type="city",class="form-control",id="city",placeholder="")}}
-                                        <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                                        <br>
                                         <label for="city">City</label>
                                     </div>
                                     <div class="d-flex justify-content-center">
