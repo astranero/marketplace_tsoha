@@ -130,3 +130,15 @@ class ContactForm(FlaskForm):
     def send_contact_us_message(self, sender, message):
         message = MessageManager(sender, message)
         message.insert_message()
+
+class MessageForm(FlaskForm):
+    sender = StringField("sender", [validators.Length(
+        min=0, max=40), validators.Email(message="Username format is incorrect."), validators.DataRequired()])
+    receiver = StringField("receiver", [validators.Length(
+        min=0, max=40), validators.Email(message="Username format is incorrect."), validators.DataRequired()])
+    message = TextAreaField("message", [validators.Length(
+        min=4)])
+
+    def send_user_message(self, sender, receiver, message):
+        message = MessageManager(sender, message, receiver)
+        message.insert_message()

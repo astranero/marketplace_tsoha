@@ -1,3 +1,4 @@
+from email.message import Message
 import dotenv
 from flask_login import current_user, login_required, login_user, logout_user
 from flask import Blueprint, render_template, redirect, flash, url_for
@@ -52,7 +53,7 @@ def logout():
     flash("You have logged out.", category="success")
     return redirect(url_for("views.login"))
 
-from authentication_models import ContactForm, PasswordChangeForm, RegistrationForm, LoginForm, ContactForm, ProfileForm
+from authentication_models import ContactForm, PasswordChangeForm, RegistrationForm, LoginForm, ContactForm, ProfileForm, MessageForm
 @views.route("/signup", methods=["GET", "POST"])
 @views.route("/register", methods=["GET", "POST"])
 def register():
@@ -87,7 +88,7 @@ def register():
 
 @app.context_processor
 def post_injection():
-    return dict(post_form=ContactForm(), profile_form=ProfileForm(), password_change_form=PasswordChangeForm())
+    return dict(post_form=ContactForm(), profile_form=ProfileForm(), password_change_form=PasswordChangeForm(), message_form=MessageForm())
 
 @views.route("/", methods=["GET", "POST"])
 @views.route("/home", methods=["GET", "POST"])
@@ -179,12 +180,25 @@ def contact():
         flash("Your message has been sent.")
     return redirect(url_for("views.home"))
 
+@login_required
+@views.route("/profile/<username>/message", methods=["POST"])
+def message(username):
+    message_data = MessageForm()
+    if message_data.validate_on_submit:
+        message_data.send_user_message(sender=message_data.sender.data, message=message_data.message.data, receiver=message_data.receiver.data)
+        flash("Your message has been sent.")
+    return redirect(url_for("views.profile", username=username))
+
+@views.route("/profile/<username>/messages", methods=["POST", "GET"])
+def messages(username):
+    return redirect(url_for("views.profile", username=username))
+
 @views.route("/product/<int:product_id>/comment", methods=["POST"])
 @login_required
 def comment(product_id):
     if request.method=="POST":
         if "comment" in request.form():
-            product_add_comment()
+            pass
         return redirect(url_for("views.product", product_id=product_id))
     return redirect(url_for("views.marketplace"))
 

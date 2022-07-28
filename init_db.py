@@ -62,7 +62,7 @@ def create_tables():
                 details TEXT NOT NULL,
                 condition TEXT,
                 price numeric NOT NULL CONSTRAINT positive_price CHECK (price > 0),
-                best_offer numeric DEFAULT None,
+                best_offer numeric DEFAULT 'None',
                 offerer TEXT,
                 creation_date timestamptz DEFAULT NOW(),
                 username TEXT,
