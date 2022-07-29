@@ -41,9 +41,9 @@ def create_tables():
                 postal_code TEXT,
                 birthday DATE NOT NULL,
                 last_seen DATE,
-                isAdmin BOOLEAN,
+                isAdmin BOOLEAN DEFAULT FALSE,
                 creation_date date DEFAULT NOW(),
-                profile_picture_id TEXT DEFAULT 'default.jpg' NOT NULL);
+                profile_picture_id TEXT DEFAULT 'default.gif' NOT NULL);
                 """)
 
     cur.execute("""CREATE TABLE IF NOT EXISTS sessions(
@@ -62,7 +62,7 @@ def create_tables():
                 details TEXT NOT NULL,
                 condition TEXT,
                 price numeric NOT NULL CONSTRAINT positive_price CHECK (price > 0),
-                best_offer numeric DEFAULT 'None',
+                best_offer numeric DEFAULT NULL,
                 offerer TEXT,
                 creation_date timestamptz DEFAULT NOW(),
                 username TEXT,
@@ -106,7 +106,7 @@ def create_tables():
         sender TEXT,
         FOREIGN KEY(receiver) REFERENCES users(username) ON DELETE CASCADE,
         FOREIGN KEY(sender) REFERENCES users(username) ON DELETE CASCADE,
-        creation_date timestamptz,
+        creation_date timestamptz DEFAULT NOW(),
         message TEXT);
         """)
 

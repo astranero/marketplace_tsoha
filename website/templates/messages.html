@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% block body %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+<main class="px-3" style="justify-content: center; margin-left: 10%;">
+    <div class="card m-0 p-0 profile-box">
+        <div class="card-title">
+            <p class="title lead">Messages</p>
+            <hr>
+            {% if data!=None %}
+            {% for i in data %}
+            {% set msg_count = i[0] %}
+            {% set sender = i[1] %}
+            {% set messages_data = message_manager.fetch_messages(sender, current_user.username) %}
+            <div class="row" style="justify-content: start !important;">
+                <div class="container">
+                    <div class="comment p-0 m-0">
+                        <br>
+                        <div class="col-3 p-0 m-0">
+                            <a href="{{url_for('views.profile', username=sender)}}">
+                                <div class="" style="padding: 0px; margin:0px;">
+                                    <img class="img-fluid thumbnail" id="profile-image"
+                                        src="{{url_for('static', filename='/images/'+ user_manager.get_profile_picture(sender)) }}">
+                                </div>
+                            </a>
+                            <p class="lead text-muted"> {{msg_count}} message(s) from {{sender.upper()}} </p>
+                        </div>
+                    </div>
+                    <a href="#" class="btn btn-m form-control btn-secondary fw-bold bg-black text-white p-0 m-0"
+                        data-toggle="collapse" data-target="#read-messages{{sender}}" aria-expanded="false"
+                        aria-controls="read-messages">
+                        Read messages sent by {{sender.capitalize()}}</a>
+                    <div id="read-messages{{sender}}" class="collapse m-0 p-0" aria-labelledby="headingOne"
+                        data-parent="#accordion">
+                        {% if data != None %}
+                        {% for info in messages_data %}
+                        {% set msg_id = info[0] %}
+                        {% set sender = info[1] %}
+                        {% set receiver = info[2] %}
+                        {% set message = info[3] %}
+                        {% set msg_date = info[4].date() %}
+                        {% set msg_time = info[4].strftime("%H:%m") %}
+                        <div class="comment p-0 m-0" style="font-size: 15px;">
+                            <p class="p-2 m-0" style="font-size: 11px; background-color: white;"> Sent at {{msg_date }}
+                                {{msg_time}}</p>
+                            {% if sender == current_user.username %}
+                            <p class="p-2 m-0" style="background-color: white;"> You said: <b>{{message}}</b></p>
+                            <a href="{{url_for('views.delete_message', message_id=msg_id, username=username)}}"
+                                onclick="return confirm('Are you sure you want to delete all messages?')"
+                                class="btn btn-sm form-control btn-warning"> Delete message
+                            </a>
+                            {% elif sender != current_user.username %}
+                            <p class="p-2 m-0" style="background-color: white;"> {{sender.capitalize()}} said:<b>
+                                    {{message}}</b></p><a
+                                href="{{url_for('views.delete_message', message_id=msg_id, username=username)}}"
+                                onclick="return confirm('Are you sure you want to delete all messages?')"
+                                class=" btn btn-sm form-control btn-warning"> Delete message
+                            </a>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <a href="#"><button class="btn btn-m form-control btn-primary mt-2" data-bs-toggle="modal"
+                    data-bs-target="#message-user{{sender}}">Reply</button></a>
+            <a href="{{url_for('views.delete_all_messages', username=username, sender=sender)}}"
+                class="btn btn-m btn-danger form-control btn-secondary fw-bold mt-2"
+                onclick="return confirm('Are you sure you want to delete all messages?')">
+                Delete all messages sent by {{sender.capitalize()}}
+            </a>
+            <div class="modal fade" tabindex="-1" id="message-user{{sender}}">
+                <div class="modal-dialog">
+                    <div class="modal-content" role="">
+                        <div class="modal-header" style="background-color:rgb(136, 247, 73);">
+                            <h5 class="modal-title">Message user {{sender.capitalize()}}</h5>
+                        </div>
+                        <div class="modal-body">
+                            <form action="{{url_for('views.message', username=sender)}}" method="POST">
+                                {{ message_form.csrf_token }}
+                                <br>
+                                {{ message_form.sender(class="form-control",type="hidden", id="sender", value=current_user.username)}}
+                                {{ message_form.receiver(class="form-control",type="hidden", id="receiver",value=sender)}}
+                                <div class="form-floating">
+                                    {{ message_form.message(class="form-control border-2 shadow-m", type="text",
+                                    id="message", minlength="4", placeholder="Your message here:")}}
+                                    <label for="message">Your message here:</label>
+                                </div>
+                                <br>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn close btn-primary">Send message</button>
+                                    <a href="{{url_request}}"><button type="button" class="btn close btn-danger"
+                                            data-bs-dismiss="modal">Cancel</button></a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p class="lead"> There is no messages</p>
+        {% endif %}
+    </div>
+</main>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
+<script src="{{url_for('static', filename='/javascript/snippets.js')}}"></script>
+{% endblock %}

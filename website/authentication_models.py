@@ -35,6 +35,8 @@ class RegistrationForm(FlaskForm):
             raise ValidationError("This email address is already in use.")
 
     def validate_username(self, username):
+        if (username.data or username.data.lower()) is ("admin" or "administration"):
+            raise ValidationError("Username isn't acceptable.")
         username_exists = User.check_username(username.data)
         if username_exists:
             raise ValidationError("This username is already taken.")
@@ -131,13 +133,20 @@ class ContactForm(FlaskForm):
         message = MessageManager(sender, message)
         message.insert_message()
 
+
 class MessageForm(FlaskForm):
     sender = StringField("sender", [validators.Length(
-        min=0, max=40), validators.Email(message="Username format is incorrect."), validators.DataRequired()])
+        min=4, max=40), validators.Email(message="Username format is incorrect."), validators.DataRequired()])
     receiver = StringField("receiver", [validators.Length(
-        min=0, max=40), validators.Email(message="Username format is incorrect."), validators.DataRequired()])
+        min=4, max=40), validators.Email(message="Username format is incorrect."), validators.DataRequired()])
     message = TextAreaField("message", [validators.Length(
-        min=4)])
+        min=0), validators.DataRequired()])
+
+    def validate_receiver(self, receiver):
+        username_exists = User.check_username(receiver)
+        if not username_exists:
+            raise ValidationError(
+                Markup("<p> Username is doesn't exist"))
 
     def send_user_message(self, sender, receiver, message):
         message = MessageManager(sender, message, receiver)

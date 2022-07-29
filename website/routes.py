@@ -1,5 +1,3 @@
-from email.message import Message
-import dotenv
 from flask_login import current_user, login_required, login_user, logout_user
 from flask import Blueprint, render_template, redirect, flash, url_for
 from werkzeug.security import generate_password_hash
@@ -16,7 +14,7 @@ from werkzeug.utils import secure_filename
 
 load_dotenv("/home/koxhr/0000 Repositories/marketplace_tsoha/.env")
 app = Flask(__name__)
-app.config["SECRET_KEY"] = environ.get("SECRET_KEY") ## Insert a new secret key
+app.config["SECRET_KEY"] = environ.get("SECRET_KEY")
 app.config["UPLOAD_FOLDER"] = environ.get("UPLOAD_FOLDER")
 app.config["SQLALCHEMY_DATABASE_URI"]= environ.get("SQLALCHEMY_DATABASE_URI")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -31,6 +29,7 @@ login_manager.init_app(app)
 csrf = CSRFProtect(app)
 app.wsgi_app = ProxyFix(app.wsgi_app)
 from user_entity import User
+from message_manager import MessageManager
 
 views = Blueprint("views", __name__)
 @views.route("/login", methods=["GET", "POST"])
@@ -88,7 +87,7 @@ def register():
 
 @app.context_processor
 def post_injection():
-    return dict(post_form=ContactForm(), profile_form=ProfileForm(), password_change_form=PasswordChangeForm(), message_form=MessageForm())
+    return dict(post_form=ContactForm(), profile_form=ProfileForm(), password_change_form=PasswordChangeForm(), message_form=MessageForm(), message_manager=MessageManager, user_manager=User)
 
 @views.route("/", methods=["GET", "POST"])
 @views.route("/home", methods=["GET", "POST"])
@@ -107,7 +106,9 @@ def marketplace():
 @views.route("/profile/<username>", methods=["POST", "GET"])
 @login_required
 def profile(username):
-    return render_template("profile.html", username=username)
+    if User.check_username(username):
+        return render_template("profile.html", username=username)
+    return render_template("404.html")
 
 @views.route("/profile/edit/<username>", methods=["POST", "GET"])
 @login_required
@@ -187,11 +188,38 @@ def message(username):
     if message_data.validate_on_submit:
         message_data.send_user_message(sender=message_data.sender.data, message=message_data.message.data, receiver=message_data.receiver.data)
         flash("Your message has been sent.")
-    return redirect(url_for("views.profile", username=username))
+    return redirect(url_for("views.messages", username=current_user.username))
 
+@login_required
 @views.route("/profile/<username>/messages", methods=["POST", "GET"])
 def messages(username):
+    if username == current_user.username:
+        data = MessageManager.fetch_senders(username)
+        return render_template("messages.html", username=username, data=data)
     return redirect(url_for("views.profile", username=username))
+
+@login_required
+@views.route("/profile/<username>/like", methods=["POST"])
+def like(username):
+    if username != current_user.username:
+        data = MessageManager.fetch_senders(username)
+        return render_template("messages.html", username=username, data=data)
+    return redirect(url_for("views.profile", username=username))
+
+@login_required
+@views.route("/profile/<username>/messages/delete_all_messages/<sender>", methods=["GET"])
+def delete_all_messages(username, sender):
+    if current_user.username == username:
+        MessageManager.delete_messages(sender, current_user.username)
+    return redirect(url_for("views.messages", username=current_user.username))
+
+@login_required
+@views.route("/profile/<username>/messages/delete_message/<message_id>", methods=["GET"])
+def delete_message(username, message_id):
+    print(f"{current_user.username} {username}")
+    if current_user.username == username:
+        MessageManager.delete_message(message_id)
+    return redirect(url_for("views.messages", username=current_user.username))
 
 @views.route("/product/<int:product_id>/comment", methods=["POST"])
 @login_required
@@ -201,8 +229,6 @@ def comment(product_id):
             pass
         return redirect(url_for("views.product", product_id=product_id))
     return redirect(url_for("views.marketplace"))
-
-
 
 ALLOWED_PROFILE_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 def allowed_file(filename):
@@ -231,9 +257,8 @@ def picture_uploader():
                 file.save(path.join(app.root_path, "static/images/"+secured_filename))
                 User.update_profile_picture(current_user, current_user.username, secured_filename)
                 flash("Profile picture has been uploaded.")
-                if profile_picture != "default.jpg":
+                if profile_picture != "default.gif":
                     remove(path.join(app.root_path, "static/images/"+profile_picture))
-                    
             else:
                 flash("Acceptable extensions are: png, jpg, jpeg and gif.")
     return redirect(request.url)

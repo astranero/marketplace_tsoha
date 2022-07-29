@@ -5,9 +5,9 @@ from routes import db
 
 
 class User(UserMixin):
-    def __init__(self, user_id, username, password, first_name, profile_picture_id="default.jpg", issuperuser=False, active=True, authenticated=True):
+    def __init__(self, user_id, username, password, first_name, profile_picture_id="default.gif", issuperuser=False, active=True, authenticated=True):
         self.user_id = user_id
-        self.username = username
+        self.username = username.lower()
         self.profile_picture_id = profile_picture_id
         self.password = password
         self.first_name = first_name
@@ -16,13 +16,13 @@ class User(UserMixin):
         self.active = active
 
     def create_user(self, email, last_name, street_address, phone_number, country, city, province, postal_code, birthday):
-        SQL = """INSERT INTO users (username, email, password, first_name, last_name, street_address, phone_number, country, city, province, postal_code, birthday)
-            VALUES (:username, :email, :password, :first_name, :last_name, :street_address, :phone_number,
-            :country, :city, :province, :postal_code, :birthday)"""
+        SQL = """INSERT INTO users (username, email, password, first_name,  last_name, street_address, phone_number, country, city, province, postal_code, birthday,  profile_picture_id)
+            VALUES (:username, :email, :password, :first_name, :last_name,  :street_address, :phone_number,
+            :country, :city, :province, :postal_code, :birthday, :profile_picture_id)"""
 
-        db.session.execute(SQL, {"username": self.username, "email": email, "password": self.password,
-                                    "first_name": self.first_name, "last_name": last_name, "street_address": street_address,
-                                    "phone_number": phone_number, "country": country, "city": city, "province": province, "postal_code": postal_code, "birthday": birthday})
+        db.session.execute(SQL, {"username": self.username.lower(), "email": email.lower(), "password": self.password,
+                                 "first_name": self.first_name, "last_name": last_name, "profile_picture_id": self.profile_picture_id, "street_address": street_address,
+                                 "phone_number": phone_number, "country": country, "city": city, "province": province, "postal_code": postal_code, "birthday": birthday})
         db.session.commit()
         return True
 
@@ -43,7 +43,8 @@ class User(UserMixin):
                 "postal_code": data[8]
             }
             return response_object
-        else: return None
+        else:
+            return None
 
     def update_first_name(username, first_name):
         SQL = "UPDATE users SET first_name=:first_name WHERE username=:username;"
@@ -99,36 +100,36 @@ class User(UserMixin):
         db.session.execute(SQL, {"password": password, "username": username})
         db.session.commit()
 
-    def update_profile_picture(self, username, profile_pic_id):
-        self.profile_picture_id=profile_pic_id
-        SQL = "UPDATE users SET profile_pic_id=:profile_pic_id WHERE username=:username;"
+    def update_profile_picture(self, username, profile_picture_id):
+        self.profile_picture_id = profile_picture_id
+        SQL = "UPDATE users SET profile_picture_id=:profile_picture_id WHERE username=:username;"
         db.session.execute(
-            SQL, {"profile_pic_id": profile_pic_id, "username": username.lower()})
-        SQL = "UPDATE sessions SET profile_picture_id=:profile_pic_id WHERE username=:username;"
+            SQL, {"profile_picture_id": profile_picture_id, "username": username.lower()})
+        SQL = "UPDATE sessions SET profile_picture_id=:profile_picture_id WHERE username=:username;"
         db.session.execute(
-            SQL, {"profile_pic_id": profile_pic_id, "username": username.lower()})
-        self.profile_picture_id = profile_pic_id
+            SQL, {"profile_picture_id": profile_picture_id, "username": username.lower()})
+        self.profile_picture_id = profile_picture_id
         db.session.commit()
 
     def delete_profile_picture():
         pass
-    
+
     def fetch_user(username):
-        SQL = """SELECT password, profile_pic_id, first_name FROM users WHERE username=:username;"""
+        SQL = """SELECT password, profile_picture_id, first_name FROM users WHERE username=:username;"""
         data = db.session.execute(
             SQL, {"username": username.lower()}).fetchone()
         if data:
             password = data[0]
-            profile_pic_id = data[1]
+            profile_picture_id = data[1]
             first_name = data[2]
-            return User(user_id=uuid4(), username=username, profile_picture_id=profile_pic_id, password=password, first_name=first_name)
-       
+            return User(user_id=uuid4(), username=username, profile_picture_id=profile_picture_id, password=password, first_name=first_name)
+
     def fetch_profile_picture(username):
-        SQL = "SELECT profile_pic_id FROM users WHERE username=:username;"
-        profile_pic_id = db.session.execute(
+        SQL = "SELECT profile_picture_id FROM users WHERE username=:username;"
+        profile_picture_id = db.session.execute(
             SQL, {"username": username.lower()}).fetchone()[0]
         db.session.commit()
-        return profile_pic_id
+        return profile_picture_id
 
     def get_password(username):
         SQL = """SELECT password FROM users WHERE username=:username;"""
@@ -163,16 +164,16 @@ class User(UserMixin):
         return False
 
     def create_session(user):
-            SQL = """INSERT INTO sessions (user_id, username, password, profile_picture_id, first_name, active, authenticated)
+        SQL = """INSERT INTO sessions (user_id, username, password, profile_picture_id, first_name, active, authenticated)
             VALUES (:user_id, :username, :password, :profile_picture_id, :first_name, :active, :authenticated );"""
-            db.session.execute(SQL, {"user_id": user.user_id, "username": user.username, "password": user.password,
-                               "first_name": user.first_name, "active": user.active, "profile_picture_id": user.profile_picture_id, "authenticated": user.authenticated})
-            db.session.commit()
+        db.session.execute(SQL, {"user_id": user.user_id, "username": user.username, "password": user.password,
+                           "first_name": user.first_name, "active": user.active, "profile_picture_id": user.profile_picture_id, "authenticated": user.authenticated})
+        db.session.commit()
 
     def delete_session(user):
-            SQL = """DELETE FROM sessions WHERE user_id=user_id;"""
-            db.session.execute(SQL, {"user_id": user.user_id})
-            db.session.commit()
+        SQL = """DELETE FROM sessions WHERE user_id=user_id;"""
+        db.session.execute(SQL, {"user_id": user.user_id})
+        db.session.commit()
 
     def get(user_id):
         try:
@@ -193,6 +194,14 @@ class User(UserMixin):
         except Exception as error:
             flash(f"Something went wrong with fetching user object: {error}")
             return None
+
+    def get_profile_picture(username):
+        print(username)
+        SQL = "SELECT profile_picture_id FROM users WHERE username=:username;"
+        profile_picture_id = db.session.execute(
+            SQL,  {"username": username}).fetchone()[0]
+        db.session.commit()
+        return profile_picture_id
 
     def get_id(self):
         return str(self.user_id)

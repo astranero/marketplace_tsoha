@@ -49,7 +49,7 @@
                         <br>
                         <br>
                         <button class="mt-0 btn btn-m btn-secondary fw-bold" data-toggle="collapse"
-                            data-target="#giveoffer" aria-expanded="false" aria-controls="giveoffer">
+                            data-target="#giveoffer" aria-expanded="true" aria-controls="giveoffer">
                             Give an offer
                         </button>
                         <button class="mt-0 btn btn-sm btn-danger fw-bold"> Report </button>
@@ -92,7 +92,7 @@
                                     <div class="" style="padding: 0px; margin:0px;">
                                         <img class="img-fluid thumbnail" id="profile-image"
                                             src="{{url_for('static', filename='/images/'+current_user.profile_picture_id)}}">
-                                        <label for="profile-image" class="username">Username</label><label
+                                        <label for="profile-image" class="username">{{sender}}</label><label
                                             class="text-muted" style="font-size: 80%;"> 4 years ago </label>
                                     </div>
                                 <br>
