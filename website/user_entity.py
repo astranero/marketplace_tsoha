@@ -2,7 +2,7 @@ from flask_login import UserMixin
 from uuid import uuid4
 from flask import flash
 from routes import db
-
+from marketplace_managers import FilterManager
 
 class User(UserMixin):
     def __init__(self, user_id, username, password, first_name, profile_picture_id="default.gif", issuperuser=False, active=True, authenticated=True):
@@ -14,6 +14,7 @@ class User(UserMixin):
         self.authenticated = authenticated
         self.issuperuser = issuperuser
         self.active = active
+        self.filter_manager = FilterManager()
 
     def create_user(self, email, last_name, street_address, phone_number, country, city, province, postal_code, birthday):
         SQL = """INSERT INTO users (username, email, password, first_name,  last_name, street_address, phone_number, country, city, province, postal_code, birthday,  profile_picture_id)
@@ -194,6 +195,9 @@ class User(UserMixin):
         except Exception as error:
             flash(f"Something went wrong with fetching user object: {error}")
             return None
+
+    def get_filter_manager(self):
+        return self.filter_manager
 
     def get_profile_picture(username):
         print(username)

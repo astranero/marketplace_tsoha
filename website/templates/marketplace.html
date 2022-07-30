@@ -38,7 +38,8 @@
                             Select Condition
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="#">New (default)</a>
+                            <a class="dropdown-item" href="#">Any (default)</a>
+                            <a class="dropdown-item" href="#">New</a>
                             <a class="dropdown-item" href="#">Used</a>
                             <a class="dropdown-item" href="#">Refurbished</a>
                             <a class="dropdown-item" href="#">Other</a>
@@ -53,7 +54,8 @@
                             Select Category
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="#">Electronics (default)</a>
+                            <a class="dropdown-item" href="#">Any (default)</a>
+                            <a class="dropdown-item" href="#">Electronics</a>
                             <a class="dropdown-item" href="#">Health and skincare</a>
                             <a class="dropdown-item" href="#">Clothes and Fashion</a>
                             <a class="dropdown-item" href="#">Jewelry</a>
@@ -84,80 +86,76 @@
             </div>
         </div>
         <br>
-
-            <div class="row align-items-center profile-box" style="justify-content: center;">
-                {% for i in range(1,190) %}
-                {% for data in products %}
-                <div class="col-3 mt-2">
-                    <div class="card card-shadow">
-                        <div class="card-body p-2 m-2">
-                            <div class="hovereffect">
-                                <img class="img-responsive shadow-1-strong img-fluid img-thumbnail card-shadow d-block mx-auto mb-2"
-                                    src="https://bootstrapious.com/i/snippets/sn-cards/shoes-1_gthops.jpg"
-                                    alt="product with title: {{data.title}}">
-                                <div class="overlay">
-                                    <h2>{{ data.title }}</h2>
-                                    <a class="info" href="#">Check it out!</a>
-                                </div>
+        <div class="row align-items-center profile-box" style="justify-content: center;">
+            {% if products != None %}
+            {% for data in products %}
+            <div class="col-3 mt-2">
+                <div class="card card-shadow">
+                    <div class="card-body p-2 m-2">
+                        <div class="hovereffect">
+                            <img class="img-responsive shadow-1-strong img-fluid img-thumbnail card-shadow d-block mx-auto mb-2"
+                                src="https://bootstrapious.com/i/snippets/sn-cards/shoes-1_gthops.jpg"
+                                alt="product with title: {{data.title}}">
+                            <div class="overlay">
+                                <h2>{{ data.title }}</h2>
+                                <a class="info" href="#">Check it out!</a>
                             </div>
-                            <br>
-                            <div class="card-title">
-                                <p class="fw-bold title">{{ data.title.capitalize() }}</a>
-                            </div>
-                            {% if data.username != current_user.username %}
-                            <div class="card mb-1 card-shadow">
-                                <div class="row mb-0 p-0" style="justify-content:center;">
-                                    <div class="col-sm-6 mt-1">
-                                        <p class="price">Price: {{ data.price }} € </a>
-                                    </div>
-                                    <div class="col-sm-6 mt-1 ">
-                                        <p class="offer-price"> Best offer: {{ data.offer }} € </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <a href="#"><button class="mt-2 btn btn-sm btn-success fw-bold" data-toggle="confirmation">
-                                    Buy product</button></a>
-                            <a href="#"><button class="mt-2 btn btn-sm btn-primary fw-bold">Give an
-                                    offer</button></a>
-                            {% else %}
-                            <a href="#"><button class="mt-2 btn btn-sm btn-primary fw-bold">Edit product </button></a>
-                            {% endif %}
-                            <br>
-                            <a href="{{url_for('views.product', product_id=data.id)}}"><button
-                                    class="btn btn-sm btn-secondary fw-bold mt-2">Check
-                                    details</button></a>
-                            <br>
-                            {% if data.username != current_user.username %}
-                            <div class="card mt-2 card-shadow" style="justify-content:center;">
-                                <div class="row mt-2 mb-0 p-0">
-                                    <p class="product-box-text">Seller: {{data.username.capitalize() }}</p>
-                                    <p class="product-box-text">Condition: {{ data.condition.capitalize() }}</p>
-                                </div>
-                            </div>
-                            {% endif %}
                         </div>
+                        <br>
+                        <div class="card-title">
+                            <p class="fw-bold title">{{ data.title.capitalize() }}</a>
+                        </div>
+                        {% if data.username != current_user.username %}
+                        <div class="card mb-1 card-shadow">
+                            <div class="row mb-0 p-0" style="justify-content:center;">
+                                <div class="col-sm-6 mt-1">
+                                    <p class="price">Price: {{ data.price }} € </a>
+                                </div>
+                                <div class="col-sm-6 mt-1 ">
+                                    <p class="offer-price"> Best offer: {{ data.offer }} € </p>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="#"><button class="mt-2 btn btn-sm btn-success fw-bold" data-toggle="confirmation">
+                                Buy product</button></a>
+                        <a href="#"><button class="mt-2 btn btn-sm btn-primary fw-bold">Give an
+                                offer</button></a>
+                        {% else %}
+                        <button class="mt-2 btn btn-sm btn-primary fw-bold"  data-bs-toggle="modal" data-bs-target="#edit-item">Edit product </button>
+                        {% endif %}
+                        <br>
+                        <a href="{{url_for('views.product', product_id=data.id)}}"><button
+                                class="btn btn-sm btn-secondary fw-bold mt-2">Check
+                                details</button></a>
+                        <br>
+                        {% if data.username != current_user.username %}
+                        <div class="card mt-2 card-shadow" style="justify-content:center;">
+                            <div class="row mt-2 mb-0 p-0">
+                                <p class="product-box-text">Seller: {{data.username.capitalize() }}</p>
+                                <p class="product-box-text">Condition: {{ data.condition.capitalize() }}</p>
+                            </div>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
-                {% endfor %}
-                {% endfor %}
-            <div class="modal fade" tabindex="-1" id="add-item" role="dialog">
+            </div>
+            <div class="modal fade" tabindex="-1" id="edit-item" role="dialog">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header" style="background-color:rgb(255, 255, 255);">
                             <h5 class="modal-title">Add item</h5>
                         </div>
                         <div class="modal-body">
-                            <form action="/add_product" enctype="multipart/form-data" method="POST">
+                            <form action="{{url_for('views.product_edit')}}" enctype="multipart/form-data"
+                                method="POST">
                                 {{ post_form.csrf_token }}
                                 <div class="row">
                                     <div class="col-3 mt-3">
-
                                         <p class="product-box-text">Select product images: </p>
                                     </div>
                                     <div class="col-3 mt-3">
-                                        <input type="file" id="files" multiple name="product_pictures"
-                                            multiple="multiple" accept="image/jpeg, image/png, image/jpg" placeholder=""
-                                            required>
+                                        <input type="file" id="product_pictures" multiple name="product_pictures"
+                                            multiple="multiple" placeholder="" required>
                                         <output id="result"></output>
                                     </div>
                                 </div>
@@ -174,8 +172,137 @@
                                     </div>
                                     <div class="col-6 text-secondary">
                                         <input type="text" id="title" name="title" minlength="3"
-                                            class="form-control mb-2" rows="5" cols="30" placeholder="Title" value=""
-                                            required>
+                                            class="form-control mb-2" rows="5" cols="30" placeholder="Title"
+                                            value={{data.title}} required>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    {% for error in x %}
+                                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                        {{ error }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    {% endfor %}
+                                    <div class="col-3">
+                                        <p class="product-box-text mt-2">Details:</p>
+                                    </div>
+                                    <div class="col-6 text-secondary">
+                                        <textarea id="details" name="details" minlength="3" class="form-control mb-2"
+                                            rows="5" cols="30" placeholder="Details" value={{data}}
+                                            required></textarea>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    {% for error in x %}
+                                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                        {{ error }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    {% endfor %}
+                                    <div class="col-3">
+                                        <p class="product-box-text mt-2">Price (€):</p>
+                                    </div>
+                                    <div class="col-6 text-secondary">
+                                        <input type="number" id="price" step="any" name="price" minlength="3"
+                                            class="form-control mb-2" rows="5" cols="30" placeholder="Price (€)"
+                                            value={{data.price}} required></input>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    {% for error in x %}
+                                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                        {{ error }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    {% endfor %}
+                                    <div class="col-3">
+                                        <p class="product-box-text mt-2">Category:</p>
+                                    </div>
+                                    <div class="col-6 text-secondary">
+                                        <select class="form-control text-muted" id="category" name="category">
+                                            <option value="">Select a category</option>
+                                            <option value="Electronics">Electronics</option>
+                                            <option value="Health and skincare">Health and skincare</option>
+                                            <option value="Clothes and Fashion">Clothes and Fashion</option>
+                                            <option value="Jewelry">Jewelry</option>
+                                            <option value="Hobby">Hobby</option>
+                                            <option value="Toys">Toys</option>
+                                            <option value="Pets">Pets</option>
+                                            <option value="Food">Food</option>
+                                            <option value="Other"> Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    {% for error in x %}
+                                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                        {{ error }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    {% endfor %}
+                                    <div class="col-3">
+                                        <p class="product-box-text mt-2">Condition:</p>
+                                    </div>
+                                    <div class="col-6 text-secondary">
+                                        <select class="form-control text-muted" id="condition" name="condition">
+                                            <option value="">Select a condition</option>
+                                            <option value="New">New</option>
+                                            <option value="Almost New">Used</option>
+                                            <option value="Refurbished">Refurbished</option>
+                                            <option value="Other" text-muted>Used - Poor
+                                                Condition</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn close btn-primary">Add</button>
+                                    <a href="{{request.url}}"><button type="button" class="btn close btn-danger"
+                                            data-bs-dismiss="modal">Cancel</button></a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+            <div class="modal fade" tabindex="-1" id="add-item" role="dialog">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header" style="background-color:rgb(255, 255, 255);">
+                            <h5 class="modal-title">Add item</h5>
+                        </div>
+                        <div class="modal-body">
+                            <form action="{{url_for('views.product_add')}}" enctype="multipart/form-data" method="POST">
+                                {{ post_form.csrf_token }}
+                                <div class="row">
+                                    <div class="col-3 mt-3">
+                                        <p class="product-box-text">Select product images: </p>
+                                    </div>
+                                    <div class="col-3 mt-3">
+                                        <input type="file" id="product_pictures" multiple name="product_pictures"
+                                            multiple="multiple" placeholder="" required>
+                                        <output id="result"></output>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    {% for error in x %}
+                                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                        {{ error }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    {% endfor %}
+                                    <div class="col-3">
+                                        <p class="product-box-text mt-2">Title:</p>
+                                    </div>
+                                    <div class="col-6 text-secondary">
+                                        <input type="text" id="title" name="title" minlength="3"
+                                            class="form-control mb-2" rows="5" cols="30" placeholder="Title" required>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -206,7 +333,7 @@
                                         <p class="product-box-text mt-2">Price (€):</p>
                                     </div>
                                     <div class="col-6 text-secondary">
-                                        <input type="number" id="price" name="price" minlength="3"
+                                        <input type="number" id="price" step="any" name="price" minlength="3"
                                             class="form-control mb-2" rows="5" cols="30" placeholder="Price (€)"
                                             value="" required></input>
                                     </div>
@@ -223,7 +350,7 @@
                                         <p class="product-box-text mt-2">Category:</p>
                                     </div>
                                     <div class="col-6 text-secondary">
-                                        <select class="form-control text-muted" id="condition-select">
+                                        <select class="form-control text-muted" id="category" name="category">
                                             <option value="">Select a category</option>
                                             <option value="Electronics">Electronics</option>
                                             <option value="Health and skincare">Health and skincare</option>
@@ -249,7 +376,7 @@
                                         <p class="product-box-text mt-2">Condition:</p>
                                     </div>
                                     <div class="col-6 text-secondary">
-                                        <select class="form-control text-muted" id="condition-select">
+                                        <select class="form-control text-muted" id="condition" name="condition">
                                             <option value="">Select a condition</option>
                                             <option value="New">New</option>
                                             <option value="Almost New">Used</option>
@@ -260,12 +387,13 @@
                                     </div>
                                 </div>
 
+
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn close btn-primary">Add</button>
+                                    <a href="{{request.url}}"><button type="button" class="btn close btn-danger"
+                                            data-bs-dismiss="modal">Cancel</button></a>
+                                </div>
                             </form>
-                            <div class="modal-footer">
-                                <button type="submit" class="btn close btn-primary">Add</button>
-                                <a href="{{request.url}}"><button type="button" class="btn close btn-danger"
-                                        data-bs-dismiss="modal">Cancel</button></a>
-                            </div>
                         </div>
                     </div>
                 </div>

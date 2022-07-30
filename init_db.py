@@ -57,12 +57,13 @@ def create_tables():
                 """)
 
     cur.execute("""CREATE TABLE IF NOT EXISTS products(
-                id SERIAL PRIMARY KEY,
+                id TEXT UNIQUE PRIMARY KEY,
                 title TEXT NOT NULL,
                 details TEXT NOT NULL,
                 condition TEXT,
+                category TEXT,
                 price numeric NOT NULL CONSTRAINT positive_price CHECK (price > 0),
-                best_offer numeric DEFAULT NULL,
+                best_offer numeric DEFAULT 0,
                 offerer TEXT,
                 creation_date timestamptz DEFAULT NOW(),
                 username TEXT,
@@ -76,14 +77,14 @@ def create_tables():
     cur.execute("""CREATE TABLE IF NOT EXISTS product_images(
         image_id TEXT NOT NULL Unique,
         creation_date timestamptz DEFAULT NOW(),
-        product_id INTEGER,
+        product_id TEXT,
         FOREIGN KEY(product_id) REFERENCES products(id) ON DELETE CASCADE);
         """)
 
     cur.execute("""CREATE TABLE IF NOT EXISTS comments(
         id SERIAL PRIMARY KEY,
         user_comment TEXT,
-        product_id INTEGER,
+        product_id TEXT,
         commentor_username TEXT,
         creation_date timestamptz NOT NULL DEFAULT NOW(),
         FOREIGN KEY(commentor_username) REFERENCES users(username) ON DELETE CASCADE,
@@ -93,10 +94,10 @@ def create_tables():
 
     cur.execute("""CREATE TABLE IF NOT EXISTS likes(
         id  SERIAL Primary Key,
-        product_id INTEGER,
         liker_username TEXT,
+        profile_username TEXT,
         FOREIGN KEY(liker_username) REFERENCES users(username) ON DELETE CASCADE,
-        FOREIGN KEY(product_id) REFERENCES products(id) ON DELETE CASCADE,
+        FOREIGN KEY(profile_username) REFERENCES users(username) ON DELETE CASCADE,
         islike boolean);
         """)
 
@@ -104,16 +105,11 @@ def create_tables():
         id  SERIAL Primary Key,
         receiver TEXT,
         sender TEXT,
+        email TEXT,
+        tag TEXT,
         FOREIGN KEY(receiver) REFERENCES users(username) ON DELETE CASCADE,
         FOREIGN KEY(sender) REFERENCES users(username) ON DELETE CASCADE,
         creation_date timestamptz DEFAULT NOW(),
-        message TEXT);
-        """)
-
-    cur.execute("""CREATE TABLE IF NOT EXISTS contact_us_messages(
-        id  SERIAL Primary Key,
-        sender TEXT,
-        creation_date timestamptz NOT NULL DEFAULT NOW(),
         message TEXT);
         """)
 

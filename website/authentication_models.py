@@ -129,8 +129,8 @@ class ContactForm(FlaskForm):
     message = TextAreaField("message", [validators.Length(
         min=4)])
 
-    def send_contact_us_message(self, sender, message):
-        message = MessageManager(sender, message)
+    def send_message(self, sender, message):
+        message = MessageManager(sender, message, tag="contact-us")
         message.insert_message()
 
 
@@ -146,8 +146,15 @@ class MessageForm(FlaskForm):
         username_exists = User.check_username(receiver)
         if not username_exists:
             raise ValidationError(
-                Markup("<p> Username is doesn't exist"))
+                Markup("Username doesn't exist"))
+    
+    def validate_sender(self, sender):
+        username = current_user.username
+        if sender == username:
+            raise ValidationError("You can't send message to yourself.")
 
-    def send_user_message(self, sender, receiver, message):
+    def send_message(self, sender, receiver, message):
         message = MessageManager(sender, message, receiver)
         message.insert_message()
+
+

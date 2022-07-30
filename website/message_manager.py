@@ -2,20 +2,21 @@ from routes import db
 
 
 class MessageManager():
-    def __init__(self, sender, message, receiver="admin"):
+    def __init__(self, sender, message, receiver="admin", tag="normal"):
         self.sender = sender
         self.receiver = receiver
         self.message = message
+        self.tag = tag
 
     def insert_message(self):
-        SQL = "INSERT INTO messages (sender, receiver, message) VALUES (:sender, :receiver, :message);"
+        SQL = "INSERT INTO messages (sender, receiver, message, tag) VALUES (:sender, :receiver, :message, :tag);"
         db.session.execute(
-            SQL, {"sender": self.sender, "receiver": self.receiver, "message": self.message})
+            SQL, {"sender": self.sender, "receiver": self.receiver, "message": self.message, "tag": self.tag})
         db.session.commit()
 
     def fetch_messages(sender, receiver):
-        SQL = """(SELECT id, sender, receiver, message, creation_date FROM messages WHERE sender=:sender AND  receiver=:receiver) 
-        UNION ALL (SELECT id, sender, receiver, message, creation_date FROM messages WHERE sender=:receiver AND receiver=:sender) ORDER BY creation_date ASC;"""
+        SQL = """(SELECT id, sender, receiver, message, creation_date FROM messages WHERE sender=:sender AND  receiver=:receiver AND tag="normal") 
+        UNION ALL (SELECT id, sender, receiver, message, creation_date FROM messages WHERE sender=:receiver AND receiver=:sender AND tag="normal") ORDER BY creation_date ASC;"""
         data = db.session.execute(
             SQL, {"sender": sender, "receiver": receiver}).fetchall()
         db.session.commit()
@@ -29,23 +30,30 @@ class MessageManager():
     def fetch_senders(receiver):
         SQL = "SELECT COUNT(id), sender FROM messages WHERE receiver=:receiver GROUP BY sender;"
         data = db.session.execute(SQL, {"receiver": receiver}).fetchall()
+        db.session.commit()
         if data:
             return data
-        db.session.commit()
 
     def fetch_receivers(sender):
-        SQL = "SELECT receiver FROM messages WHERE sender=:sender GROUP BY receiver;"
+        SQL = "SELECT COUNT(id), receiver FROM messages WHERE sender=:sender GROUP BY receiver;"
         data = db.session.execute(SQL, {"sender": sender}).fetchall()
         db.session.commit()
         if data:
             return data
 
-    def admin_fetch_messages(sender, receiver):
-        SQL = """(SELECT message_id, sender, receiver, message, creation_date FROM messages WHERE sender=:sender AND  receiver=:receiver) 
-        UNION ALL (SELECT message_id, sender, receiver, message, creation_date FROM messages WHERE sender=:receiver AND receiver=:sender) ORDER BY creation_date ASC;"""
+    def fetch_contact_messages():
+        SQL = """SELECT message_id, sender, receiver, message, creation_date FROM messages WHERE tag="admin" ORDER BY creation_date ASC;"""
         data = db.session.execute(
-            SQL, {"sender": sender, "receiver": receiver}).fetchall()
+            SQL).fetchall()
         db.session.commit()
+        return data
+        
+    def fetch_report_messages():
+        SQL = """SELECT message_id, sender, receiver, message, creation_date FROM messages WHERE tag="contact-us" ORDER BY creation_date ASC;"""
+        data = db.session.execute(
+            SQL).fetchall()
+        db.session.commit()
+        return data
 
     def delete_message(id):
         SQL = "DELETE FROM messages WHERE id=:id;"

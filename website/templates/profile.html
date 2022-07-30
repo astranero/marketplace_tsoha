@@ -14,18 +14,18 @@
     <div class="card m-0 p-0 profile-box">
         <div class="row" style="font-weight: bold; color: #222222;">
             <div class="col-3 m-0 p-0 thumbnail">
-                <img src="{{url_for('static', filename='/images/'+user_manager.get_profile_picture(username))}}" class=" mt-2 mb-2"
-                    style="width: 200px; z-index: 4; border-radius: 15px;">
+                <img src="{{url_for('static', filename='/images/'+user_manager.get_profile_picture(username))}}"
+                    class=" mt-2 mb-2" style="width: 200px; z-index: 4; border-radius: 15px;">
             </div>
             <div class="col-3 mt-5 m-0 p-0" style="justify-content: start;">
                 <p class="title lead">{{username.capitalize()}}</p>
                 <br>
                 <br>
+                {% if current_user.username==username %} 
                 <br>
                 <br>
                 <br>
                 <br>
-                {% if current_user.username==username %}
                 <a href="{{url_for('views.profile_edit', username=current_user.username)}}"><button
                         class="btn btn-lg btn-success mb-2">Edit</button></a>
                 <a href="{{url_for('views.messages', username=current_user.username)}}"><button
@@ -33,15 +33,21 @@
                 {% else %}
                 <a href="#" type="submit"><button class="btn btn-lg btn-primary mb-2" data-bs-toggle="modal"
                         data-bs-target="#message-user">Send message</button></a>
+                <a href="#" type="submit"><button class="btn btn-lg btn-danger mb-2" data-bs-toggle="modal"
+                        data-bs-target="#report-user">Report User</button></a>
                 {% endif %}
             </div>
             <div class="col-3 mt-5 m-0 p-0" style="justify-content: start; align-content:flex-start;">
-                <p class="lead"> Reputation: likes</p>
-                <p class="lead"> Items sold: </p>
-            </div>
-            <div class="col-3 mt-5 m-0 p-0">
-                <p class="lead"> Like / dislike: </p>
-                <i class="fa fa-thumbs-down"></i>
+                <div class="row">
+                    <div class="col-6">
+                        <p class="lead"> Reputation: likes</p>
+                        <p class="lead"> Items sold: </p>
+                    </div>
+                    <div class="col-6">
+                        <p class="lead"> Like / dislike: </p>
+                        <i class="fa fa-thumbs-up"></i>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -64,6 +70,36 @@
         {% endif %}
     </div>
     <div class="modal fade" tabindex="-1" id="message-user">
+        <div class="modal-dialog">
+            <div class="modal-content" role="">
+                <div class="modal-header" style="background-color:rgb(175, 248, 160);">
+                    <h5 class="modal-title">Message user {{username.capitalize()}}</h5>
+                </div>
+                <div class="modal-body">
+                    <form action="{{url_for('views.message', username=username)}}" method="POST">
+                        {{ message_form.csrf_token }}
+                        <br>
+                        {{message_form.sender(class="form-control",type="hidden",
+                        id="sender",value=current_user.username)}}
+                        {{message_form.receiver(class="form-control",type="hidden",
+                        id="receiver",value=username)}}
+                        <div class="form-floating">
+                            {{message_form.message(class="form-control border-2 shadow-m",type="text",
+                            id="message",placeholder="Your message here:")}}
+                            <label for="message">Your message here:</label>
+                        </div>
+                        <br>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn close btn-primary">Send message</button>
+                            <a href="{{url_request}}"><button type="button" class="btn close btn-danger"
+                                    data-bs-dismiss="modal">Cancel</button></a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" tabindex="-1" id="report-user">
         <div class="modal-dialog">
             <div class="modal-content" role="">
                 <div class="modal-header" style="background-color:rgb(175, 248, 160);">
