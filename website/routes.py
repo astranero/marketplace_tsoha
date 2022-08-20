@@ -273,7 +273,7 @@ def profile(username):
         return render_template("profile.html", username=username)
     return render_template("404.html")
 
-@views.route("/profile/edit/<username>", methods=["POST", "GET"])
+@views.route("/profile_edit/<username>", methods=["POST", "GET"])
 @login_required
 def profile_edit(username):
     if username == current_user.username:
@@ -310,7 +310,7 @@ def profile_edit(username):
                     User.update_city(username, city)
                 flash("Your profile has been updated.")
             return render_template(
-            "profile/edit.html", 
+            "profile_edit.html", 
             username=current_user.username, 
             profile_form=form)
 
