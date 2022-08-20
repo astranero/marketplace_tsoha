@@ -1,16 +1,6 @@
 {% extends "base.html" %}
 {% block body %}
 <form class="form-signin" method="POST">
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    {% for category, message in messages %}
-    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-        {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    {% endfor %}
-    {% endif %}
-    {% endwith %}
     {{ form.hidden_tag() }}
     {{ form.csrf_token }}
     <section>
@@ -31,12 +21,14 @@
                                     </div>
                                     {% endfor %}
                                     <div class="form-floating">
-                                        {{form.username(class="form-control",type="text", id="username", placeholder="")}}
+                                        {{form.username(class="form-control",type="text", id="username",
+                                        placeholder="")}}
                                         <label for="email">Your Username</label>
                                     </div>
                                     <br>
                                     <div class="form-floating">
-                                        {{form.password(type="password",class="form-control", id="password", placeholder="")}}
+                                        {{form.password(type="password",class="form-control", id="password",
+                                        placeholder="")}}
                                         <br>
                                         <label for="password">Password</label>
                                     </div>

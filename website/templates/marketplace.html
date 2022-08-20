@@ -122,9 +122,19 @@
                             <p class="fw-bold title">{{ data.title.capitalize() }}</a>
                         </div>
                         {% if data.username != current_user.username %}
+                        {% with isSold = product_manager(data.id).fetch_isSold() %}
+
                         <p class="price">Price: {{ data.price }} € </p>
-                        <a href="#"><button class="mt-1 btn btn-sm btn-success fw-bold" data-toggle="confirmation"> Buy
+                        {% if isSold %}
+                        <a href="{{url_for('views.buy_product', product_id=data.id)}}"><button
+                                class="mt-1 btn btn-sm btn-success fw-bold" disabled data-toggle="confirmation"> Buy
                                 product </button></a>
+                        {% else %}
+                        <a href="{{url_for('views.buy_product', product_id=data.id)}}"><button
+                                class="mt-1 btn btn-sm btn-success fw-bold" data-toggle="confirmation"> Buy
+                                product </button></a>
+                        {% endif %}
+                        {% endwith %}
                         {% endif %}
                         <a href="{{url_for('views.product', product_id=data.id)}}"><button
                                 class="btn btn-sm btn-secondary fw-bold mt-1 ">Check details</button></a>

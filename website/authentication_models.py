@@ -1,7 +1,7 @@
 from datetime import date
 import re
 from flask_wtf import FlaskForm
-from wtforms import BooleanField, StringField, PasswordField, validators, DateField, TelField, ValidationError, EmailField, TextAreaField
+from wtforms import StringField, PasswordField, validators, DateField, TelField, ValidationError, EmailField, TextAreaField
 from flask_login import current_user
 from user_entity import User
 from werkzeug.security import check_password_hash
@@ -156,6 +156,36 @@ class MessageForm(FlaskForm):
     def send_message(self, sender, receiver, message):
         message = MessageManager(sender, message, receiver)
         message.insert_message()
+
+    def send_report(self, sender, message):
+        message = MessageManager(sender, message, tag="report")
+        message.insert_message()
+
+
+class CommentReportForm(FlaskForm):
+    sender = StringField("sender", [validators.Length(
+        min=4, max=40), validators.DataRequired()])
+    reported = StringField("reported", [validators.Length(
+        min=4, max=40), validators.DataRequired()])
+    product_id = StringField("product_id", [validators.Length(
+        min=4, max=40), validators.DataRequired()])
+    comment_id = StringField("comment_id", [validators.Length(
+        min=4, max=40), validators.DataRequired()])
+    comment = StringField("comment", [validators.Length(
+        min=4, max=40), validators.DataRequired()])
+    message = TextAreaField("message", [validators.Length(
+        min=0), validators.DataRequired()])
+
+    def validate_reported(self, reported):
+        username_exists = User.check_username(reported)
+        if not username_exists:
+            raise ValidationError(
+                Markup("Username doesn't exist"))
+
+    def validate_sender(self, sender):
+        username = current_user.username
+        if sender == username:
+            raise ValidationError("You can't send message to yourself.")
 
     def send_report(self, sender, message):
         message = MessageManager(sender, message, tag="report")

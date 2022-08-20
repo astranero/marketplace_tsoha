@@ -1,15 +1,5 @@
 {% extends 'base.html' %}
 {% block body %}
-{% with messages = get_flashed_messages(with_categories=true) %}
-{% if messages %}
-{% for category, message in messages %}
-<div class="alert alert-warning alert-dismissible fade show" role="alert">
-    {{ message }}
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-{% endfor %}
-{% endif %}
-{% endwith %}
 <main class="px-3" style="justify-content: center; margin-left: 10%;">
     <div class="card m-0 p-0 profile-box">
         <div class="row" style="font-weight: bold; color: #222222;">
@@ -21,11 +11,7 @@
                 <p class="title lead">{{username.capitalize()}}</p>
                 <br>
                 <br>
-                {% if current_user.username==username %} 
-                <br>
-                <br>
-                <br>
-                <br>
+                {% if current_user.username==username %}
                 <a href="{{url_for('views.profile_edit', username=current_user.username)}}"><button
                         class="btn btn-lg btn-success mb-2">Edit</button></a>
                 <a href="{{url_for('views.messages', username=current_user.username)}}"><button
@@ -40,12 +26,30 @@
             <div class="col-3 mt-5 m-0 p-0" style="justify-content: start; align-content:flex-start;">
                 <div class="row">
                     <div class="col-6">
-                        <p class="lead"> Reputation: likes</p>
-                        <p class="lead"> Items sold: </p>
+                        <p class="lead"> Reputation:<br>{{current_user.count_profile_likes(username)}} likes</p>
+                        <p class="lead"> Items sold:<br>{{product_manager().count_isSold(username)}} </p>
                     </div>
                     <div class="col-6">
-                        <p class="lead"> Like / dislike: </p>
-                        <i class="fa fa-thumbs-up"></i>
+                        <div class="row">
+                            {% with islike = current_user.fetch_profile_islike(current_user.username, username) %}
+                            {% with exists = current_user.has_liked_profile(current_user.username, username) %}
+                            {% if islike == True and exists == True %}
+                            <a href="{{ url_for('views.dislike', username=username) }}"><i class="fa fa-thumbs-down"
+                                    style="color:red;"> </i> </a>
+                            {% else %}
+                            <a href="{{ url_for('views.like', username=username) }}"><i class="fa fa-thumbs-up"
+                                    style="color:rgb(0, 247, 255);"></i></a>
+                            {% endif %}
+                            {% endwith %}
+                            {% endwith %}
+                        </div>
+                        <br>
+                        <div class="row">
+                            {% if current_user.username==username %}
+                            <a href="{{ url_for('views.delete_profile') }}" onclick="return confirm ('Are you sure?')" type="submit"><button class="btn btn-m btn-danger mb-2">Delete
+                                    profile</button></a>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -62,7 +66,6 @@
             <p class="lead title"> Items bought </p>
         </div>
         <hr>
-        {% else %}
         <div class="row">
             <p class="lead title"> Items sold </p>
         </div>

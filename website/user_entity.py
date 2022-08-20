@@ -172,6 +172,10 @@ class User(UserMixin):
         SQL = """DELETE FROM sessions WHERE user_id=user_id;"""
         db.session.execute(SQL, {"user_id": user.user_id})
         db.session.commit()
+    
+    def delete_profile(self):
+        sql = """DELETE FROM users WHERE username=:username;"""
+        db.session.execute(sql, {"username": self.username})
 
     def get(user_id):
         try:
@@ -194,12 +198,42 @@ class User(UserMixin):
             return None
 
     def get_profile_picture(username):
-        print(username)
         SQL = "SELECT profile_picture_id FROM users WHERE username=:username;"
         profile_picture_id = db.session.execute(
             SQL,  {"username": username}).fetchone()[0]
         db.session.commit()
         return profile_picture_id
+
+    def like_profile(self, liker_username, profile_username, islike):
+        sql = "INSERT INTO likes (liker_username, profile_username, islike) VALUES (:liker_username, :profile_username, :islike);"
+        db.session.execute(sql, {"liker_username": liker_username,
+                           "profile_username": profile_username, "islike": islike})
+        db.session.commit()
+
+    def fetch_profile_islike(self, liker_username, profile_username):
+        sql = "SELECT islike FROM likes WHERE profile_username=:profile_username AND liker_username=:liker_username;"
+        islike = db.session.execute(
+            sql, {"liker_username": liker_username, "profile_username": profile_username}).fetchone()
+        if islike:
+            return islike[0]
+
+    def has_liked_profile(self, liker_username, profile_username):
+        sql = "SELECT EXISTS (SELECT 1 FROM likes WHERE profile_username=:profile_username AND liker_username=:liker_username);"
+        has_liked = db.session.execute(
+            sql, {"liker_username": liker_username, "profile_username": profile_username}).fetchone()
+        if has_liked:
+            return has_liked[0]
+        return False
+
+    def update_profile_like(self, liker_username, profile_username, islike):
+        sql = "UPDATE likes SET islike=:islike WHERE liker_username=:liker_username AND profile_username=:profile_username; "
+        db.session.execute(sql, {"liker_username": liker_username,
+                           "profile_username": profile_username, "islike": islike})
+        db.session.commit()
+
+    def count_profile_likes(self, profile_username):
+        sql = "SELECT count(islike) FROM likes WHERE islike=True AND profile_username=:profile_username;"
+        return db.session.execute(sql, {"profile_username": profile_username}).fetchone()[0]
 
     def get_id(self):
         return str(self.user_id)

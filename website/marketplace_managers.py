@@ -105,20 +105,24 @@ class ProductManager:
     def fetch_product_img(product_id):
         SQL = "SELECT image_id FROM product_images WHERE product_id=:product_id ORDER BY RANDOM() LIMIT 1;"
         data = db.session.execute(SQL, {"product_id": product_id}).fetchone()
-        if data != None and data.image_id != None: return data.image_id
-        else: return "default.png"
+        if data != None and data.image_id != None:
+            return data.image_id
+        else:
+            return "default.png"
 
     def fetch_product(product_id):
         SQL = """SELECT id, title, details, condition, category, price, username FROM products WHERE id =:product_id"""
         return db.session.execute(SQL, {"product_id": product_id}).fetchone()
-    
+
     def fetch_bought_products(product_id, sold_to):
         pass
+
     def fetch_user_products(product_id, username):
         pass
+
     def fetch_sold_products(product_id, username):
         pass
-    
+
     def insert_product(self):
         SQL = """INSERT INTO products(id, title, details, condition, category, price, username)
         VALUES(:id, :title, :details, :condition, :category, :price, :username);"""
@@ -138,17 +142,20 @@ class ProductManager:
 
     def update_title(self, title):
         SQL = """UPDATE products SET title=:title WHERE id=:product_id;"""
-        db.session.execute(SQL, {"title":title, "product_id": self.product_id, })
+        db.session.execute(
+            SQL, {"title": title, "product_id": self.product_id, })
         db.session.commit()
 
     def update_details(self, details):
         SQL = """UPDATE products SET details=:details WHERE id=:product_id;"""
-        db.session.execute(SQL, {"product_id": self.product_id, "details": details})
+        db.session.execute(
+            SQL, {"product_id": self.product_id, "details": details})
         db.session.commit()
 
     def update_price(self, price):
         SQL = """UPDATE products SET price=:price WHERE id=:product_id;"""
-        db.session.execute(SQL, {"product_id": self.product_id, "price": price})
+        db.session.execute(
+            SQL, {"product_id": self.product_id, "price": price})
         db.session.commit()
 
     def update_category(self, category):
@@ -163,12 +170,17 @@ class ProductManager:
             SQL, {"product_id": self.product_id, "condition": condition})
         db.session.commit()
 
-    def update_isSold(self, sold_to, isSold:bool):
+    def update_isSold(self, sold_to, isSold: bool):
         SQL = """UPDATE products SET isSold=:isSold, sold_to=:sold_to 
         WHERE id=:product_id;"""
-        db.session.execute(SQL, {"product_id":self.product_id, "isSold":isSold, "sold_to":sold_to})
+        db.session.execute(
+            SQL, {"product_id": self.product_id, "isSold": isSold, "sold_to": sold_to})
         db.session.commit()
-    
+
     def fetch_isSold(self):
         SQL = """SELECT isSold FROM products WHERE id=:product_id;"""
-        return db.session.execute(SQL, {"product_id":self.product_id}).fetchone()[0]
+        return db.session.execute(SQL, {"product_id": self.product_id}).fetchone()[0]
+
+    def count_isSold(self, username):
+        SQL = """SELECT count(isSold) FROM products WHERE username=:username;"""
+        return db.session.execute(SQL, {"username": username}).fetchone()[0]
