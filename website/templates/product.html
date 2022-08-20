@@ -54,14 +54,166 @@
                         </a>
                         <br>
                         {% if product.username != current_user.username %}
-                        <a href="#" onclick="return confirm('Purchase confirmation')"><button class="mt-0 btn btn-lg btn-success fw-bold" data-toggle="confirmation">
+                        {% with isSold = product_manager(product.id).fetch_isSold() %}
+                        {% if isSold %}
+                        <a href="{{url_for('views.buy_product', product_id=product.id)}}"
+                            onclick="return confirm('Purchase confirmation')"><button
+                                class="mt-0 btn btn-lg btn-success fw-bold" disabled data-toggle="confirmation">
                                 Buy product</button></a>
+
+                        {% else %}
+                        <a href="{{url_for('views.buy_product', product_id=product.id)}}"
+                            onclick="return confirm('Purchase confirmation')"><button
+                                class="mt-0 btn btn-lg btn-success fw-bold" data-toggle="confirmation">
+                                Buy product</button></a>
+                        {% endif %}
+                        {% endwith %}
                         <br>
                         <br>
                         <button class="mt-0 btn btn-sm btn-danger fw-bold"> Report </button>
                         {% else %}
-                        <a href="#"><button class="mt-0 btn btn btn-success fw-bold">Edit</button></a>
-                        <a href="{{url_for('views.product_delete', product_id=product.id)}}" onclick="return confirm('Confirm deletion')"><button class="mt-0 btn btn btn-danger fw-bold">Delete</button></a>
+                        <a href="#"><button class="mt-0 btn btn btn-success fw-bold" data-bs-toggle="modal"
+                                data-bs-target="#edit-item">Edit</button></a>
+                        <div class="modal fade" tabindex="-1" id="edit-item" role="dialog">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header" style="background-color:rgb(255, 255, 255);">
+                                        <h5 class="modal-title">Edit item</h5>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="{{url_for('views.product_edit', product_id=product.id)}}"
+                                            enctype="multipart/form-data" method="POST">
+                                            {{ post_form.csrf_token }}
+                                            <div class="row">
+                                                <div class="col-3 mt-3">
+                                                    <p class="product-box-text">Select product images (Old images are
+                                                        used if no image selected): </p>
+                                                </div>
+                                                <div class="col-3 mt-3">
+                                                    <input type="file" id="product_pictures" multiple
+                                                        name="product_pictures" multiple="multiple" placeholder="">
+                                                    <output id="result"></output>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                {% for error in x %}
+                                                <div class="alert alert-warning alert-dismissible fade show"
+                                                    role="alert">
+                                                    {{ error }}
+                                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                {% endfor %}
+                                                <div class="col-3">
+                                                    <p class="product-box-text mt-2">Title:</p>
+                                                </div>
+                                                <div class="col-6 text-secondary">
+                                                    <input type="text" id="title" name="title" minlength="3"
+                                                        class="form-control mb-2" rows="5" cols="30" placeholder="Title"
+                                                        value="{{ product.title }}">
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                {% for error in x %}
+                                                <div class="alert alert-warning alert-dismissible fade show"
+                                                    role="alert">
+                                                    {{ error }}
+                                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                {% endfor %}
+                                                <div class="col-3">
+                                                    <p class="product-box-text mt-2">Details:</p>
+                                                </div>
+                                                <div class="col-6 text-secondary">
+                                                    <textarea id="details" name="details" minlength="3"
+                                                        class="form-control mb-2 textarea" rows="5"
+                                                        cols="30">{{ product.details }}</textarea>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                {% for error in x %}
+                                                <div class="alert alert-warning alert-dismissible fade show"
+                                                    role="alert">
+                                                    {{ error }}
+                                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                {% endfor %}
+                                                <div class="col-3">
+                                                    <p class="product-box-text mt-2">Price (€):</p>
+                                                </div>
+                                                <div class="col-6 text-secondary">
+                                                    <input type="number" id="price" step="any" name="price"
+                                                        minlength="3" class="form-control mb-2" rows="5" cols="30"
+                                                        placeholder="Price (€)" value={{product.price}}></input>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                {% for error in x %}
+                                                <div class="alert alert-warning alert-dismissible fade show"
+                                                    role="alert">
+                                                    {{ error }}
+                                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                {% endfor %}
+                                                <div class="col-3">
+                                                    <p class="product-box-text mt-2">Category:</p>
+                                                </div>
+                                                <div class="col-6 text-secondary">
+                                                    <select class="form-control text-muted" id="category"
+                                                        name="category">
+                                                        <option value="">Select a category</option>
+                                                        <option value="Electronics">Electronics</option>
+                                                        <option value="Health and Skincare">Health and Skincare</option>
+                                                        <option value="Clothes and Fashion">Clothes and Fashion</option>
+                                                        <option value="Jewelry">Jewelry</option>
+                                                        <option value="Hobby">Hobby</option>
+                                                        <option value="Toys">Toys</option>
+                                                        <option value="Pets">Pets</option>
+                                                        <option value="Food">Food</option>
+                                                        <option value="Other"> Other</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                {% for error in x %}
+                                                <div class="alert alert-warning alert-dismissible fade show"
+                                                    role="alert">
+                                                    {{ error }}
+                                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                {% endfor %}
+                                                <div class="col-3">
+                                                    <p class="product-box-text mt-2">Condition:</p>
+                                                </div>
+                                                <div class="col-6 text-secondary">
+                                                    <select class="form-control text-muted" id="condition"
+                                                        name="condition">
+                                                        <option value="">Select a condition</option>
+                                                        <option value="New">New</option>
+                                                        <option value="Used">Used</option>
+                                                        <option value="Refurbished">Refurbished</option>
+                                                        <option value="Other">Other</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn close btn-primary">Submit</button>
+                                                <a href="{{request.url}}"><button type="button"
+                                                        class="btn close btn-danger"
+                                                        data-bs-dismiss="modal">Cancel</button></a>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="{{url_for('views.product_delete', product_id=product.id)}}"
+                            onclick="return confirm('Confirm deletion')"><button
+                                class="mt-0 btn btn btn-danger fw-bold">Delete</button></a>
                         {% endif %}
                     </div>
                 </div>
@@ -98,13 +250,19 @@
                                     <label for="profile-image"
                                         class="username">{{comment.commentor_username.capitalize()}}</label><label
                                         class="text-muted" style="font-size: 75%;"> {{ comment.creation_date}} </label>
-                                        <a href="{{url_for('views.comment_delete', product_id = product.id, comment_id = comment.id )}}" onclick="return confirm('Confirm deletion')"><button class="mt-0 btn btn-sm btn-m fw-bold text-muted" style="font-size: 85%;">Delete</button></a>
-                                        <a href="#"><button class="mt-0 btn btn-sm btn-m fw-bold" style="color:red; font-size: 85%;">Report</button></a>
+                                    {% if comment.commentor_username == current_user.username %}
+                                    <a href="{{url_for('views.comment_delete', product_id = product.id, comment_id = comment.id )}}"
+                                        onclick="return confirm('Confirm deletion')"><button
+                                            class="mt-0 btn btn-sm btn-m fw-bold text-muted"
+                                            style="font-size: 85%;">Delete</button></a>
+                                    {% else %}
+                                    <a href="#"><button class="mt-0 btn btn-sm btn-m fw-bold"
+                                            style="color:red; font-size: 85%;">Report</button></a>
+                                    {% endif %}
                                 </div>
                                 <br>
                                 <p> {{ comment.user_comment }}</p>
                             </div>
-                            
                         </li>
                     </ul>
                 </div>

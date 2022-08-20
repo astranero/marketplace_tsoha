@@ -15,8 +15,8 @@ class MessageManager():
         db.session.commit()
 
     def fetch_messages(sender, receiver):
-        SQL = """(SELECT id, sender, receiver, message, creation_date FROM messages WHERE sender=:sender AND  receiver=:receiver AND tag="normal") 
-        UNION ALL (SELECT id, sender, receiver, message, creation_date FROM messages WHERE sender=:receiver AND receiver=:sender AND tag="normal") ORDER BY creation_date ASC;"""
+        SQL = """(SELECT id, sender, receiver, message, creation_date FROM messages WHERE sender=:sender AND  receiver=:receiver AND tag='normal') 
+        UNION ALL (SELECT id, sender, receiver, message, creation_date FROM messages WHERE sender=:receiver AND receiver=:sender AND tag='normal') ORDER BY creation_date ASC;"""
         data = db.session.execute(
             SQL, {"sender": sender, "receiver": receiver}).fetchall()
         db.session.commit()
@@ -42,14 +42,14 @@ class MessageManager():
             return data
 
     def fetch_contact_messages():
-        SQL = """SELECT message_id, sender, receiver, message, creation_date FROM messages WHERE tag="admin" ORDER BY creation_date ASC;"""
+        SQL = """SELECT message_id, sender, receiver, message, creation_date FROM messages WHERE tag='contact-us' ORDER BY creation_date ASC;"""
         data = db.session.execute(
             SQL).fetchall()
         db.session.commit()
         return data
 
     def fetch_report_messages():
-        SQL = """SELECT message_id, sender, receiver, message, creation_date FROM messages WHERE tag="contact-us" ORDER BY creation_date ASC;"""
+        SQL = """SELECT message_id, sender, receiver, message, creation_date FROM messages WHERE tag='report' ORDER BY creation_date ASC;"""
         data = db.session.execute(
             SQL).fetchall()
         db.session.commit()

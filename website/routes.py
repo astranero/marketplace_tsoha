@@ -1,5 +1,6 @@
 from logging import Filter
 from math import prod
+from queue import PriorityQueue
 from flask_login import current_user, login_required, login_user, logout_user
 from flask import Blueprint, render_template, redirect, flash, url_for
 from werkzeug.security import generate_password_hash
@@ -143,27 +144,28 @@ def set_search():
 @views.route("/market", methods=["POST"])
 @login_required
 def product_add():
-    title = request.form["title"]
-    details = request.form["details"]
-    price = request.form["price"]
-    category = request.form["category"]
-    condition = request.form["condition"]
-    data = request.files.getlist("product_pictures")
-    product_id = str(uuid4())
-    product = ProductManager(product_id=product_id, username=current_user.username, title=title, details=details, price=price, category=category, condition=condition)
-    product.insert_product()
-    for file in data:
-        if file and allowed_file(file.filename):
-            filename = str(uuid4())
-            file_extension = file.filename.rsplit('.', 1)[1].lower()
-            file.filename = filename+"."+file_extension
-            secured_filename = secure_filename(file.filename)
-            file.save(path.join(app.root_path, "static/images/"+secured_filename))
-            product.insert_product_imgs(img_id=secured_filename)
-        else:
-            flash("Acceptable extensions are: png, jpg, jpeg and gif.")
-            return redirect(request.url)
-    return redirect(url_for("views.marketplace"))
+    if request.method == "POST":
+        title = request.form["title"]
+        details = request.form["details"]
+        price = request.form["price"]
+        category = request.form["category"]
+        condition = request.form["condition"]
+        data = request.files.getlist("product_pictures")
+        product_id = str(uuid4())
+        product = ProductManager(product_id=product_id, username=current_user.username, title=title, details=details, price=price, category=category, condition=condition)
+        product.insert_product()
+        for file in data:
+            if file and allowed_file(file.filename):
+                filename = str(uuid4())
+                file_extension = file.filename.rsplit('.', 1)[1].lower()
+                file.filename = filename+"."+file_extension
+                secured_filename = secure_filename(file.filename)
+                file.save(path.join(app.root_path, "static/images/"+secured_filename))
+                product.insert_product_imgs(img_id=secured_filename)
+            else:
+                flash("Acceptable extensions are: png, jpg, jpeg and gif.")
+                return redirect(request.url)
+        return redirect(url_for("views.marketplace"))
 
 @views.route("/product/<product_id>", methods=["GET"])
 @login_required
@@ -174,11 +176,13 @@ def product(product_id):
 @views.route("/product_delete/<product_id>", methods=["GET"])
 @login_required
 def product_delete(product_id):
-    imgs = ProductManager.fetch_product_imgs(product_id)
+    product_mgr = ProductManager
+    imgs = product_mgr.fetch_product_imgs(product_id)
     if imgs != None:
         for img in imgs:
-            remove(path.join(app.root_path, "static/images/"+img[0]))
-    ProductManager.delete_product(product_id)
+            if path.exists(app.root_path+"static/images/"+img[0]):
+                remove(path.join(app.root_path, "static/images/"+img[0]))
+    product_mgr(product_id).delete_product()
     return redirect(url_for("views.marketplace"))
 
 @views.route("/product/<product_id>/<comment_id>", methods=["GET"])
@@ -199,17 +203,44 @@ def comment(product_id):
         return redirect(url_for("views.product", product_id=product_id, comments=comments))
     return redirect(url_for("views.marketplace"))
 
-@views.route("/marketplace", methods=["POST"])
+@views.route("/product_edit/<product_id>", methods=["POST"])
 @login_required
-def product_edit():
-    title = request.form["title"]
-    details = request.form["details"]
-    price = request.form["price"]
-    category = request.form["category"]
-    condition = request.form["condition"]
-    data = request.files.getlist("product_pictures")
-    return redirect(url_for("views.marketplace"))
+def product_edit(product_id):
+    if request.method == "POST":
+        product_mgr = ProductManager(product_id)
+        title = request.form["title"]
+        details = request.form["details"]
+        price = request.form["price"]
+        category = request.form["category"]
+        condition = request.form["condition"]
+        images = request.files.getlist("product_pictures")
+        if images:
+            product_mgr.delete_product_images()
+            for file in images:
+                if file and allowed_file(file.filename):
+                    filename = str(uuid4())
+                    file_extension = file.filename.rsplit('.', 1)[1].lower()
+                    file.filename = filename+"."+file_extension
+                    secured_filename = secure_filename(file.filename)
+                    file.save(path.join(app.root_path, "static/images/"+secured_filename))
+                    product_mgr.insert_product_imgs(img_id=secured_filename)
+                else:
+                    flash("Acceptable extensions are: png, jpg, jpeg and gif.")
+        product_mgr.update_title(title)
+        product_mgr.update_details(details)
+        product_mgr.update_price(price)
+        product_mgr.update_category(category)
+        product_mgr.update_condition(condition)
+        return redirect(url_for("views.product", product_id=product_id))
 
+@views.route("/buy_product/<product_id>")
+@login_required
+def buy_product(product_id):
+    product_mgr = ProductManager(product_id)
+    isSold = product_mgr.fetch_isSold()
+    if not isSold:
+        product_mgr.update_isSold(isSold=True, sold_to=current_user.username)
+    return redirect(url_for("views.product", product_id=product_id))
 
 @views.route("/profile/<username>", methods=["GET"])
 @login_required
