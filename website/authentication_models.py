@@ -147,7 +147,7 @@ class MessageForm(FlaskForm):
         if not username_exists:
             raise ValidationError(
                 Markup("Username doesn't exist"))
-    
+
     def validate_sender(self, sender):
         username = current_user.username
         if sender == username:
@@ -156,5 +156,3 @@ class MessageForm(FlaskForm):
     def send_message(self, sender, receiver, message):
         message = MessageManager(sender, message, receiver)
         message.insert_message()
-
-

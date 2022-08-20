@@ -128,12 +128,6 @@ body {
 
 .price {
     color: rgb(0, 0, 0);
-    font-size: 20px;
-    text-align: center;
-}
-
-.offer-price {
-    color: rgb(2, 2, 2);
     font-size: 18px;
     text-align: center;
 }

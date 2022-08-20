@@ -1,4 +1,5 @@
 from logging import Filter
+from math import prod
 from flask_login import current_user, login_required, login_user, logout_user
 from flask import Blueprint, render_template, redirect, flash, url_for
 from werkzeug.security import generate_password_hash
@@ -35,8 +36,9 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_PROFILE_EXTENSIONS
 
 from user_entity import User
-from message_manager import MessageManager
-from marketplace_managers import ProductManager
+from message_manager import CommentManager, MessageManager
+from marketplace_managers import FilterManager, ProductManager
+filter_manager = FilterManager()
 
 views = Blueprint("views", __name__)
 @views.route("/login", methods=["GET", "POST"])
@@ -94,7 +96,9 @@ def register():
 
 @app.context_processor
 def post_injection():
-    return dict(post_form=ContactForm(), profile_form=ProfileForm(), password_change_form=PasswordChangeForm(), message_form=MessageForm(), message_manager=MessageManager, user_manager=User)
+    return dict(post_form=ContactForm(), profile_form=ProfileForm(),
+     password_change_form=PasswordChangeForm(), message_form=MessageForm(), message_manager=MessageManager, 
+     user_manager=User, product_manager=ProductManager, filter_manager=FilterManager())
 
 @views.route("/", methods=["GET", "POST"])
 @views.route("/home", methods=["GET", "POST"])
@@ -107,31 +111,33 @@ def home():
 @views.route("/market", methods=["GET"])
 @login_required
 def marketplace():
-    products = current_user.get_filter_manager().fetch_products()
+    products = filter_manager.fetch_products()
     return render_template("marketplace.html", products=products)
 
-@views.route("/marketplace/<condition>")
+@views.route("/set_condition/<condition>")
 @login_required
 def set_condition(condition):
-    current_user.get_filter_manager().set_condition(condition)
+    filter_manager.set_condition(condition)
     return redirect(url_for("views.marketplace"))
 
-@views.route("/marketplace/<category>")
+@views.route("/set_category/<category>")
 @login_required
 def set_category(category):
-    current_user.get_filter_manager().set_category(category)
+    filter_manager.set_category(category)
     return redirect(url_for("views.marketplace"))
 
-@views.route("/marketplace/<sort>")
+@views.route("/set_sort/<sort>")
 @login_required
 def set_sort(sort):
-    current_user.get_filter_manager().set_sort(sort)
+    filter_manager.set_sort(sort)
     return redirect(url_for("views.marketplace"))
 
-@views.route("/product/<product_id>", methods=["GET"])
+@views.route("/set_search")
 @login_required
-def product(product_id):
-    return render_template("product.html", product_id=product_id)
+def set_search():
+    search = request.args["search"]
+    filter_manager.set_search(search)
+    return redirect(url_for("views.marketplace"))
 
 @views.route("/marketplace", methods=["POST"])
 @views.route("/market", methods=["POST"])
@@ -153,12 +159,45 @@ def product_add():
             file.filename = filename+"."+file_extension
             secured_filename = secure_filename(file.filename)
             file.save(path.join(app.root_path, "static/images/"+secured_filename))
-            User.update_profile_picture(current_user, current_user.username, secured_filename)
             product.insert_product_imgs(img_id=secured_filename)
         else:
             flash("Acceptable extensions are: png, jpg, jpeg and gif.")
             return redirect(request.url)
-    return render_template("marketplace.html")
+    return redirect(url_for("views.marketplace"))
+
+@views.route("/product/<product_id>", methods=["GET"])
+@login_required
+def product(product_id):
+    comments = CommentManager.fetch_comments(product_id)
+    return render_template("product.html", product_id=product_id, comments=comments)
+
+@views.route("/product_delete/<product_id>", methods=["GET"])
+@login_required
+def product_delete(product_id):
+    imgs = ProductManager.fetch_product_imgs(product_id)
+    if imgs != None:
+        for img in imgs:
+            remove(path.join(app.root_path, "static/images/"+img[0]))
+    ProductManager.delete_product(product_id)
+    return redirect(url_for("views.marketplace"))
+
+@views.route("/product/<product_id>/<comment_id>", methods=["GET"])
+@login_required
+def comment_delete(product_id, comment_id):
+    CommentManager.delete_comment(comment_id)
+    comments = CommentManager.fetch_comments(product_id)
+    return render_template("product.html", product_id=product_id, comments=comments)
+
+@views.route("/product/<product_id>/comment", methods=["POST"])
+@login_required
+def comment(product_id):
+    if request.method=="POST":
+        comment  = request.form["comment"]
+        mgr = CommentManager(comment, product_id, current_user.username)
+        mgr.insert_comments()
+        comments = CommentManager.fetch_comments(product_id)
+        return redirect(url_for("views.product", product_id=product_id, comments=comments))
+    return redirect(url_for("views.marketplace"))
 
 @views.route("/marketplace", methods=["POST"])
 @login_required
@@ -169,7 +208,8 @@ def product_edit():
     category = request.form["category"]
     condition = request.form["condition"]
     data = request.files.getlist("product_pictures")
-    return render_template("marketplace.html")
+    return redirect(url_for("views.marketplace"))
+
 
 @views.route("/profile/<username>", methods=["GET"])
 @login_required
@@ -227,8 +267,6 @@ def profile_edit(username):
     flash("You can't edit other user's profile.")
     return redirect(url_for("views.home"))
 
-
-
 @views.route("/about")
 def about():
     return render_template("about.html")
@@ -284,15 +322,6 @@ def delete_message(username, message_id):
         MessageManager.delete_message(message_id)
     return redirect(url_for("views.messages", username=current_user.username))
 
-@views.route("/product/<int:product_id>/comment", methods=["POST"])
-@login_required
-def comment(product_id):
-    if request.method=="POST":
-        if "comment" in request.form():
-            pass
-        return redirect(url_for("views.product", product_id=product_id))
-    return redirect(url_for("views.marketplace"))
-
 @views.route("/uploader")
 @login_required
 def new_uploader():
@@ -303,7 +332,7 @@ def new_uploader():
 def picture_uploader():
     if request.method == "POST" :
         if "profile_picture" in request.files:
-            profile_picture = User.fetch_profile_picture(current_user.username)
+            profile_picture = current_user.fetch_profile_picture(current_user.username)
             file = request.files.get("profile_picture")
             if file.filename == '':
                     flash('No selected file')

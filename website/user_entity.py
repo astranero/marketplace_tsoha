@@ -4,8 +4,9 @@ from flask import flash
 from routes import db
 from marketplace_managers import FilterManager
 
+
 class User(UserMixin):
-    def __init__(self, user_id, username, password, first_name, profile_picture_id="default.gif", issuperuser=False, active=True, authenticated=True):
+    def __init__(self, user_id, username, password, first_name, profile_picture_id="default.png", issuperuser=False, active=True, authenticated=True):
         self.user_id = user_id
         self.username = username.lower()
         self.profile_picture_id = profile_picture_id
@@ -14,7 +15,6 @@ class User(UserMixin):
         self.authenticated = authenticated
         self.issuperuser = issuperuser
         self.active = active
-        self.filter_manager = FilterManager()
 
     def create_user(self, email, last_name, street_address, phone_number, country, city, province, postal_code, birthday):
         SQL = """INSERT INTO users (username, email, password, first_name,  last_name, street_address, phone_number, country, city, province, postal_code, birthday,  profile_picture_id)
@@ -112,9 +112,6 @@ class User(UserMixin):
         self.profile_picture_id = profile_picture_id
         db.session.commit()
 
-    def delete_profile_picture():
-        pass
-
     def fetch_user(username):
         SQL = """SELECT password, profile_picture_id, first_name FROM users WHERE username=:username;"""
         data = db.session.execute(
@@ -125,7 +122,7 @@ class User(UserMixin):
             first_name = data[2]
             return User(user_id=uuid4(), username=username, profile_picture_id=profile_picture_id, password=password, first_name=first_name)
 
-    def fetch_profile_picture(username):
+    def fetch_profile_picture(self, username):
         SQL = "SELECT profile_picture_id FROM users WHERE username=:username;"
         profile_picture_id = db.session.execute(
             SQL, {"username": username.lower()}).fetchone()[0]
@@ -195,9 +192,6 @@ class User(UserMixin):
         except Exception as error:
             flash(f"Something went wrong with fetching user object: {error}")
             return None
-
-    def get_filter_manager(self):
-        return self.filter_manager
 
     def get_profile_picture(username):
         print(username)
