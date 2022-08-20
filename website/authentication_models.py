@@ -156,3 +156,7 @@ class MessageForm(FlaskForm):
     def send_message(self, sender, receiver, message):
         message = MessageManager(sender, message, receiver)
         message.insert_message()
+
+    def send_report(self, sender, message):
+        message = MessageManager(sender, message, tag="report")
+        message.insert_message()

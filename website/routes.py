@@ -1,6 +1,7 @@
 from logging import Filter
 from math import prod
 from queue import PriorityQueue
+from wsgiref.util import request_uri
 from flask_login import current_user, login_required, login_user, logout_user
 from flask import Blueprint, render_template, redirect, flash, url_for
 from werkzeug.security import generate_password_hash
@@ -318,6 +319,15 @@ def message(username):
         message_data.send_message(sender=message_data.sender.data, message=message_data.message.data, receiver=message_data.receiver.data)
         flash("Your message has been sent.")
     return redirect(url_for("views.messages", username=current_user.username))
+
+@login_required
+@views.route("/report", methods=["POST"])
+def report():
+    message_data = MessageForm()
+    if message_data.validate_on_submit:
+        message_data.send_report(sender=message_data.sender.data, message=message_data.message.data)
+        flash("Your message has been sent.")
+    return redirect(url_for(request_uri))
 
 @login_required
 @views.route("/profile/<username>/messages", methods=["POST", "GET"])
