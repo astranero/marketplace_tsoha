@@ -86,16 +86,6 @@
                                 {% with isSold = product_manager(product.id).fetch_isSold() %}
 
                             <p class="price">Price: {{ product.price }} € </p>
-                            {% if isSold %}
-                            <a href="{{url_for('views.buy_product', product_id=product.id)}}"><button
-                                    class="mt-1 btn btn-sm btn-success fw-bold" disabled data-toggle="confirmation">
-                                    Buy
-                                    product </button></a>
-                            {% else %}
-                            <a href="{{url_for('views.buy_product', product_id=product.id)}}"><button
-                                    class="mt-1 btn btn-sm btn-success fw-bold" data-toggle="confirmation"> Buy
-                                    product </button></a>
-                            {% endif %}
                             {% endwith %}
                             {% endif %}
                         </div>
