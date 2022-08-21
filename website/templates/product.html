@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
 {% block body %}
 <main class="px-3" style="justify-content: center; margin-left: 10%;">
-    {% with product = product_manager.fetch_product(product_id) %}
+    {% with product = fetch_product(product_id) %}
     <div class="card m-0 p-0">
         <div class="card-body">
             <div class="row" style="width: 100%;">
                 <div class="col-lg-6">
                     <div id="product_carousel" class="carousel slide mr-2 ml-0 p-0" data-interval="false">
                         <div class="carousel-inner">
-                            {% with images = product_manager.fetch_product_imgs(product_id) %}
+                            {% with images = fetch_product_imgs(product_id) %}
                             {% if images %}
                             {% with image_one = images[0][0] %}
                             <div class="carousel-item active">
@@ -54,7 +54,7 @@
                         </a>
                         <br>
                         {% if product.username != current_user.username %}
-                        {% with isSold = product_manager(product.id).fetch_isSold() %}
+                        {% with isSold = fetch_issold(product.id) %}
                         {% if isSold %}
                         <a href="{{url_for('views.buy_product', product_id=product.id)}}"
                             onclick="return confirm('Purchase confirmation')"><button
@@ -75,7 +75,7 @@
                         <br>
                         <br>
                         {% else %}
-                        {% with isSold = product_manager(product.id).fetch_isSold() %}
+                        {% with isSold = fetch_issold(product.id) %}
                         {% if isSold %}
                         <a href="#"><button class="mt-0 btn btn btn-success fw-bold" data-bs-toggle="modal"
                                 data-bs-target="" disabled>Edit</button></a>
@@ -221,7 +221,7 @@
                                 </div>
                             </div>
                         </div>
-                        {% with isSold = product_manager(product.id).fetch_isSold() %}
+                        {% with isSold = fetch_issold(product.id) %}
                         {% if isSold %}
                         <a href="#"><button
                                 class="mt-0 btn btn btn-danger fw-bold disabled">Delete</button></a>
@@ -295,7 +295,7 @@
                                 <div class="" style="padding: 0px; margin:0px;">
                                     <a href="{{url_for('views.profile', username=comment.commentor_username)}}">
                                         <img class="img-fluid thumbnail" id="profile-image"
-                                            src="{{url_for('static', filename='/images/'+current_user.fetch_profile_picture(comment.commentor_username))}}"></a>
+                                            src="{{url_for('static', filename='/images/'+fetch_profile_picture(comment.commentor_username))}}"></a>
                                     <label for="profile-image"
                                         class="username">{{comment.commentor_username.capitalize()}}</label><label
                                         class="text-muted" style="font-size: 75%;"> {{ comment.creation_date}} </label>

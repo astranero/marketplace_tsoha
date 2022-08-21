@@ -1,19 +1,49 @@
-from logging import Filter
-from math import prod
-from queue import PriorityQueue
-from flask_login import current_user, login_required, login_user, logout_user
-from flask import Blueprint, render_template, redirect, flash, url_for
-from werkzeug.security import generate_password_hash
 from uuid import uuid4
-from flask import Flask, request
-from dotenv import load_dotenv
 from os import environ, remove, path
 from datetime import timedelta
-from flask_login import LoginManager
-from flask_sqlalchemy import SQLAlchemy
-from flask_wtf.csrf import CSRFProtect
+from message_manager import CommentManager, MessageManager
+from marketplace_managers import(
+    FilterManager,
+    ProductManager,
+    delete_product,
+    delete_product_images,
+    fetch_issold,
+    fetch_product_imgs,
+    fetch_product_img,
+    fetch_product,
+    fetch_bought_products,
+    fetch_sold_products,
+    fetch_user_products,
+    delete_product,
+    delete_product_images,
+    update_issold,
+    count_sold_products
+    )
+from user_entity import(
+    User,
+    get_profile_picture,
+    check_username,
+    fetch_profile_picture,
+    fetch_user
+    )
+from authentication_models import(
+CommentReportForm,
+ContactForm,
+PasswordChangeForm,
+RegistrationForm,
+LoginForm,
+ContactForm,
+ProfileForm,
+MessageForm
+)
+from flask_login import LoginManager, current_user, login_required, login_user, logout_user
+from flask import Blueprint, render_template, redirect, flash, url_for, Flask, request
+from werkzeug.security import generate_password_hash
 from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.utils import secure_filename
+from dotenv import load_dotenv
+from flask_sqlalchemy import SQLAlchemy
+from flask_wtf.csrf import CSRFProtect
 
 load_dotenv("/home/koxhr/0000 Repositories/marketplace_tsoha/.env")
 app = Flask(__name__)
@@ -36,11 +66,7 @@ ALLOWED_PROFILE_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_PROFILE_EXTENSIONS
 
-from user_entity import User
-from message_manager import CommentManager, MessageManager
-from marketplace_managers import FilterManager, ProductManager
 filter_manager = FilterManager()
-
 views = Blueprint("views", __name__)
 @views.route("/login", methods=["GET", "POST"])
 def login():
@@ -48,9 +74,9 @@ def login():
         return redirect(url_for("views.home"))
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.fetch_user(form.username.data)
+        user = fetch_user(form.username.data)
         login_user(user, remember=True)
-        User.create_session(user)
+        user.create_session(user)
         return redirect(url_for("views.home"))
     return render_template("/login.html", form=form)
 
@@ -62,59 +88,60 @@ def logout():
     flash("You have logged out.", category="success")
     return redirect(url_for("views.login"))
 
-from authentication_models import (
-CommentReportForm,
-ContactForm,
-PasswordChangeForm,
-RegistrationForm,
-LoginForm,
-ContactForm,
-ProfileForm,
-MessageForm
-)
 @views.route("/signup", methods=["GET", "POST"])
 @views.route("/register", methods=["GET", "POST"])
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
-        hash=generate_password_hash(form.password.data)
-        user = User(
-            user_id=uuid4(),
-            username=form.username.data,
-            password=hash,
-            first_name=form.first_name.data,
-            )
-        response = user.create_user(
-            email=form.email.data,
-            last_name=form.last_name.data,
-            street_address=form.street_address.data,
-            phone_number=form.phone_number.data,
-            country=form.country.data,
-            city=form.city.data,
-            province=form.province.data,
-            postal_code=form.postal_code.data,
-            birthday=form.birthday.data
-        )
+        password_hash=generate_password_hash(form.password.data)
+        user_info = {
+            "username":form.username.data,
+            "password":password_hash,
+            "first_name":form.first_name.data
+        }
+        user = User(user_id=uuid4(), user_info=user_info)
+
+        registration_info = {
+            "email":form.email.data,
+            "last_name":form.last_name.data,
+            "street_address":form.street_address.data,
+            "phone_number":form.phone_number.data,
+            "country":form.country.data,
+            "city":form.city.data,
+            "province":form.province.data,
+            "postal_code":form.postal_code.data,
+            "birthday":form.birthday.data
+        }
+        response = user.create_user(registration_info)
         if response:
-            User.create_session(user)
+            user.create_session(user)
             login_user(user, remember=True)
             flash("Congratulations, your registration is complete.", category="success")
             return redirect(url_for("views.home"))
-        else:
-            flash("Something went wrong with registration, please try again.")
+        flash("Something went wrong with registration, please try again.")
     return render_template("/register.html", form=form)
 
 @app.context_processor
 def post_injection():
-    return dict(post_form=ContactForm(),
+    return dict (
+    post_form=ContactForm(),
     profile_form=ProfileForm(),
     password_change_form=PasswordChangeForm(),
     message_form=MessageForm(),
+    report_form=CommentReportForm(),
     message_manager=MessageManager,
-    user_manager=User,
-    product_manager=ProductManager,
+    get_profile_picture=get_profile_picture,
     filter_manager=FilterManager(),
-    report_form=CommentReportForm())
+    fetch_issold=fetch_issold,
+    fetch_product_imgs=fetch_product_imgs,
+    fetch_product_img=fetch_product_img,
+    fetch_product=fetch_product,
+    fetch_profile_picture=fetch_profile_picture,
+    fetch_bought_products=fetch_bought_products,
+    fetch_sold_products=fetch_sold_products,
+    fetch_user_products=fetch_user_products,
+    count_sold_products=count_sold_products
+    )
 @views.route("/", methods=["GET", "POST"])
 @views.route("/home", methods=["GET", "POST"])
 def home():
@@ -159,21 +186,17 @@ def set_search():
 @login_required
 def product_add():
     if request.method == "POST":
-        title = request.form["title"]
-        details = request.form["details"]
-        price = request.form["price"]
-        category = request.form["category"]
-        condition = request.form["condition"]
         data = request.files.getlist("product_pictures")
+        product_info = {"title":request.form["title"],
+            "details":request.form["details"],
+            "price":request.form["price"],
+            "category":request.form["category"],
+            "condition":request.form["condition"]}
         product_id = str(uuid4())
-        product = ProductManager(
-        product_id=product_id,
-        username=current_user.username,
-        title=title, details=details,
-        price=price, category=category,
-        condition=condition
-        )
-        product.insert_product()
+        new_product = ProductManager(product_id=product_id,
+        username=current_user.username)
+        new_product.set_product_info(product_info=product_info)
+        new_product.insert_product()
         for file in data:
             if file and allowed_file(file.filename):
                 filename = str(uuid4())
@@ -185,57 +208,69 @@ def product_add():
             else:
                 flash("Acceptable extensions are: png, jpg, jpeg and gif.")
                 return redirect(request.url)
-        return redirect(url_for("views.marketplace"))
+    return redirect(url_for("views.marketplace"))
 
 @views.route("/product/<product_id>", methods=["GET"])
 @login_required
 def product(product_id):
-    comments = CommentManager.fetch_comments(product_id)
-    return render_template("product.html", product_id=product_id, comments=comments)
+    comments = CommentManager(product_id=product_id).fetch_comments()
+    return render_template("product.html",
+    product_id=product_id,
+    comments=comments)
 
 @views.route("/product_delete/<product_id>", methods=["GET"])
 @login_required
 def product_delete(product_id):
-    product_mgr = ProductManager
-    imgs = product_mgr.fetch_product_imgs(product_id)
-    if imgs != None:
+    imgs = fetch_product_imgs(product_id)
+    if imgs is not None:
         for img in imgs:
             if path.exists(app.root_path+"static/images/"+img[0]):
                 remove(path.join(app.root_path, "static/images/"+img[0]))
-    product_mgr(product_id).delete_product()
+    delete_product(product_id)
     return redirect(url_for("views.marketplace"))
 
 @views.route("/product/<product_id>/<comment_id>", methods=["GET"])
 @login_required
 def comment_delete(product_id, comment_id):
-    CommentManager.delete_comment(comment_id)
-    comments = CommentManager.fetch_comments(product_id)
-    return render_template("product.html", product_id=product_id, comments=comments)
+    CommentManager(comment_id=comment_id).delete_comment()
+    comments = CommentManager(product_id=product_id).fetch_comments()
+    return render_template("product.html",
+    product_id=product_id,
+    comments=comments
+    )
 
 @views.route("/product/<product_id>/comment", methods=["POST"])
 @login_required
 def comment(product_id):
     if request.method=="POST":
-        comment  = request.form["comment"]
-        mgr = CommentManager(comment, product_id, current_user.username)
+        new_comment  = request.form["comment"]
+        mgr = CommentManager(
+            new_comment,
+            product_id,
+            current_user.username
+            )
         mgr.insert_comments()
-        comments = CommentManager.fetch_comments(product_id)
-        return redirect(url_for("views.product", product_id=product_id, comments=comments))
+        comments = CommentManager(product_id=product_id).fetch_comments()
+        return redirect(url_for("views.product",
+        product_id=product_id,
+        comments=comments))
     return redirect(url_for("views.marketplace"))
 
 @views.route("/product_edit/<product_id>", methods=["POST"])
 @login_required
 def product_edit(product_id):
     if request.method == "POST":
-        product_mgr = ProductManager(product_id)
-        title = request.form["title"]
-        details = request.form["details"]
-        price = request.form["price"]
-        category = request.form["category"]
-        condition = request.form["condition"]
+        product_info = {"title":request.form["title"],
+            "details":request.form["details"],
+            "price":request.form["price"],
+            "category":request.form["category"],
+            "condition":request.form["condition"]}
+        product_mgr = ProductManager(
+        username=current_user.username,
+        product_id=product_id)
         images = request.files.getlist("product_pictures")
         if images:
-            product_mgr.delete_product_images()
+            delete_product_images(product_id)
             for file in images:
                 if file and allowed_file(file.filename):
                     filename = str(uuid4())
@@ -246,21 +281,21 @@ def product_edit(product_id):
                     product_mgr.insert_product_imgs(img_id=secured_filename)
                 else:
                     flash("Acceptable extensions are: png, jpg, jpeg and gif.")
-        product_mgr.update_title(title)
-        product_mgr.update_details(details)
-        product_mgr.update_price(price)
-        product_mgr.update_category(category)
-        product_mgr.update_condition(condition)
+        product_mgr.set_product_info(product_info=product_info)
+        product_mgr.update_title()
+        product_mgr.update_details()
+        product_mgr.update_price()
+        product_mgr.update_category()
+        product_mgr.update_condition()
         flash("Your product has been updated.")
         return redirect(url_for("views.product", product_id=product_id))
 
 @views.route("/buy_product/<product_id>")
 @login_required
 def buy_product(product_id):
-    product_mgr = ProductManager(product_id)
-    isSold = product_mgr.fetch_isSold()
-    if not isSold:
-        product_mgr.update_isSold(isSold=True, sold_to=current_user.username)
+    issold = fetch_issold(product_id)
+    if not issold:
+        update_issold(is_sold=True, sold_to=current_user.username, product_id=product_id)
         flash("You have bought this product succesfully.")
     else:
         flash("This product has already been sold.")
@@ -269,15 +304,14 @@ def buy_product(product_id):
 @views.route("/return_product/<product_id>")
 @login_required
 def return_product(product_id):
-    product_mgr = ProductManager(product_id)
-    product_mgr.update_isSold(isSold=False, sold_to=None)
+    update_issold(is_sold=False, sold_to=None, product_id=product_id)
     flash("Product has been returned succesfully.")
     return redirect(url_for("views.profile", username=current_user.username))
 
 @views.route("/profile/<username>", methods=["GET"])
 @login_required
 def profile(username):
-    if User.check_username(username):
+    if check_username(username):
         return render_template("profile.html", username=username)
     return render_template("404.html")
 
@@ -299,38 +333,38 @@ def profile_edit(username):
             city = form.city.data
             if form.validate_on_submit():
                 if first_name:
-                    User.update_first_name(username, first_name)
+                    current_user.update_first_name(username, first_name)
                 if last_name:
-                    User.update_last_name(username, last_name)
+                    current_user.update_last_name(username, last_name)
                 if email:
-                    User.update_email(username, email)
+                    current_user.update_email(username, email)
                 if phone_number:
-                    User.update_phone_number(username, phone_number)
+                    current_user.update_phone_number(username, phone_number)
                 if street_address:
-                    User.update_street_address(username, street_address)
+                    current_user.update_street_address(username, street_address)
                 if country:
-                    User.update_country(username, country)
+                    current_user.update_country(username, country)
                 if province:
-                    User.update_province(username, province)
+                    current_user.update_province(username, province)
                 if postal_code:
-                    User.update_postal_code(username, postal_code)
+                    current_user.update_postal_code(username, postal_code)
                 if city:
-                    User.update_city(username, city)
+                    current_user.update_city(username, city)
                 flash("Your profile has been updated.")
             return render_template(
-            "profile_edit.html", 
-            username=current_user.username, 
+            "profile_edit.html",
+            username=current_user.username,
             profile_form=form)
 
         elif "current_password" in request.form:
             form = PasswordChangeForm()
             if form.validate_on_submit():
-                hash=generate_password_hash(form.new_password.data)
-                User.update_password(current_user.username, hash)
+                hashed_password=generate_password_hash(form.new_password.data)
+                current_user.update_password(current_user.username, hashed_password)
                 flash("Your password has been changed.")
             return render_template(
-            "profile/edit.html", 
-            username=current_user.username, 
+            "profile_edit.html",
+            username=current_user.username,
             password_change_form=form
             )
     flash("You can't edit other user's profile.")
@@ -340,11 +374,11 @@ def profile_edit(username):
 @login_required
 def delete_profile():
     current_user.delete_profile()
-    User.delete_session(current_user)
+    current_user.delete_session(current_user)
     logout_user()
     flash("Profile succesfully deleted.", category="success")
     return redirect(url_for("views.login"))
-    
+
 @views.route("/about")
 def about():
     return render_template("about.html")
@@ -363,8 +397,8 @@ def message(username):
     message_data = MessageForm()
     if message_data.validate_on_submit:
         message_data.send_message(
-        sender=message_data.sender.data, 
-        message=message_data.message.data, 
+        sender=message_data.sender.data,
+        message=message_data.message.data,
         receiver=message_data.receiver.data)
         flash("Your message has been sent.")
     return redirect(url_for("views.messages", username=current_user.username))
@@ -376,13 +410,13 @@ def report():
     if message_data.validate_on_submit:
         sender = message_data.sender.data
         reported = message_data.reported.data
-        message = message=message_data.message.data
-        comment = message_data.comment.data
+        new_message = message_data.message.data
+        new_comment = message_data.comment.data
         comment_id = message_data.comment_id.data
         product_id = message_data.product_id.data
-        new_data = f"""In product_id={product_id} 
-        comment_id:{comment_id} user {reported} 
-        commented: {comment}. {sender} 
+        new_data = f"""In product_id={product_id}
+        comment_id:{comment_id} user {reported}
+        commented: {comment}. {sender}
         reported this with message: {message}."""
         message_data.send_report(sender, new_data)
         flash("Report has been sent.")
@@ -393,9 +427,9 @@ def report():
 @views.route("/profile/<username>/messages", methods=["POST", "GET"])
 def messages(username):
     if username == current_user.username:
-        data = MessageManager.fetch_senders(username)
+        data = MessageManager(receiver=username).fetch_senders()
         if not data:
-            data = MessageManager.fetch_receivers(username)
+            data = MessageManager(username).fetch_receivers()
         return render_template("messages.html", username=username, data=data)
     return redirect(url_for("views.profile", username=username))
 
@@ -406,14 +440,14 @@ def like(username):
     islike = current_user.fetch_profile_islike(current_user.username, username)
     if  exists and not islike:
         current_user.update_profile_like(
-            current_user.username, 
-            username, 
+            current_user.username,
+            username,
             True
             )
-    if not exists: 
+    if not exists:
         current_user.like_profile(
-            current_user.username, 
-            username, 
+            current_user.username,
+            username,
             True
             )
     return redirect(url_for("views.profile", username=username))
@@ -422,8 +456,8 @@ def like(username):
 @views.route("/dislike/<username>", methods=["POST", "GET"])
 def dislike(username):
     current_user.update_profile_like(
-        current_user.username, 
-        username, 
+        current_user.username,
+        username,
         False
         )
     return redirect(url_for("views.profile", username=username))
@@ -432,14 +466,8 @@ def dislike(username):
 @views.route("/profile/<username>/messages/delete_all_messages/<sender>", methods=["GET"])
 def delete_all_messages(username, sender):
     if current_user.username == username:
-        MessageManager.delete_messages(
-            sender, 
-            current_user.username
-            )
-        MessageManager.delete_messages(
-            current_user.username, 
-            sender
-            )
+        MessageManager(sender=sender, receiver=current_user.username).delete_messages()
+        MessageManager(sender=current_user.username, receiver=sender).delete_messages()
     return redirect(url_for("views.messages", username=current_user.username))
 
 @login_required
@@ -447,7 +475,7 @@ def delete_all_messages(username, sender):
 def delete_message(username, message_id):
     print(f"{current_user.username} {username}")
     if current_user.username == username:
-        MessageManager.delete_message(message_id)
+        MessageManager(message_id=message_id).delete_message()
     return redirect(url_for("views.messages", username=current_user.username))
 
 @views.route("/uploader", methods=["POST"])
@@ -455,11 +483,11 @@ def delete_message(username, message_id):
 def picture_uploader():
     if request.method == "POST" :
         if "profile_picture" in request.files:
-            profile_picture = current_user.fetch_profile_picture(current_user.username)
+            profile_picture = fetch_profile_picture(current_user.username)
             file = request.files.get("profile_picture")
             if file.filename == '':
-                    flash('No selected file')
-                    return redirect(request.url)
+                flash('No selected file')
+                return redirect(request.url)
             if file and allowed_file(file.filename):
                 filename = str(uuid4())
                 file_extension = file.filename.rsplit('.', 1)[1].lower()
@@ -467,12 +495,10 @@ def picture_uploader():
                 secured_filename = secure_filename(file.filename)
                 file.save(
                     path.join(
-                    app.root_path, 
-                    "static/images/"+secured_filename
+                    app.root_path,
+                    "static/images/"+secured_filename)
                     )
-                    )
-                User.update_profile_picture(
-                    current_user,
+                current_user.update_profile_picture(
                     current_user.username,
                     secured_filename)
                 flash("Profile picture has been uploaded.")
@@ -482,15 +508,8 @@ def picture_uploader():
                 except: pass
             else:
                 flash("Acceptable extensions are: png, jpg, jpeg and gif.")
-    return redirect(request.url)
+    return redirect(url_for("views.profile_edit", username=current_user.username))
 
-@app.errorhandler(404)
-def error_404(error):
-    return render_template("404.html"), 404
-    
-@app.errorhandler(500)
-def error_500(error):
-    return render_template("500.html"), 500
 
 @login_manager.unauthorized_handler
 def unauthorized():

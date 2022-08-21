@@ -9,7 +9,7 @@
             {% for i in data %}
             {% set msg_count = i[0] %}
             {% set sender = i[1] %}
-            {% set messages_data = message_manager.fetch_messages(sender, current_user.username) %}
+            {% set messages_data = message_manager(sender, current_user.username).fetch_messages() %}
             <div class="row" style="justify-content: start !important;">
                 <div class="container">
                     <div class="comment p-0 m-0">
@@ -18,7 +18,7 @@
                             <a href="{{url_for('views.profile', username=sender)}}">
                                 <div class="" style="padding: 0px; margin:0px;">
                                     <img class="img-fluid thumbnail" id="profile-image"
-                                        src="{{url_for('static', filename='/images/'+ user_manager.get_profile_picture(sender)) }}">
+                                        src="{{url_for('static', filename='/images/'+ get_profile_picture(sender)) }}">
                                 </div>
                             </a>
                             <p class="lead text-muted"> {{msg_count}} message(s) between {{sender.upper()}} and you</p>

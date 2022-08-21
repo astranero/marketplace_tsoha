@@ -4,7 +4,7 @@
     <div class="card m-0 p-0 profile-box">
         <div class="row" style="font-weight: bold; color: #222222;">
             <div class="col-3 m-0 p-0 thumbnail">
-                <img src="{{url_for('static', filename='/images/'+user_manager.get_profile_picture(username))}}"
+                <img src="{{url_for('static', filename='/images/'+get_profile_picture(username))}}"
                     class=" mt-2 mb-2" style="width: 200px; z-index: 4; border-radius: 15px;">
             </div>
             <div class="col-3 mt-5 m-0 p-0" style="justify-content: start;">
@@ -27,7 +27,7 @@
                 <div class="row">
                     <div class="col-6">
                         <p class="lead"> Reputation:<br>{{current_user.count_profile_likes(username)}} likes</p>
-                        <p class="lead"> Items sold:<br>{{product_manager().count_isSold(username)}} </p>
+                        <p class="lead"> Items sold:<br>{{count_sold_products(username)}} </p>
                     </div>
                     <div class="col-6">
                         <div class="row">
@@ -59,7 +59,7 @@
     <div class="card m-0 p-0 profile-box" style="font-weight: bold; color: #000000;">
         <div class="row">
             <p class="lead title"> Currently selling</p>
-            {% with products = product_manager.fetch_user_products(username) %}
+            {% with products = fetch_user_products(username) %}
             {% if products != None %}
             {% for product in products %}
             <div class="col-3 mt-2">
@@ -67,7 +67,7 @@
                     <div class="card-body p-2 m-2">
                         <div class="hovereffect">
                             {% if product.id != None %}
-                            {% with image_id = product_manager.fetch_product_img(product.id) %}
+                            {% with image_id = fetch_product_img(product.id) %}
                             <img class="img-responsive shadow-1-strong img-fluid img-thumbnail card-shadow d-block mx-auto mb-2"
                                 src="{{url_for('static', filename='/images/'+image_id)}}"
                                 alt="product with title: {{product.title}}">
@@ -83,7 +83,7 @@
                         <div class="card-title">
                             <p class="fw-bold title">{{ product.title.capitalize() }}</a>
                                 {% if username != current_user.username %}
-                                {% with isSold = product_manager(product.id).fetch_isSold() %}
+                                {% with isSold = fetch_issold(product.id) %}
 
                             <p class="price">Price: {{ product.price }} € </p>
                             {% endwith %}
@@ -104,7 +104,7 @@
         {% if current_user.username == username %}
         <div class="row">
             <p class="lead title"> Items bought </p>
-            {% with products = product_manager.fetch_bought_products(current_user.username) %}
+            {% with products = fetch_bought_products(current_user.username) %}
             {% if products != None %}
             {% for product in products %}
             <div class="col-3 mt-2">
@@ -112,7 +112,7 @@
                     <div class="card-body p-2 m-2">
                         <div class="hovereffect">
                             {% if product.id != None %}
-                            {% with image_id = product_manager.fetch_product_img(product.id) %}
+                            {% with image_id = fetch_product_img(product.id) %}
                             <img class="img-responsive shadow-1-strong img-fluid img-thumbnail card-shadow d-block mx-auto mb-2"
                                 src="{{url_for('static', filename='/images/'+image_id)}}"
                                 alt="product with title: {{product.title}}">
@@ -143,7 +143,7 @@
         <hr>
         <div class="row">
             <p class="lead title"> Items sold </p>
-            {% with products = product_manager.fetch_sold_products(current_user.username) %}
+            {% with products = fetch_sold_products(current_user.username) %}
             {% if products != None %}
             {% for product in products %}
             <div class="col-3 m-2">
@@ -151,7 +151,7 @@
                     <div class="card-body p-2 m-2">
                         <div class="hovereffect">
                             {% if product.id != None %}
-                            {% with image_id = product_manager.fetch_product_img(product.id) %}
+                            {% with image_id = fetch_product_img(product.id) %}
                             <img class="img-responsive shadow-1-strong img-fluid img-thumbnail card-shadow d-block mx-auto mb-2"
                                 src="{{url_for('static', filename='/images/'+image_id)}}"
                                 alt="product with title: {{product.title}}">
