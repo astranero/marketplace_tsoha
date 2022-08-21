@@ -1,5 +1,4 @@
 from routes import db
-from flask import flash
 
 
 class FilterManager:
@@ -114,14 +113,17 @@ class ProductManager:
         SQL = """SELECT id, title, details, condition, category, price, username FROM products WHERE id =:product_id"""
         return db.session.execute(SQL, {"product_id": product_id}).fetchone()
 
-    def fetch_bought_products(product_id, sold_to):
-        pass
+    def fetch_bought_products(sold_to):
+        sql = """SELECT id, title, price, username FROM products WHERE sold_to=:sold_to"""
+        return db.session.execute(sql, {"sold_to": sold_to}).fetchall()
 
-    def fetch_user_products(product_id, username):
-        pass
+    def fetch_user_products(username):
+        sql = """SELECT id, title, price, username FROM products WHERE isSold=False AND username=:username"""
+        return db.session.execute(sql, {"username": username}).fetchall()
 
-    def fetch_sold_products(product_id, username):
-        pass
+    def fetch_sold_products(username):
+        sql = """SELECT id, title, price, username, sold_to FROM products WHERE isSold=True AND username=:username"""
+        return db.session.execute(sql, {"username": username}).fetchall()
 
     def insert_product(self):
         SQL = """INSERT INTO products(id, title, details, condition, category, price, username)
@@ -182,5 +184,5 @@ class ProductManager:
         return db.session.execute(SQL, {"product_id": self.product_id}).fetchone()[0]
 
     def count_isSold(self, username):
-        SQL = """SELECT count(isSold) FROM products WHERE username=:username;"""
+        SQL = """SELECT count(*) FROM products WHERE username=:username and isSold=True;"""
         return db.session.execute(SQL, {"username": username}).fetchone()[0]

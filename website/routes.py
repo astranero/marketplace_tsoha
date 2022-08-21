@@ -261,10 +261,18 @@ def buy_product(product_id):
     isSold = product_mgr.fetch_isSold()
     if not isSold:
         product_mgr.update_isSold(isSold=True, sold_to=current_user.username)
-        flash("You have bought product succesfully.")
+        flash("You have bought this product succesfully.")
     else:
         flash("This product has already been sold.")
     return redirect(url_for("views.product", product_id=product_id))
+
+@views.route("/return_product/<product_id>")
+@login_required
+def return_product(product_id):
+    product_mgr = ProductManager(product_id)
+    product_mgr.update_isSold(isSold=False, sold_to=None)
+    flash("Product has been returned succesfully.")
+    return redirect(url_for("views.profile", username=current_user.username))
 
 @views.route("/profile/<username>", methods=["GET"])
 @login_required
@@ -325,11 +333,10 @@ def profile_edit(username):
             username=current_user.username, 
             password_change_form=form
             )
-
     flash("You can't edit other user's profile.")
     return redirect(url_for("views.home"))
 
-@views.route("/delete_profile", methods=["POST", "GET"])
+@views.route("/delete_profile")
 @login_required
 def delete_profile():
     current_user.delete_profile()

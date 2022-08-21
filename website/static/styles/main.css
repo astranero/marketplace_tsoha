@@ -88,20 +88,20 @@ body {
     position: relative;
     font-size: 17px;
     padding: 10px;
-    background: rgba(65, 0, 0, 0.6);
+    background: rgba(19, 2, 2, 0.6);
 }
 
 .hovereffect a.info {
     display: inline-block;
     text-decoration: none;
     padding: 7px 14px;
-    border: 1px solid rgb(255, 255, 255);
+    border: 1px solid rgba(156, 155, 155, 0.678);
     margin: 50px 0 0 0;
     background-color: transparent;
 }
 
 .hovereffect a.info:hover {
-    box-shadow: 0 0 5px rgb(255, 255, 255);
+    box-shadow: 0 0 5px rgb(197, 197, 197);
 }
 
 .hovereffect a.info,
@@ -113,7 +113,7 @@ body {
     transition: all 0.4s ease-in;
     opacity: 0;
     filter: alpha(opacity=0);
-    color: rgb(255, 255, 255);
+    color: rgba(172, 172, 172, 0.63);
     text-transform: uppercase;
 }
 
