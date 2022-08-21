@@ -172,7 +172,7 @@ class User(UserMixin):
         SQL = """DELETE FROM sessions WHERE user_id=user_id;"""
         db.session.execute(SQL, {"user_id": user.user_id})
         db.session.commit()
-    
+
     def delete_profile(self):
         sql = """DELETE FROM users WHERE username=:username;"""
         db.session.execute(sql, {"username": self.username})
