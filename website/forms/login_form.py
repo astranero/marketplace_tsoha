@@ -6,7 +6,6 @@ from models.user_model import User, check_username
 from flask_login import current_user
 from werkzeug.security import check_password_hash
 from markupsafe import Markup
-from models.messaging_models import MessageManager
 
 class LoginForm(FlaskForm):
     username = StringField("Username", [validators.Length(

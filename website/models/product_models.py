@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
-marketplace_db = SQLAlchemy
+from __init__ import app
+marketplace_db = SQLAlchemy(app)
 
 class FilterManager:
     def __init__(

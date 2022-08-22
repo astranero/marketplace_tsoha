@@ -1,8 +1,17 @@
-import imp
-from uuid import uuid4
-from os import remove, path
-from datetime import timedelta
-from models.messaging_models import CommentManager, MessageManager, message_db
+from forms.messaging_form import (
+    MessageForm,
+    CommentReportForm,
+    ContactForm
+)
+from forms.login_form import LoginForm
+from forms.registration_form import (RegistrationForm, ProfileForm)
+from models.user_model import(
+    User,
+    get_profile_picture,
+    check_username,
+    fetch_profile_picture,
+    fetch_user
+)
 from models.product_models import(
     FilterManager,
     ProductManager,
@@ -18,48 +27,24 @@ from models.product_models import(
     delete_product,
     delete_product_images,
     update_issold,
-    count_sold_products,
-    marketplace_db
+    count_sold_products
 )
-from models.user_model import(
-    User,
-    get_profile_picture,
-    check_username,
-    fetch_profile_picture,
-    fetch_user,
-    user_db
-)
-from forms.profile_form import ProfileForm
-from forms.registration_form import RegistrationForm
-from forms.login_form import LoginForm
-from forms.messaging_form import (
-    MessageForm,
-    CommentReportForm,
-    ContactForm
-)
-from forms.password_change_form import PasswordChangeForm
-from __init__ import app, login_manager
-from werkzeug.middleware.proxy_fix import ProxyFix
-from flask_sqlalchemy import SQLAlchemy
-from flask_wtf.csrf import CSRFProtect
-from flask_login import current_user, login_required, login_user, logout_user
-from flask import Blueprint, render_template, redirect, flash, url_for, request
-from werkzeug.security import generate_password_hash
+from models.messaging_models import CommentManager, MessageManager
 from werkzeug.utils import secure_filename
-
+from werkzeug.security import generate_password_hash
+from flask import Blueprint, render_template, redirect, flash, url_for, request
+from flask_login import current_user, login_required, login_user, logout_user
+from flask_wtf.csrf import CSRFProtect
+from flask_sqlalchemy import SQLAlchemy
+from werkzeug.middleware.proxy_fix import ProxyFix
+from __init__ import app, login_manager
+from forms.password_change_form import PasswordChangeForm
+from uuid import uuid4
+from os import remove, path
 db = SQLAlchemy(app)
-user_db(app)
-marketplace_db(app)
-message_db(app)
 login_manager.init_app(app)
 csrf = CSRFProtect(app)
 app.wsgi_app = ProxyFix(app.wsgi_app)
-
-
-@login_manager.user_loader
-def user_loader(user_id):
-    return User.get(user_id)
-
 
 ALLOWED_PROFILE_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
@@ -70,6 +55,11 @@ def allowed_file(filename):
 
 filter_manager = FilterManager()
 views = Blueprint("views", __name__)
+
+
+@login_manager.user_loader
+def user_loader(user_id):
+    return User.get(user_id)
 
 
 @views.route("/login", methods=["GET", "POST"])
@@ -88,7 +78,7 @@ def login():
 @views.route("/logout")
 @login_required
 def logout():
-    User.delete_session(current_user)
+    current_user.delete_session()
     logout_user()
     flash("You have logged out.", category="success")
     return redirect(url_for("views.login"))
@@ -221,7 +211,7 @@ def product_add():
                 secured_filename = secure_filename(file.filename)
                 file.save(path.join(app.root_path,
                           "static/images/"+secured_filename))
-                product.insert_product_imgs(img_id=secured_filename)
+                new_product.insert_product_imgs(img_id=secured_filename)
             else:
                 flash("Acceptable extensions are: png, jpg, jpeg and gif.")
                 return redirect(request.url)
@@ -266,9 +256,9 @@ def comment(product_id):
     if request.method == "POST":
         new_comment = request.form["comment"]
         mgr = CommentManager(
-            new_comment,
-            product_id,
-            current_user.username
+            comment=new_comment,
+            product_id=product_id,
+            username=current_user.username
         )
         mgr.insert_comments()
         comments = CommentManager(product_id=product_id).fetch_comments()
@@ -406,7 +396,7 @@ def profile_edit(username):
 @login_required
 def delete_profile():
     current_user.delete_profile()
-    current_user.delete_session(current_user)
+    current_user.delete_session()
     logout_user()
     flash("Profile succesfully deleted.", category="success")
     return redirect(url_for("views.login"))
@@ -453,8 +443,8 @@ def report():
         product_id = message_data.product_id.data
         new_data = f"""In product_id={product_id}
         comment_id:{comment_id} user {reported}
-        commented: {comment}. {sender}
-        reported this with message: {message}."""
+        commented: {new_comment}. {sender}
+        reported this with message: {new_message}."""
         message_data.send_report(sender, new_data)
         flash("Report has been sent.")
         flash(new_data)
@@ -467,7 +457,7 @@ def messages(username):
     if username == current_user.username:
         data = MessageManager(receiver=username).fetch_senders()
         if not data:
-            data = MessageManager(username).fetch_receivers()
+            data = MessageManager(sender=username).fetch_receivers()
         return render_template("messages.html", username=username, data=data)
     return redirect(url_for("views.profile", username=username))
 
@@ -548,7 +538,7 @@ def picture_uploader():
                     secured_filename)
                 flash("Profile picture has been uploaded.")
                 try:
-                    if profile_picture != "default.gif":
+                    if profile_picture != "default.png":
                         remove(path.join(app.root_path,
                                "static/images/"+profile_picture))
                 except:

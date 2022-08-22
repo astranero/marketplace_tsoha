@@ -1,7 +1,8 @@
 from uuid import uuid4
 from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
-user_db = SQLAlchemy
+from __init__ import app
+user_db = SQLAlchemy(app)
 
 
 class User(UserMixin):
@@ -206,10 +207,10 @@ class User(UserMixin):
                             "authenticated": current_user.authenticated})
         user_db.session.commit()
 
-    def delete_session(self, current_user):
+    def delete_session(self):
         sql = """DELETE FROM sessions
         WHERE user_id=user_id;"""
-        user_db.session.execute(sql, {"user_id": current_user.user_id})
+        user_db.session.execute(sql, {"user_id": self.user_id})
         user_db.session.commit()
 
     def delete_profile(self):

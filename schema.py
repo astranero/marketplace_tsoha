@@ -96,7 +96,7 @@ def create_tables():
         profile_username TEXT,
         islike boolean,
         FOREIGN KEY(liker_username) REFERENCES users(username) ON DELETE CASCADE,
-        FOREIGN KEY(profile_username) REFERENCES users(username) ON DELETE CASCADE;)
+        FOREIGN KEY(profile_username) REFERENCES users(username) ON DELETE CASCADE);
         """)
 
     cur.execute("""CREATE TABLE IF NOT EXISTS messages(

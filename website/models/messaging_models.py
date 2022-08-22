@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
-message_db = SQLAlchemy
+from __init__ import app
+message_db = SQLAlchemy(app)
 
 
 class MessageManager():
@@ -72,7 +73,7 @@ class MessageManager():
         FROM messages WHERE sender=:sender
         GROUP BY receiver;"""
         data = message_db.session.execute(
-            sql, {"sender": self.sender}).fetchall()
+            sql, {"sender":self.sender}).fetchall()
         if data:
             return data
         return None

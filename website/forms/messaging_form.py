@@ -37,7 +37,7 @@ class MessageForm(FlaskForm):
             raise ValidationError("You can't send message to yourself.")
 
     def send_message(self, sender, receiver, message):
-        message = MessageManager(sender, message, receiver)
+        message = MessageManager(sender=sender, receiver=receiver, message=message)
         message.insert_message()
 
     def send_report(self, sender, message):

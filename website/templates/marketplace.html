@@ -120,11 +120,10 @@
                         <br>
                         <div class="card-title">
                             <p class="fw-bold title">{{ data.title.capitalize() }}</a>
+                            <p class="price">Price: {{ data.price }} € </p>
                         </div>
                         {% if data.username != current_user.username %}
                         {% with isSold = fetch_issold(data.id) %}
-
-                        <p class="price">Price: {{ data.price }} € </p>
                         {% if isSold %}
                         <a href="{{url_for('views.buy_product', product_id=data.id)}}"><button
                                 class="mt-1 btn btn-sm btn-success fw-bold" disabled data-toggle="confirmation"> Buy
