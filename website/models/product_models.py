@@ -1,5 +1,5 @@
-from routes import db
-
+from flask_sqlalchemy import SQLAlchemy
+marketplace_db = SQLAlchemy
 
 class FilterManager:
     def __init__(
@@ -40,7 +40,7 @@ class FilterManager:
             (CASE WHEN :sort = 'Price - Highest' THEN price END) DESC,
             (CASE WHEN :sort = 'Price - Lowest' THEN price END) ASC,
             (CASE WHEN :sort = 'A-Z (default)' THEN title END) ASC;"""
-            data = db.session.execute(
+            data = marketplace_db.session.execute(
                 sql,
                 {"condition": self.condition,
                  "category": self.category,
@@ -63,7 +63,7 @@ class FilterManager:
             (CASE WHEN :sort = 'Price - Highest' THEN price END) DESC,
             (CASE WHEN :sort = 'Price - Lowest' THEN price END) ASC,
             (CASE WHEN :sort = 'A-Z (default)' THEN title END) ASC;"""
-            data = db.session.execute(
+            data = marketplace_db.session.execute(
                 sql,
                 {"condition": self.condition,
                  "category": self.category,
@@ -81,7 +81,7 @@ class FilterManager:
             (CASE WHEN :sort = 'Price - Highest' THEN price END) DESC,
             (CASE WHEN :sort = 'Price - Lowest' THEN price END) ASC,
             (CASE WHEN :sort = 'A-Z (default)' THEN title END) ASC;"""
-            data = db.session.execute(
+            data = marketplace_db.session.execute(
                 sql, {"condition": self.condition,
                       "category": self.category,
                       "sort": self.sort,
@@ -98,12 +98,12 @@ class FilterManager:
             (CASE WHEN :sort = 'Price - Highest' THEN price END) DESC,
             (CASE WHEN :sort = 'Price - Lowest' THEN price END) ASC,
             (CASE WHEN :sort = 'A-Z (default)' THEN title END) ASC;"""
-            data = db.session.execute(
+            data = marketplace_db.session.execute(
                 sql, {"condition": self.condition,
                       "category": self.category,
                       "sort": self.sort,
                       "search": "%"+self.search+"%"}).fetchall()
-        db.session.commit()
+        marketplace_db.session.commit()
         self.search = ""
         return data
 
@@ -128,14 +128,14 @@ class ProductManager:
 
     def insert_product_imgs(self, img_id):
         sql = "INSERT INTO product_images(image_id, product_id) VALUES (:image_id, :product_id);"
-        db.session.execute(
+        marketplace_db.session.execute(
             sql, {"product_id": self.product_id, "image_id": img_id})
-        db.session.commit()
+        marketplace_db.session.commit()
 
     def insert_product(self):
         sql = """INSERT INTO products(id, title, details, condition, category, price, username)
         VALUES(:id, :title, :details, :condition, :category, :price, :username);"""
-        db.session.execute(sql,
+        marketplace_db.session.execute(sql,
                            {"id": self.product_id,
                             "title": self.title,
                             "details": self.details,
@@ -143,44 +143,44 @@ class ProductManager:
                             "category": self.category,
                             "price": self.price,
                             "username": self.username})
-        db.session.commit()
+        marketplace_db.session.commit()
 
     def update_title(self):
         sql = """UPDATE products SET title=:title WHERE id=:product_id;"""
-        db.session.execute(
+        marketplace_db.session.execute(
             sql, {"title": self.title, "product_id": self.product_id, })
-        db.session.commit()
+        marketplace_db.session.commit()
 
     def update_details(self):
         sql = """UPDATE products SET details=:details WHERE id=:product_id;"""
-        db.session.execute(
+        marketplace_db.session.execute(
             sql, {"product_id": self.product_id, "details": self.details})
-        db.session.commit()
+        marketplace_db.session.commit()
 
     def update_price(self):
         sql = """UPDATE products SET price=:price WHERE id=:product_id;"""
-        db.session.execute(
+        marketplace_db.session.execute(
             sql, {"product_id": self.product_id, "price": self.price})
-        db.session.commit()
+        marketplace_db.session.commit()
 
     def update_category(self):
         sql = """UPDATE products SET category=:category WHERE id=:product_id;"""
-        db.session.execute(
+        marketplace_db.session.execute(
             sql, {"product_id": self.product_id, "category": self.category})
-        db.session.commit()
+        marketplace_db.session.commit()
 
     def update_condition(self):
         sql = """UPDATE products SET condition=:condition WHERE id=:product_id;"""
-        db.session.execute(
+        marketplace_db.session.execute(
             sql, {"product_id": self.product_id, "condition": self.condition})
-        db.session.commit()
+        marketplace_db.session.commit()
 
 
 def fetch_issold(product_id):
     sql = """SELECT isSold
     FROM products
     WHERE id=:product_id;"""
-    return db.session.execute(sql,
+    return marketplace_db.session.execute(sql,
                               {"product_id": product_id}).fetchone()[0]
 
 
@@ -188,17 +188,17 @@ def update_issold(sold_to, is_sold: bool, product_id):
     sql = """UPDATE products
     SET isSold=:isSold, sold_to=:sold_to
     WHERE id=:product_id;"""
-    db.session.execute(sql,
+    marketplace_db.session.execute(sql,
                        {"product_id": product_id,
                         "isSold": is_sold,
                         "sold_to": sold_to})
-    db.session.commit()
+    marketplace_db.session.commit()
 
 
 def fetch_product_imgs(product_id):
     sql = "SELECT image_id FROM product_images WHERE product_id=:product_id;"
-    data = db.session.execute(sql, {"product_id": product_id}).fetchall()
-    db.session.commit()
+    data = marketplace_db.session.execute(sql, {"product_id": product_id}).fetchall()
+    marketplace_db.session.commit()
     return data
 
 
@@ -209,7 +209,7 @@ def fetch_product_img(product_id):
     WHERE product_id=:product_id 
     ORDER BY RANDOM() LIMIT 1;
     """
-    data = db.session.execute(sql,
+    data = marketplace_db.session.execute(sql,
                               {"product_id": product_id}).fetchone()
     if data is not None and data.image_id is not None:
         return data.image_id
@@ -221,20 +221,20 @@ def fetch_product(product_id):
     SELECT id, title, details, condition, category, price, username
     FROM products
     WHERE id =:product_id"""
-    return db.session.execute(sql,
+    return marketplace_db.session.execute(sql,
                               {"product_id": product_id}).fetchone()
 
 
 def fetch_bought_products(sold_to):
     sql = """SELECT id, title, price, username FROM products WHERE sold_to=:sold_to"""
-    return db.session.execute(sql, {"sold_to": sold_to}).fetchall()
+    return marketplace_db.session.execute(sql, {"sold_to": sold_to}).fetchall()
 
 
 def fetch_user_products(username):
     sql = """SELECT id, title, price, username
     FROM products
     WHERE isSold=False AND username=:username"""
-    return db.session.execute(sql,
+    return marketplace_db.session.execute(sql,
                               {"username": username}).fetchall()
 
 
@@ -242,26 +242,26 @@ def fetch_sold_products(username):
     sql = """SELECT id, title, price, username, sold_to
     FROM products
     WHERE isSold=True AND username=:username"""
-    return db.session.execute(sql,
+    return marketplace_db.session.execute(sql,
                               {"username": username}).fetchall()
 
 
 def count_sold_products(username):
     sql = """SELECT count(*) FROM products
     WHERE username=:username and isSold=True;"""
-    return db.session.execute(sql,
+    return marketplace_db.session.execute(sql,
                               {"username": username}).fetchone()[0]
 
 
 def delete_product(product_id):
     sql = """DELETE FROM products
     WHERE id=:product_id;"""
-    db.session.execute(sql,
-    {"product_id": product_id})
-    db.session.commit()
+    marketplace_db.session.execute(sql,
+                       {"product_id": product_id})
+    marketplace_db.session.commit()
 
 
 def delete_product_images(product_id):
     sql = """DELETE FROM product_images WHERE product_id=:product_id;"""
-    db.session.execute(sql, {"product_id": product_id})
-    db.session.commit()
+    marketplace_db.session.execute(sql, {"product_id": product_id})
+    marketplace_db.session.commit()

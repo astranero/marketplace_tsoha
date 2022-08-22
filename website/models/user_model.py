@@ -1,6 +1,7 @@
 from uuid import uuid4
 from flask_login import UserMixin
-from routes import db
+from flask_sqlalchemy import SQLAlchemy
+user_db = SQLAlchemy
 
 
 class User(UserMixin):
@@ -22,7 +23,7 @@ class User(UserMixin):
         (:username, :email, :password, :first_name, :last_name,  :street_address, :phone_number,
         :country, :city, :province, :postal_code, :birthday, :profile_picture_id)"""
 
-        db.session.execute(sql,
+        user_db.session.execute(sql,
                            {"username": self.username.lower(),
                             "email": registration_info["email"].lower(),
                             "password": self.password,
@@ -37,14 +38,14 @@ class User(UserMixin):
                             "postal_code": registration_info["postal_code"],
                             "birthday": registration_info["birthday"]}
                            )
-        db.session.commit()
+        user_db.session.commit()
         return True
 
     def get_user_information(self):
         sql = """SELECT first_name, last_name, email, street_address,
         phone_number, country, city, province, postal_code
         FROM users WHERE username=:username;"""
-        data = db.session.execute(
+        data = user_db.session.execute(
             sql, {"username": self.username}).fetchone()
         if data:
             response_object = {
@@ -65,116 +66,116 @@ class User(UserMixin):
         sql = """UPDATE users
         SET first_name=:first_name
         WHERE username=:username;"""
-        db.session.execute(sql,
+        user_db.session.execute(sql,
                            {"first_name": first_name,
                             "username": username})
-        db.session.commit()
+        user_db.session.commit()
 
     def update_last_name(self, username, last_name):
         sql = """UPDATE users
         SET last_name=:last_name
         WHERE username=:username;"""
-        db.session.execute(sql,
+        user_db.session.execute(sql,
                            {"last_name": last_name,
                             "username": username})
-        db.session.commit()
+        user_db.session.commit()
 
     def update_email(self, username, email):
         sql = """UPDATE users
         SET email=:email
         WHERE username=:username;"""
-        db.session.execute(sql,
+        user_db.session.execute(sql,
                            {"email": email,
                             "username": username})
-        db.session.commit()
+        user_db.session.commit()
 
     def update_street_address(self, username, street_address):
         sql = """UPDATE users
         SET street_address=:street_address
         WHERE username=:username;"""
-        db.session.execute(
+        user_db.session.execute(
             sql, {"street_address": street_address,
                   "username": username})
-        db.session.commit()
+        user_db.session.commit()
 
     def update_phone_number(self, username, phone_number):
         sql = """UPDATE users
         SET phone_number=:phone_number
         WHERE username=:username;"""
-        db.session.execute(sql,
+        user_db.session.execute(sql,
                            {"phone_number": phone_number,
                             "username": username})
-        db.session.commit()
+        user_db.session.commit()
 
     def update_country(self, username, country):
         sql = """UPDATE users
         SET country=:country
         WHERE username=:username;"""
-        db.session.execute(sql,
+        user_db.session.execute(sql,
                            {"country": country,
                             "username": username})
-        db.session.commit()
+        user_db.session.commit()
 
     def update_city(self, username, city):
         sql = """UPDATE users
         SET city=:city
         WHERE username=:username;"""
-        db.session.execute(sql,
+        user_db.session.execute(sql,
                            {"city": city,
                             "username": username})
-        db.session.commit()
+        user_db.session.commit()
 
     def update_province(self, username, province):
         sql = """UPDATE users
         SET province=:province
         WHERE username=:username;"""
-        db.session.execute(sql,
+        user_db.session.execute(sql,
                            {"province": province,
                             "username": username})
-        db.session.commit()
+        user_db.session.commit()
 
     def update_postal_code(self, username, postal_code):
         sql = """UPDATE users
         SET postal_code=:postal_code
         WHERE username=:username;"""
-        db.session.execute(sql,
+        user_db.session.execute(sql,
                            {"postal_code": postal_code,
                             "username": username})
-        db.session.commit()
+        user_db.session.commit()
 
     def update_password(self, username, password):
         sql = """UPDATE users
         SET password=:password
         WHERE username=:username;"""
-        db.session.execute(sql,
+        user_db.session.execute(sql,
                            {"password": password,
                             "username": username})
-        db.session.commit()
+        user_db.session.commit()
 
     def update_profile_picture(self, username, profile_picture_id):
         self.profile_picture_id = profile_picture_id
         sql = """UPDATE users
         SET profile_picture_id=:profile_picture_id
         WHERE username=:username;"""
-        db.session.execute(sql,
+        user_db.session.execute(sql,
                            {"profile_picture_id": profile_picture_id,
                             "username": username.lower()})
         sql = """UPDATE sessions
         SET profile_picture_id=:profile_picture_id
         WHERE username=:username;"""
-        db.session.execute(sql,
+        user_db.session.execute(sql,
                            {"profile_picture_id": profile_picture_id,
                             "username": username.lower()})
         self.profile_picture_id = profile_picture_id
-        db.session.commit()
+        user_db.session.commit()
 
     def get_password(self, username):
         sql = """SELECT password
         FROM users
         WHERE username=:username;"""
-        hash_password = db.session.execute(
+        hash_password = user_db.session.execute(
             sql, {"username": username.lower()}).fetchone()[0]
-        db.session.commit()
+        user_db.session.commit()
         return hash_password
 
     def fetch_email(self, username):
@@ -182,10 +183,10 @@ class User(UserMixin):
         SELECT email FROM users
         WHERE username=:username;
         """
-        db_email = db.session.execute(
+        user_db_email = user_db.session.execute(
             sql, {"username": username}).fetchone()[0]
-        db.session.commit()
-        return db_email
+        user_db.session.commit()
+        return user_db_email
 
     def create_session(self, current_user):
         sql = """INSERT INTO sessions
@@ -195,7 +196,7 @@ class User(UserMixin):
         (:user_id, :username, :password, 
         :profile_picture_id, :first_name, 
         :active, :authenticated );"""
-        db.session.execute(sql,
+        user_db.session.execute(sql,
                            {"user_id": current_user.user_id,
                             "username": current_user.username,
                             "password": current_user.password,
@@ -203,26 +204,26 @@ class User(UserMixin):
                             "active": current_user.active,
                             "profile_picture_id": current_user.profile_picture_id,
                             "authenticated": current_user.authenticated})
-        db.session.commit()
+        user_db.session.commit()
 
     def delete_session(self, current_user):
         sql = """DELETE FROM sessions
         WHERE user_id=user_id;"""
-        db.session.execute(sql, {"user_id": current_user.user_id})
-        db.session.commit()
+        user_db.session.execute(sql, {"user_id": current_user.user_id})
+        user_db.session.commit()
 
     def delete_profile(self):
         sql = """DELETE FROM users
         WHERE username=:username;"""
-        db.session.execute(sql, {"username": self.username})
+        user_db.session.execute(sql, {"username": self.username})
 
     def get(user_id):
         sql = """SELECT user_id, username, password, 
             first_name, profile_picture_id, active, authenticated
             FROM sessions WHERE
             user_id=:user_id"""
-        data = db.session.execute(sql, {"user_id": user_id}).fetchone()
-        db.session.commit()
+        data = user_db.session.execute(sql, {"user_id": user_id}).fetchone()
+        user_db.session.commit()
         if data:
             user_id = data[0]
             username = data[1]
@@ -246,15 +247,15 @@ class User(UserMixin):
     def like_profile(self, liker_username, profile_username, islike):
         sql = """INSERT INTO likes (liker_username, profile_username, islike)
         VALUES (:liker_username, :profile_username, :islike);"""
-        db.session.execute(sql, {"liker_username": liker_username,
+        user_db.session.execute(sql, {"liker_username": liker_username,
                                  "profile_username": profile_username,
                                  "islike": islike})
-        db.session.commit()
+        user_db.session.commit()
 
     def fetch_profile_islike(self, liker_username, profile_username):
         sql = """SELECT islike FROM likes
         WHERE profile_username=:profile_username AND liker_username=:liker_username;"""
-        islike = db.session.execute(sql, {"liker_username": liker_username,
+        islike = user_db.session.execute(sql, {"liker_username": liker_username,
                                           "profile_username": profile_username}).fetchone()
         if islike:
             return islike[0]
@@ -264,7 +265,7 @@ class User(UserMixin):
         sql = """SELECT EXISTS
         (SELECT 1 FROM likes
         WHERE profile_username=:profile_username AND liker_username=:liker_username);"""
-        has_liked = db.session.execute(sql,
+        has_liked = user_db.session.execute(sql,
                                        {"liker_username": liker_username,
                                         "profile_username": profile_username}).fetchone()
         if has_liked:
@@ -274,16 +275,16 @@ class User(UserMixin):
     def update_profile_like(self, liker_username, profile_username, islike):
         sql = """UPDATE likes SET islike=:islike
         WHERE liker_username=:liker_username AND profile_username=:profile_username;"""
-        db.session.execute(sql, {"liker_username": liker_username,
+        user_db.session.execute(sql, {"liker_username": liker_username,
                                  "profile_username": profile_username,
                                  "islike": islike})
-        db.session.commit()
+        user_db.session.commit()
 
     def count_profile_likes(self, profile_username):
         sql = """SELECT count(islike)
         FROM likes
         WHERE islike=True AND profile_username=:profile_username;"""
-        return db.session.execute(sql, {"profile_username": profile_username}).fetchone()[0]
+        return user_db.session.execute(sql, {"profile_username": profile_username}).fetchone()[0]
 
     def get_id(self):
         return str(self.user_id)
@@ -297,9 +298,9 @@ class User(UserMixin):
 
 def get_profile_picture(username):
     sql = "SELECT profile_picture_id FROM users WHERE username=:username;"
-    profile_picture_id = db.session.execute(
+    profile_picture_id = user_db.session.execute(
         sql,  {"username": username}).fetchone()[0]
-    db.session.commit()
+    user_db.session.commit()
     return profile_picture_id
 
 
@@ -309,10 +310,10 @@ def check_username(username):
     (SELECT username
     FROM users
     WHERE username=:username);"""
-    db_username = db.session.execute(
+    user_db_username = user_db.session.execute(
         sql, {"username": username.lower()}).fetchone()[0]
-    db.session.commit()
-    if db_username:
+    user_db.session.commit()
+    if user_db_username:
         return True
     return False
 
@@ -322,10 +323,10 @@ def check_email(email):
     (SELECT email
     FROM users
     WHERE email=:email);"""
-    db_email = db.session.execute(
+    user_db_email = user_db.session.execute(
         sql, {"email": email.lower()}).fetchone()[0]
-    db.session.commit()
-    if db_email:
+    user_db.session.commit()
+    if user_db_email:
         return True
     return False
 
@@ -334,7 +335,7 @@ def fetch_user(username):
     sql = """SELECT password, profile_picture_id, first_name
     FROM users
     WHERE username=:username;"""
-    data = db.session.execute(sql,
+    data = user_db.session.execute(sql,
                               {"username": username.lower()}).fetchone()
     if data:
         password = data[0]
@@ -356,7 +357,7 @@ def fetch_profile_picture(username):
     sql = """SELECT profile_picture_id
         FROM users
         WHERE username=:username;"""
-    profile_picture_id = db.session.execute(
+    profile_picture_id = user_db.session.execute(
         sql, {"username": username.lower()}).fetchone()[0]
-    db.session.commit()
+    user_db.session.commit()
     return profile_picture_id
