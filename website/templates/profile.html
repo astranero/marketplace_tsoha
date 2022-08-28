@@ -31,6 +31,7 @@
                     </div>
                     <div class="col-6">
                         <div class="row">
+                            {% if username != current_user.username %}
                             {% with islike = profile_manager.fetch_profile_islike(current_user.username, username) %}
                             {% with exists = profile_manager.has_liked_profile(current_user.username, username) %}
                             {% if islike == True and exists == True %}
@@ -42,6 +43,7 @@
                             {% endif %}
                             {% endwith %}
                             {% endwith %}
+                            {% endif %}
                         </div>
                         <br>
                         <div class="row">

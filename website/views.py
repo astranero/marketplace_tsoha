@@ -1,5 +1,6 @@
 from uuid import uuid4
 from os import remove, path
+import click
 from werkzeug.utils import secure_filename
 from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.security import generate_password_hash
@@ -42,6 +43,31 @@ db = SQLAlchemy(app)
 login_manager.init_app(app)
 csrf = CSRFProtect(app)
 app.wsgi_app = ProxyFix(app.wsgi_app)
+
+
+@app.cli.command("create-admin")
+@click.argument("username", prompt="Your username", help="Username to login to Asra with.")
+@click.argument("password", prompt="Your password", help="Password for your username.")
+def create_admin(username, password):
+    password_hash = generate_password_hash(password)
+    user = UserManager(username=username)
+    registration_info = {
+            "username": None,
+            "password": password_hash,
+            "first_name": None,
+            "email": str(uuid4())+"@admin.admin",
+            "last_name": None,
+            "street_address": None,
+            "phone_number": 000000000,
+            "country": None,
+            "city": None,
+            "province": None,
+            "postal_code": None,
+            "birthday": None,
+            "profile_picture_id": "default.png",
+            "is_admin": True
+    }
+    user = user.create_user(registration_info)
 
 ALLOWED_PROFILE_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
@@ -101,7 +127,8 @@ def register():
             "province": form.province.data,
             "postal_code": form.postal_code.data,
             "birthday": form.birthday.data,
-            "profile_picture_id": "default.png"
+            "profile_picture_id": "default.png",
+            "is_admin": False
         }
         user = user.create_user(registration_info)
         if user:
@@ -385,7 +412,7 @@ def profile_edit(username):
 @views.route("/delete_profile")
 @login_required
 def delete_profile():
-    current_user.delete_profile()
+    ProfileManager().delete_profile(current_user.username)
     current_user.delete_session()
     logout_user()
     flash("Profile succesfully deleted.", category="success")
@@ -540,6 +567,7 @@ def picture_uploader():
             else:
                 flash("Acceptable extensions are: png, jpg, jpeg and gif.")
     return redirect(url_for("views.profile_edit", username=current_user.username))
+
 
 @app.errorhandler(404)
 def error_404():
