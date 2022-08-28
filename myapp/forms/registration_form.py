@@ -7,8 +7,8 @@ from wtforms import(
     TelField, ValidationError,
     EmailField
 )
-from models.user_model import check_email, check_username
 from flask_login import current_user
+from models.user_model import UserManager, check_email, check_username
 
 
 class RegistrationForm(FlaskForm):
@@ -92,7 +92,7 @@ class ProfileForm(FlaskForm):
     city = StringField("City")
 
     def validate_email(self, email):
-        current_email = current_user.fetch_email(current_user.username)
+        current_email = UserManager(current_user.username).fetch_email()
         if current_email != email.data:
             email_exists = check_email(email.data)
             if email_exists:

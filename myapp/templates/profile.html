@@ -4,8 +4,8 @@
     <div class="card m-0 p-0 profile-box">
         <div class="row" style="font-weight: bold; color: #222222;">
             <div class="col-3 m-0 p-0 thumbnail">
-                <img src="{{url_for('static', filename='/images/'+get_profile_picture(username))}}"
-                    class=" mt-2 mb-2" style="width: 200px; z-index: 4; border-radius: 15px;">
+                <img src="{{url_for('static', filename='/images/'+get_profile_picture(username))}}" class=" mt-2 mb-2"
+                    style="width: 200px; z-index: 4; border-radius: 15px;">
             </div>
             <div class="col-3 mt-5 m-0 p-0" style="justify-content: start;">
                 <p class="title lead">{{username.capitalize()}}</p>
@@ -26,13 +26,13 @@
             <div class="col-3 mt-5 m-0 p-0" style="justify-content: start; align-content:flex-start;">
                 <div class="row">
                     <div class="col-6">
-                        <p class="lead"> Reputation:<br>{{current_user.count_profile_likes(username)}} likes</p>
+                        <p class="lead"> Reputation:<br>{{profile_manager.count_profile_likes(username)}} likes</p>
                         <p class="lead"> Items sold:<br>{{count_sold_products(username)}} </p>
                     </div>
                     <div class="col-6">
                         <div class="row">
-                            {% with islike = current_user.fetch_profile_islike(current_user.username, username) %}
-                            {% with exists = current_user.has_liked_profile(current_user.username, username) %}
+                            {% with islike = profile_manager.fetch_profile_islike(current_user.username, username) %}
+                            {% with exists = profile_manager.has_liked_profile(current_user.username, username) %}
                             {% if islike == True and exists == True %}
                             <a href="{{ url_for('views.dislike', username=username) }}"><i class="fa fa-thumbs-down"
                                     style="color:red;"> </i> </a>
@@ -90,9 +90,6 @@
                             {% endif %}
                         </div>
                     </div>
-                    <br>
-                    <br>
-                    <br>
                 </div>
             </div>
             {% endfor %}
@@ -186,7 +183,7 @@
                     <h5 class="modal-title">Message user {{username.capitalize()}}</h5>
                 </div>
                 <div class="modal-body">
-                    <form action="{{url_for('views.message', username=username)}}" method="POST">
+                    <form action="{{url_for('views.send_message', username=username)}}" method="POST">
                         {{ message_form.csrf_token }}
                         <br>
                         {{message_form.sender(class="form-control",type="hidden",

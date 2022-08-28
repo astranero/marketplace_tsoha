@@ -49,7 +49,7 @@
                 </div>
             </div>
         </div>
-        {% with data=current_user.get_user_information() %}
+        {% with data=user_manager(current_user.username).get_user_information() %}
         <form action="{{url_for('views.profile_edit', username=current_user.username)}}" method="POST">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             <div class="row">

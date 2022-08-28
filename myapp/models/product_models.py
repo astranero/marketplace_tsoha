@@ -2,6 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from __init__ import app
 marketplace_db = SQLAlchemy(app)
 
+
 class FilterManager:
     def __init__(
         self,
@@ -137,13 +138,13 @@ class ProductManager:
         sql = """INSERT INTO products(id, title, details, condition, category, price, username)
         VALUES(:id, :title, :details, :condition, :category, :price, :username);"""
         marketplace_db.session.execute(sql,
-                           {"id": self.product_id,
-                            "title": self.title,
-                            "details": self.details,
-                            "condition": self.condition,
-                            "category": self.category,
-                            "price": self.price,
-                            "username": self.username})
+                                       {"id": self.product_id,
+                                        "title": self.title,
+                                        "details": self.details,
+                                        "condition": self.condition,
+                                        "category": self.category,
+                                        "price": self.price,
+                                        "username": self.username})
         marketplace_db.session.commit()
 
     def update_title(self):
@@ -182,7 +183,7 @@ def fetch_issold(product_id):
     FROM products
     WHERE id=:product_id;"""
     return marketplace_db.session.execute(sql,
-                              {"product_id": product_id}).fetchone()[0]
+                                          {"product_id": product_id}).fetchone()[0]
 
 
 def update_issold(sold_to, is_sold: bool, product_id):
@@ -190,15 +191,16 @@ def update_issold(sold_to, is_sold: bool, product_id):
     SET isSold=:isSold, sold_to=:sold_to
     WHERE id=:product_id;"""
     marketplace_db.session.execute(sql,
-                       {"product_id": product_id,
-                        "isSold": is_sold,
-                        "sold_to": sold_to})
+                                   {"product_id": product_id,
+                                    "isSold": is_sold,
+                                    "sold_to": sold_to})
     marketplace_db.session.commit()
 
 
 def fetch_product_imgs(product_id):
     sql = "SELECT image_id FROM product_images WHERE product_id=:product_id;"
-    data = marketplace_db.session.execute(sql, {"product_id": product_id}).fetchall()
+    data = marketplace_db.session.execute(
+        sql, {"product_id": product_id}).fetchall()
     marketplace_db.session.commit()
     return data
 
@@ -211,7 +213,7 @@ def fetch_product_img(product_id):
     ORDER BY RANDOM() LIMIT 1;
     """
     data = marketplace_db.session.execute(sql,
-                              {"product_id": product_id}).fetchone()
+                                          {"product_id": product_id}).fetchone()
     if data is not None and data.image_id is not None:
         return data.image_id
     return "default.png"
@@ -223,7 +225,7 @@ def fetch_product(product_id):
     FROM products
     WHERE id =:product_id"""
     return marketplace_db.session.execute(sql,
-                              {"product_id": product_id}).fetchone()
+                                          {"product_id": product_id}).fetchone()
 
 
 def fetch_bought_products(sold_to):
@@ -236,7 +238,7 @@ def fetch_user_products(username):
     FROM products
     WHERE isSold=False AND username=:username"""
     return marketplace_db.session.execute(sql,
-                              {"username": username}).fetchall()
+                                          {"username": username}).fetchall()
 
 
 def fetch_sold_products(username):
@@ -244,21 +246,21 @@ def fetch_sold_products(username):
     FROM products
     WHERE isSold=True AND username=:username"""
     return marketplace_db.session.execute(sql,
-                              {"username": username}).fetchall()
+                                          {"username": username}).fetchall()
 
 
 def count_sold_products(username):
     sql = """SELECT count(*) FROM products
     WHERE username=:username and isSold=True;"""
     return marketplace_db.session.execute(sql,
-                              {"username": username}).fetchone()[0]
+                                          {"username": username}).fetchone()[0]
 
 
 def delete_product(product_id):
     sql = """DELETE FROM products
     WHERE id=:product_id;"""
     marketplace_db.session.execute(sql,
-                       {"product_id": product_id})
+                                   {"product_id": product_id})
     marketplace_db.session.commit()
 
 

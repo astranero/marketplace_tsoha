@@ -73,14 +73,14 @@ class MessageManager():
         FROM messages WHERE sender=:sender
         GROUP BY receiver;"""
         data = message_db.session.execute(
-            sql, {"sender":self.sender}).fetchall()
+            sql, {"sender": self.sender}).fetchall()
         if data:
             return data
         return None
 
-    def delete_message(self, message_id):
+    def delete_message(self):
         sql = "DELETE FROM messages WHERE id=:id;"
-        message_db.session.execute(sql, {"id": message_id})
+        message_db.session.execute(sql, {"id": self.message_id})
         message_db.session.commit()
 
 
@@ -110,3 +110,12 @@ class CommentManager():
         WHERE id=:comment_id;"""
         message_db.session.execute(sql, {"comment_id": self.comment_id})
         message_db.session.commit()
+
+
+def count_messages(sender, receiver):
+    sql = """SELECT count(id) FROM messages
+    WHERE (sender=:sender and receiver=:receiver)
+    OR (receiver=:sender and sender=:receiver);"""
+    message_count = message_db.session.execute(
+        sql, {"sender": sender, "receiver": receiver}).fetchone()
+    return message_count[0]

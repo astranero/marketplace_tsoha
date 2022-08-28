@@ -6,11 +6,10 @@ from forms.messaging_form import (
 from forms.login_form import LoginForm
 from forms.registration_form import (RegistrationForm, ProfileForm)
 from models.user_model import(
+    UserManager,
+    ProfileManager,
     User,
-    get_profile_picture,
-    check_username,
-    fetch_profile_picture,
-    fetch_user
+    check_username
 )
 from models.product_models import(
     FilterManager,
@@ -29,7 +28,7 @@ from models.product_models import(
     update_issold,
     count_sold_products
 )
-from models.messaging_models import CommentManager, MessageManager
+from models.messaging_models import CommentManager, MessageManager, count_messages
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash
 from flask import Blueprint, render_template, redirect, flash, url_for, request
@@ -59,7 +58,7 @@ views = Blueprint("views", __name__)
 
 @login_manager.user_loader
 def user_loader(user_id):
-    return User.get(user_id)
+    return User.get(current_user, user_id=user_id)
 
 
 @views.route("/login", methods=["GET", "POST"])
@@ -68,7 +67,7 @@ def login():
         return redirect(url_for("views.home"))
     form = LoginForm()
     if form.validate_on_submit():
-        user = fetch_user(form.username.data)
+        user = UserManager(username=form.username.data).fetch_user()
         login_user(user, remember=True)
         user.create_session(user)
         return redirect(url_for("views.home"))
@@ -90,14 +89,11 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         password_hash = generate_password_hash(form.password.data)
-        user_info = {
+        user = UserManager(username=form.username.data)
+        registration_info = {
             "username": form.username.data,
             "password": password_hash,
-            "first_name": form.first_name.data
-        }
-        user = User(user_id=uuid4(), user_info=user_info)
-
-        registration_info = {
+            "first_name": form.first_name.data,
             "email": form.email.data,
             "last_name": form.last_name.data,
             "street_address": form.street_address.data,
@@ -108,8 +104,8 @@ def register():
             "postal_code": form.postal_code.data,
             "birthday": form.birthday.data
         }
-        response = user.create_user(registration_info)
-        if response:
+        user = user.create_user(registration_info)
+        if user:
             user.create_session(user)
             login_user(user, remember=True)
             flash("Congratulations, your registration is complete.",
@@ -128,17 +124,20 @@ def post_injection():
         message_form=MessageForm(),
         report_form=CommentReportForm(),
         message_manager=MessageManager,
-        get_profile_picture=get_profile_picture,
+        profile_manager = ProfileManager(),
+        user_manager = UserManager,
         filter_manager=FilterManager(),
+        get_profile_picture=ProfileManager().get_profile_picture,
         fetch_issold=fetch_issold,
         fetch_product_imgs=fetch_product_imgs,
         fetch_product_img=fetch_product_img,
         fetch_product=fetch_product,
-        fetch_profile_picture=fetch_profile_picture,
+        fetch_profile_picture=ProfileManager().fetch_profile_picture,
         fetch_bought_products=fetch_bought_products,
         fetch_sold_products=fetch_sold_products,
         fetch_user_products=fetch_user_products,
-        count_sold_products=count_sold_products
+        count_sold_products=count_sold_products,
+        count_messages=count_messages
     )
 
 
@@ -337,6 +336,7 @@ def profile(username):
 @login_required
 def profile_edit(username):
     if username == current_user.username:
+        mgr = UserManager(username=username)
         if "current_password" not in request.form:
             username = current_user.username
             form = ProfileForm()
@@ -351,24 +351,24 @@ def profile_edit(username):
             city = form.city.data
             if form.validate_on_submit():
                 if first_name:
-                    current_user.update_first_name(username, first_name)
+                    mgr.update_first_name(first_name)
                 if last_name:
-                    current_user.update_last_name(username, last_name)
+                    mgr.update_last_name(last_name)
                 if email:
-                    current_user.update_email(username, email)
+                    mgr.update_email(email)
                 if phone_number:
-                    current_user.update_phone_number(username, phone_number)
+                    mgr.update_phone_number(phone_number)
                 if street_address:
-                    current_user.update_street_address(
-                        username, street_address)
+                    mgr.update_street_address(
+                        street_address)
                 if country:
-                    current_user.update_country(username, country)
+                    mgr.update_country(country)
                 if province:
-                    current_user.update_province(username, province)
+                    mgr.update_province(province)
                 if postal_code:
-                    current_user.update_postal_code(username, postal_code)
+                    mgr.update_postal_code(postal_code)
                 if city:
-                    current_user.update_city(username, city)
+                    mgr.update_city(city)
                 flash("Your profile has been updated.")
             return render_template(
                 "profile_edit.html",
@@ -380,8 +380,7 @@ def profile_edit(username):
             if form.validate_on_submit():
                 hashed_password = generate_password_hash(
                     form.new_password.data)
-                current_user.update_password(
-                    current_user.username, hashed_password)
+                mgr.update_password(hashed_password)
                 flash("Your password has been changed.")
             return render_template(
                 "profile_edit.html",
@@ -418,14 +417,16 @@ def contact():
 
 
 @login_required
-@views.route("/profile/<username>/message", methods=["POST"])
-def message(username):
+@views.route("/send_message", methods=["POST", "GET"])
+def send_message():
     message_data = MessageForm()
     if message_data.validate_on_submit:
-        message_data.send_message(
+        if not message_data.send_message(
             sender=message_data.sender.data,
             message=message_data.message.data,
-            receiver=message_data.receiver.data)
+            receiver=message_data.receiver.data):
+            flash("You can't message yourself.")
+            redirect(url_for("views.messages", username=current_user.username))
         flash("Your message has been sent.")
     return redirect(url_for("views.messages", username=current_user.username))
 
@@ -447,7 +448,6 @@ def report():
         reported this with message: {new_message}."""
         message_data.send_report(sender, new_data)
         flash("Report has been sent.")
-        flash(new_data)
     return redirect(url_for("views.product", product_id=product_id))
 
 
@@ -465,16 +465,17 @@ def messages(username):
 @login_required
 @views.route("/like/<username>", methods=["POST", "GET"])
 def like(username):
-    exists = current_user.has_liked_profile(current_user.username, username)
-    islike = current_user.fetch_profile_islike(current_user.username, username)
+    profile_mgr = ProfileManager()
+    exists = profile_mgr.has_liked_profile(current_user.username, username)
+    islike = profile_mgr.fetch_profile_islike(current_user.username, username)
     if exists and not islike:
-        current_user.update_profile_like(
+        profile_mgr.update_profile_like(
             current_user.username,
             username,
             True
         )
     if not exists:
-        current_user.like_profile(
+        profile_mgr.like_profile(
             current_user.username,
             username,
             True
@@ -485,10 +486,11 @@ def like(username):
 @login_required
 @views.route("/dislike/<username>", methods=["POST", "GET"])
 def dislike(username):
-    current_user.update_profile_like(
+    profile_mgr = ProfileManager()
+    profile_mgr.update_profile_like(
         current_user.username,
         username,
-        False
+        islike=False
     )
     return redirect(url_for("views.profile", username=username))
 
@@ -507,7 +509,6 @@ def delete_all_messages(username, sender):
 @login_required
 @views.route("/profile/<username>/messages/delete_message/<message_id>", methods=["GET"])
 def delete_message(username, message_id):
-    print(f"{current_user.username} {username}")
     if current_user.username == username:
         MessageManager(message_id=message_id).delete_message()
     return redirect(url_for("views.messages", username=current_user.username))
@@ -516,9 +517,10 @@ def delete_message(username, message_id):
 @views.route("/uploader", methods=["POST"])
 @login_required
 def picture_uploader():
+    profile_mgr = ProfileManager()
     if request.method == "POST":
         if "profile_picture" in request.files:
-            profile_picture = fetch_profile_picture(current_user.username)
+            profile_picture = profile_mgr.fetch_profile_picture(current_user.username)
             file = request.files.get("profile_picture")
             if file.filename == '':
                 flash('No selected file')
@@ -533,7 +535,7 @@ def picture_uploader():
                         app.root_path,
                         "static/images/"+secured_filename)
                 )
-                current_user.update_profile_picture(
+                profile_mgr.update_profile_picture(
                     current_user.username,
                     secured_filename)
                 flash("Profile picture has been uploaded.")

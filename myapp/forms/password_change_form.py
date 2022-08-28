@@ -6,6 +6,7 @@ from wtforms import (PasswordField,
                      )
 from flask_login import current_user
 from werkzeug.security import check_password_hash
+from models.user_model import UserManager
 
 
 class PasswordChangeForm(FlaskForm):
@@ -31,6 +32,6 @@ class PasswordChangeForm(FlaskForm):
                 one special character.""")
 
     def validate_current_password(self, current_password):
-        hashed_password = current_user.get_password(current_user.username)
+        hashed_password = UserManager(current_user.username).get_password()
         if not check_password_hash(hashed_password, current_password.data):
             raise ValidationError("Your password is incorrect.")

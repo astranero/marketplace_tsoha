@@ -68,8 +68,7 @@
                                 Buy product</button></a>
                         {% endif %}
                         {% endwith %}
-                        <a href="#"><button
-                                class="mt-0 btn btn-m btn-secondary fw-bold" data-bs-toggle="modal"
+                        <a href="#"><button class="mt-0 btn btn-m btn-secondary fw-bold" data-bs-toggle="modal"
                                 data-bs-target="#message-profile">
                                 Contact Seller</button></a>
                         <br>
@@ -223,10 +222,9 @@
                         </div>
                         {% with isSold = fetch_issold(product.id) %}
                         {% if isSold %}
-                        <a href="#"><button
-                                class="mt-0 btn btn btn-danger fw-bold disabled">Delete</button></a>
-                                <br><br><br>
-                                <p>Product has already been sold.</p>
+                        <a href="#"><button class="mt-0 btn btn btn-danger fw-bold disabled">Delete</button></a>
+                        <br><br><br>
+                        <p>Product has already been sold.</p>
                         {% else %}
                         <a href="{{url_for('views.product_delete', product_id=product.id)}}"
                             onclick="return confirm('Confirm deletion')"><button
@@ -246,7 +244,7 @@
                     <h5 class="modal-title">Message user {{product.username.capitalize()}}</h5>
                 </div>
                 <div class="modal-body">
-                    <form action="{{url_for('views.message', username=username)}}" method="POST">
+                    <form action="{{url_for('views.send_message', username=username)}}" method="POST">
                         {{ message_form.csrf_token }}
                         <br>
                         {{message_form.sender(class="form-control",type="hidden",

@@ -1,5 +1,4 @@
-from models.messaging_models import MessageManager
-from models.user_model import check_username
+
 from flask_wtf import FlaskForm
 from wtforms import(
     StringField,
@@ -10,6 +9,7 @@ from wtforms import(
 from flask_login import current_user
 from markupsafe import Markup
 from models.messaging_models import MessageManager
+from models.user_model import UserManager
 
 
 class MessageForm(FlaskForm):
@@ -26,7 +26,7 @@ class MessageForm(FlaskForm):
                              validators.DataRequired()])
 
     def validate_receiver(self, receiver):
-        username_exists = check_username(receiver)
+        username_exists = UserManager.check_username(receiver)
         if not username_exists:
             raise ValidationError(
                 Markup("Username doesn't exist"))
@@ -37,11 +37,15 @@ class MessageForm(FlaskForm):
             raise ValidationError("You can't send message to yourself.")
 
     def send_message(self, sender, receiver, message):
-        message = MessageManager(sender=sender, receiver=receiver, message=message)
-        message.insert_message()
+        if receiver != sender:
+            message = MessageManager(
+                sender=sender, receiver=receiver, message=message)
+            message.insert_message()
+            return True
+        return False
 
     def send_report(self, sender, message):
-        message = MessageManager(sender, message, tag="report")
+        message = MessageManager(sender=sender, message=message, tag="report")
         message.insert_message()
 
 
@@ -55,12 +59,12 @@ class CommentReportForm(FlaskForm):
     comment_id = StringField("comment_id", [validators.Length(
         min=4, max=40), validators.DataRequired()])
     comment = StringField("comment", [validators.Length(
-        min=4, max=40), validators.DataRequired()])
+        min=0, max=350), validators.DataRequired()])
     message = TextAreaField("message", [validators.Length(
         min=0), validators.DataRequired()])
 
     def validate_reported(self, reported):
-        username_exists = check_username(reported)
+        username_exists = UserManager.check_username(reported)
         if not username_exists:
             raise ValidationError(
                 Markup("Username doesn't exist"))
@@ -71,7 +75,7 @@ class CommentReportForm(FlaskForm):
             raise ValidationError("You can't send message to yourself.")
 
     def send_report(self, sender, message):
-        message = MessageManager(sender, message, tag="report")
+        message = MessageManager(sender=sender, message=message, tag="report")
         message.insert_message()
 
 
@@ -85,5 +89,6 @@ class ContactForm(FlaskForm):
         min=4)])
 
     def send_message(self, sender, message):
-        message = MessageManager(sender, message, tag="contact-us")
+        message = MessageManager(
+            sender=sender, message=message, tag="contact-us")
         message.insert_message()

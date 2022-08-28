@@ -130,7 +130,7 @@
                                     <h5 class="modal-title">Send a message:</h5>
                                 </div>
                                 <div class="modal-body">
-                                    <form action="{{url_for('views.message', username=current_user.username)}}"
+                                    <form action="{{url_for('views.send_message', username=current_user.username)}}"
                                         method="POST">
                                         {{ message_form.csrf_token }}
                                         <br>

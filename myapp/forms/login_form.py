@@ -1,11 +1,12 @@
 from flask_wtf import FlaskForm
 from wtforms import (
     StringField, PasswordField,
-    validators,ValidationError)
-from models.user_model import User, check_username
-from flask_login import current_user
+    validators, ValidationError)
 from werkzeug.security import check_password_hash
 from markupsafe import Markup
+from flask_login import current_user
+from models.user_model import UserManager, check_username
+
 
 class LoginForm(FlaskForm):
     username = StringField("Username", [validators.Length(
@@ -20,7 +21,7 @@ class LoginForm(FlaskForm):
         self.password_validation(self.password)
 
     def password_validation(self, password):
-        hashed_password = User.get_password(current_user, self.username.data.lower())
+        hashed_password = UserManager(self.username.data.lower()).get_password()
         if not check_password_hash(hashed_password, password.data):
             raise ValidationError(
                 "Your username or password is incorrect.")
