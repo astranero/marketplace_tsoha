@@ -48,7 +48,6 @@ class User(UserMixin):
     def get_id(self):
         return str(self.user_id)
 
-    @set
     def set_profile_picture(self, profile_picture_id):
         self.profile_picture_id = profile_picture_id
 
@@ -64,7 +63,7 @@ class User(UserMixin):
     def is_superuser(self):
         return self.issuperuser
 
-    def create_session(self, current_user):
+    def create_session(self, user):
         sql = """INSERT INTO sessions
         (user_id, username, password,
         profile_picture_id, first_name, active, authenticated)
@@ -73,13 +72,13 @@ class User(UserMixin):
         :profile_picture_id, :first_name,
         :active, :authenticated );"""
         user_db.session.execute(sql,
-                                {"user_id": current_user.user_id,
-                                 "username": current_user.username,
-                                 "password": current_user.password,
-                                 "first_name": current_user.first_name,
-                                 "active": current_user.active,
-                                 "profile_picture_id": current_user.profile_picture_id,
-                                 "authenticated": current_user.authenticated})
+                                {"user_id": user.user_id,
+                                 "username": user.username,
+                                 "password": user.password,
+                                 "first_name": user.first_name,
+                                 "active": user.active,
+                                 "profile_picture_id": user.profile_picture_id,
+                                 "authenticated": user.authenticated})
         user_db.session.commit()
 
     def delete_session(self):

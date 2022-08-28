@@ -1,14 +1,13 @@
 from uuid import uuid4
 from os import remove, path
 from werkzeug.utils import secure_filename
+from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.security import generate_password_hash
 from flask import Blueprint, render_template, redirect, flash, url_for, request
 from flask_login import current_user, login_required, login_user, logout_user
 from flask_wtf.csrf import CSRFProtect
 from flask_sqlalchemy import SQLAlchemy
-from werkzeug.middleware.proxy_fix import ProxyFix
 from __init__ import app, login_manager
-
 from forms.messaging_form import (
     MessageForm,
     CommentReportForm,
@@ -34,8 +33,6 @@ from models.product_models import(
     fetch_bought_products,
     fetch_sold_products,
     fetch_user_products,
-    delete_product,
-    delete_product_images,
     update_issold,
     count_sold_products
 )
@@ -104,7 +101,7 @@ def register():
             "province": form.province.data,
             "postal_code": form.postal_code.data,
             "birthday": form.birthday.data,
-            "profile_picture_id":"default.png"
+            "profile_picture_id": "default.png"
         }
         user = user.create_user(registration_info)
         if user:
@@ -543,6 +540,15 @@ def picture_uploader():
             else:
                 flash("Acceptable extensions are: png, jpg, jpeg and gif.")
     return redirect(url_for("views.profile_edit", username=current_user.username))
+
+@app.errorhandler(404)
+def error_404(error):
+    return render_template("404.html"), 404
+
+
+@app.errorhandler(500)
+def error_500(error):
+    return render_template("500.html"), 500
 
 
 @login_manager.unauthorized_handler

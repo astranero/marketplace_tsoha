@@ -9,8 +9,7 @@ from wtforms import(
 from flask_login import current_user
 from markupsafe import Markup
 from models.messaging_models import MessageManager
-from models.user_model import UserManager
-
+from models.user_model import check_username
 
 class MessageForm(FlaskForm):
     sender = StringField("sender", [validators.Length(
@@ -26,7 +25,7 @@ class MessageForm(FlaskForm):
                              validators.DataRequired()])
 
     def validate_receiver(self, receiver):
-        username_exists = UserManager.check_username(receiver)
+        username_exists = check_username(receiver)
         if not username_exists:
             raise ValidationError(
                 Markup("Username doesn't exist"))
@@ -64,7 +63,7 @@ class CommentReportForm(FlaskForm):
         min=0), validators.DataRequired()])
 
     def validate_reported(self, reported):
-        username_exists = UserManager.check_username(reported)
+        username_exists = check_username(reported)
         if not username_exists:
             raise ValidationError(
                 Markup("Username doesn't exist"))
