@@ -36,8 +36,8 @@ from models.product_models import(
     update_issold,
     count_sold_products
 )
-from forms.password_change_form import PasswordChangeForm
 from models.messaging_models import CommentManager, MessageManager, count_messages
+from forms.password_change_form import PasswordChangeForm
 db = SQLAlchemy(app)
 login_manager.init_app(app)
 csrf = CSRFProtect(app)
@@ -542,12 +542,12 @@ def picture_uploader():
     return redirect(url_for("views.profile_edit", username=current_user.username))
 
 @app.errorhandler(404)
-def error_404(error):
+def error_404():
     return render_template("404.html"), 404
 
 
 @app.errorhandler(500)
-def error_500(error):
+def error_500():
     return render_template("500.html"), 500
 
 
