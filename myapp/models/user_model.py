@@ -1,5 +1,5 @@
 from uuid import uuid4
-from flask_login import UserMixin
+from flask_login import UserMixin, current_user
 from flask_sqlalchemy import SQLAlchemy
 from __init__ import app
 user_db = SQLAlchemy(app)
@@ -47,6 +47,10 @@ class User(UserMixin):
 
     def get_id(self):
         return str(self.user_id)
+
+    @set
+    def set_profile_picture(self, profile_picture_id):
+        self.profile_picture_id = profile_picture_id
 
     @property
     def is_authenticated(self):
@@ -103,7 +107,7 @@ class UserManager():
                                  "password": registration_info["password"],
                                  "first_name": registration_info["first_name"],
                                  "last_name": registration_info["last_name"],
-                                 "profile_picture_id": "default.png",
+                                 "profile_picture_id": registration_info["profile_picture_id"],
                                  "street_address": registration_info["street_address"],
                                  "phone_number": registration_info["phone_number"],
                                  "country": registration_info["country"],
@@ -328,7 +332,7 @@ class ProfileManager():
         return profile_picture_id
 
     def update_profile_picture(self, username, profile_picture_id):
-        self.profile_picture_id = profile_picture_id
+        current_user.set_profile_picture(profile_picture_id)
         sql = """UPDATE users
         SET profile_picture_id=:profile_picture_id
         WHERE username=:username;"""
@@ -341,13 +345,12 @@ class ProfileManager():
         user_db.session.execute(sql,
                                 {"profile_picture_id": profile_picture_id,
                                  "username": username.lower()})
-        self.profile_picture_id = profile_picture_id
         user_db.session.commit()
 
-    def delete_profile(self):
+    def delete_profile(self, username):
         sql = """DELETE FROM users
             WHERE username=:username;"""
-        user_db.session.execute(sql, {"username": self.username})
+        user_db.session.execute(sql, {"username": username})
 
 
 def check_username(username):

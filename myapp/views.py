@@ -1,3 +1,14 @@
+from uuid import uuid4
+from os import remove, path
+from werkzeug.utils import secure_filename
+from werkzeug.security import generate_password_hash
+from flask import Blueprint, render_template, redirect, flash, url_for, request
+from flask_login import current_user, login_required, login_user, logout_user
+from flask_wtf.csrf import CSRFProtect
+from flask_sqlalchemy import SQLAlchemy
+from werkzeug.middleware.proxy_fix import ProxyFix
+from __init__ import app, login_manager
+
 from forms.messaging_form import (
     MessageForm,
     CommentReportForm,
@@ -28,18 +39,8 @@ from models.product_models import(
     update_issold,
     count_sold_products
 )
-from models.messaging_models import CommentManager, MessageManager, count_messages
-from werkzeug.utils import secure_filename
-from werkzeug.security import generate_password_hash
-from flask import Blueprint, render_template, redirect, flash, url_for, request
-from flask_login import current_user, login_required, login_user, logout_user
-from flask_wtf.csrf import CSRFProtect
-from flask_sqlalchemy import SQLAlchemy
-from werkzeug.middleware.proxy_fix import ProxyFix
-from __init__ import app, login_manager
 from forms.password_change_form import PasswordChangeForm
-from uuid import uuid4
-from os import remove, path
+from models.messaging_models import CommentManager, MessageManager, count_messages
 db = SQLAlchemy(app)
 login_manager.init_app(app)
 csrf = CSRFProtect(app)
@@ -102,7 +103,8 @@ def register():
             "city": form.city.data,
             "province": form.province.data,
             "postal_code": form.postal_code.data,
-            "birthday": form.birthday.data
+            "birthday": form.birthday.data,
+            "profile_picture_id":"default.png"
         }
         user = user.create_user(registration_info)
         if user:
@@ -124,8 +126,8 @@ def post_injection():
         message_form=MessageForm(),
         report_form=CommentReportForm(),
         message_manager=MessageManager,
-        profile_manager = ProfileManager(),
-        user_manager = UserManager,
+        profile_manager=ProfileManager(),
+        user_manager=UserManager,
         filter_manager=FilterManager(),
         get_profile_picture=ProfileManager().get_profile_picture,
         fetch_issold=fetch_issold,
@@ -300,7 +302,7 @@ def product_edit(product_id):
         product_mgr.update_category()
         product_mgr.update_condition()
         flash("Your product has been updated.")
-        return redirect(url_for("views.product", product_id=product_id))
+    return redirect(url_for("views.product", product_id=product_id))
 
 
 @views.route("/buy_product/<product_id>")
@@ -349,33 +351,25 @@ def profile_edit(username):
             province = form.province.data
             postal_code = form.postal_code.data
             city = form.city.data
+
             if form.validate_on_submit():
-                if first_name:
-                    mgr.update_first_name(first_name)
-                if last_name:
-                    mgr.update_last_name(last_name)
-                if email:
-                    mgr.update_email(email)
-                if phone_number:
-                    mgr.update_phone_number(phone_number)
-                if street_address:
-                    mgr.update_street_address(
-                        street_address)
-                if country:
-                    mgr.update_country(country)
-                if province:
-                    mgr.update_province(province)
-                if postal_code:
-                    mgr.update_postal_code(postal_code)
-                if city:
-                    mgr.update_city(city)
+                mgr.update_first_name(first_name)
+                mgr.update_last_name(last_name)
+                mgr.update_email(email)
+                mgr.update_phone_number(phone_number)
+                mgr.update_street_address(
+                    street_address)
+                mgr.update_country(country)
+                mgr.update_province(province)
+                mgr.update_postal_code(postal_code)
+                mgr.update_city(city)
                 flash("Your profile has been updated.")
             return render_template(
                 "profile_edit.html",
                 username=current_user.username,
                 profile_form=form)
 
-        elif "current_password" in request.form:
+        if "current_password" in request.form:
             form = PasswordChangeForm()
             if form.validate_on_submit():
                 hashed_password = generate_password_hash(
@@ -422,9 +416,9 @@ def send_message():
     message_data = MessageForm()
     if message_data.validate_on_submit:
         if not message_data.send_message(
-            sender=message_data.sender.data,
-            message=message_data.message.data,
-            receiver=message_data.receiver.data):
+                sender=message_data.sender.data,
+                message=message_data.message.data,
+                receiver=message_data.receiver.data):
             flash("You can't message yourself.")
             redirect(url_for("views.messages", username=current_user.username))
         flash("Your message has been sent.")
@@ -520,7 +514,8 @@ def picture_uploader():
     profile_mgr = ProfileManager()
     if request.method == "POST":
         if "profile_picture" in request.files:
-            profile_picture = profile_mgr.fetch_profile_picture(current_user.username)
+            profile_picture = profile_mgr.fetch_profile_picture(
+                current_user.username)
             file = request.files.get("profile_picture")
             if file.filename == '':
                 flash('No selected file')
@@ -543,7 +538,7 @@ def picture_uploader():
                     if profile_picture != "default.png":
                         remove(path.join(app.root_path,
                                "static/images/"+profile_picture))
-                except:
+                except FileNotFoundError:
                     pass
             else:
                 flash("Acceptable extensions are: png, jpg, jpeg and gif.")
