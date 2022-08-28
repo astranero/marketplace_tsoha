@@ -10,17 +10,11 @@ conn = psycopg2.connect(
 cur = conn.cursor()
 
 
-cur.execute('''DROP TABLE IF EXISTS comment_likes''')
-cur.execute('''DROP TABLE IF EXISTS post_images''')
-cur.execute('''DROP TABLE IF EXISTS post_likes''')
-cur.execute('''DROP TABLE IF EXISTS posts''')
 cur.execute('''DROP TABLE IF EXISTS sessions''')
 cur.execute('''DROP TABLE IF EXISTS comments''')
 cur.execute('DROP TABLE IF EXISTS product_images')
 cur.execute('''DROP TABLE IF EXISTS messages''')
-cur.execute('''DROP TABLE IF EXISTS contact_us_messages''')
 cur.execute('''DROP TABLE IF EXISTS likes''')
-cur.execute('''DROP TABLE IF EXISTS visitors''')
 cur.execute('''DROP TABLE IF EXISTS products''')
 cur.execute('''DROP TABLE IF EXISTS users''')
 
