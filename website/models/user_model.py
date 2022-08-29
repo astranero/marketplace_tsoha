@@ -16,7 +16,7 @@ class User(UserMixin):
         self.username = user_info["username"].lower()
         self.authenticated = authenticated
         self.active = active
-        self.is_admin= is_admin
+        self.is_admin = is_admin
 
     def get(self, user_id):
         sql = """SELECT user_id, username, password,
@@ -254,6 +254,15 @@ class UserManager():
         WHERE username=:username;"""
         user_db.session.execute(sql,
                                 {"password": password,
+                                 "username": self.username})
+        user_db.session.commit()
+    
+    def update_activity(self, active):
+        sql = """UPDATE users
+        SET active=:active
+        WHERE username=:username;"""
+        user_db.session.execute(sql,
+                                {"active": active,
                                  "username": self.username})
         user_db.session.commit()
 
