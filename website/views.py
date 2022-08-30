@@ -4,7 +4,7 @@ import click
 from werkzeug.utils import secure_filename
 from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.security import generate_password_hash
-from flask import Blueprint, render_template, redirect, flash, url_for, request
+from flask import Blueprint, render_template, redirect, flash, url_for, request, abort
 from flask_login import current_user, login_required, login_user, logout_user
 from flask_wtf.csrf import CSRFProtect
 from flask_sqlalchemy import SQLAlchemy
@@ -46,8 +46,8 @@ app.wsgi_app = ProxyFix(app.wsgi_app)
 
 
 @app.cli.command("create-admin")
-@click.argument("username", prompt="Your username", help="Username to login to Asra with.")
-@click.argument("password", prompt="Your password", help="Password for your username.")
+@click.argument("username")
+@click.argument("password")
 def create_admin(username, password):
     password_hash = generate_password_hash(password)
     user = UserManager(username=username)
@@ -179,6 +179,9 @@ def home():
 @views.route("/market", methods=["GET"])
 @login_required
 def marketplace():
+    if not current_user.is_active:
+        flash("You can't access this page since you have been banned.")
+        return redirect(url_for("views.logout"))
     products = filter_manager.fetch_products()
     return render_template("marketplace.html", products=products)
 
@@ -568,6 +571,12 @@ def picture_uploader():
                 flash("Acceptable extensions are: png, jpg, jpeg and gif.")
     return redirect(url_for("views.profile_edit", username=current_user.username))
 
+@views.route("/admin", methods=["GET"])
+@login_required
+def admin():
+    if current_user.is_admin:
+        return render_template("admin.html")
+    return abort(404)
 
 @app.errorhandler(404)
 def error_404():

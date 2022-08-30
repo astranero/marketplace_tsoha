@@ -87,6 +87,13 @@
                             </a></h5>
                     </div>
                     {% endif %}
+                    {% if current_user.is_admin %} 
+                    <div class="nav col-15 md-5 justify-content-end">
+                        <h5><a href="{{ url_for('views.admin') }}" class="nav-link w3-button w3-bar-item"
+                                style="color:#030e12"> Admin page
+                            </a></h5>
+                    </div>
+                    {% endif %}
                     <div class="nav col-15 md-5 justify-content-end">
                         <h5><a href="{{ url_for('views.contact') }}" class="nav-link w3-button w3-bar-item"
                                 data-bs-toggle="modal" data-bs-target="#contact-us" style="color:#030e12"> Contact us

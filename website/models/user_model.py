@@ -98,10 +98,10 @@ class UserManager():
     def create_user(self, registration_info):
         sql = """INSERT INTO users
         (username, email, password, first_name,  last_name, street_address,
-        phone_number, country, city, province, postal_code, birthday,  profile_picture_id, is_admin)
+        phone_number, country, city, province, postal_code, birthday,  profile_picture_id)
         VALUES
         (:username, :email, :password, :first_name, :last_name,  :street_address, :phone_number,
-        :country, :city, :province, :postal_code, :birthday, :profile_picture_id, :is_admin)"""
+        :country, :city, :province, :postal_code, :birthday, :profile_picture_id)"""
 
         user_db.session.execute(sql,
                                 {"username": self.username.lower(),
@@ -116,8 +116,7 @@ class UserManager():
                                  "city": registration_info["city"],
                                  "province": registration_info["province"],
                                  "postal_code": registration_info["postal_code"],
-                                 "birthday": registration_info["birthday"],
-                                 "is_admin": registration_info["is_admin"]
+                                 "birthday": registration_info["birthday"]
                                  }
                                 )
         user_db.session.commit()
@@ -142,7 +141,7 @@ class UserManager():
             return User(user_id=uuid4(),
                         user_info=user_info,
                         profile_picture_id=profile_picture_id,
-                        active=active
+                        active=active,
                         is_admin=is_admin)
         return None
 
@@ -263,6 +262,16 @@ class UserManager():
         WHERE username=:username;"""
         user_db.session.execute(sql,
                                 {"active": active,
+                                 "username": self.username})
+        user_db.session.commit()
+    
+    
+    def update_is_admin(self, is_admin):
+        sql = """UPDATE users
+        SET is_admin=:is_admin
+        WHERE username=:username;"""
+        user_db.session.execute(sql,
+                                {"is_admin": is_admin,
                                  "username": self.username})
         user_db.session.commit()
 
