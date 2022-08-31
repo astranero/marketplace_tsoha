@@ -61,7 +61,7 @@
                                 </a></h5>
                         </li>
                         <li>
-                            <h5><a href="{{ url_for('views.contact') }}" class="nav-link w3-button w3-bar-item"
+                            <h5><a href="{{ url_for('views.send_message') }}" class="nav-link w3-button w3-bar-item"
                                     data-bs-toggle="modal" data-bs-target="#message-user" style="color:#030e12"> Send a
                                     message
                                 </a></h5>
@@ -94,42 +94,6 @@
                             </a></h5>
                     </div>
                     {% endif %}
-                    <div class="nav col-15 md-5 justify-content-end">
-                        <h5><a href="{{ url_for('views.contact') }}" class="nav-link w3-button w3-bar-item"
-                                data-bs-toggle="modal" data-bs-target="#contact-us" style="color:#030e12"> Contact us
-                            </a></h5>
-                    </div>
-                    <div class="modal fade" tabindex="-1" id="contact-us">
-                        <div class="modal-dialog">
-                            <div class="modal-content" role="">
-                                <div class="modal-header" style="background-color:rgb(248, 232, 160);">
-                                    <h5 class="modal-title">Contact us</h5>
-                                </div>
-                                <div class="modal-body">
-                                    <form action="{{url_for('views.contact')}}" method="POST">
-                                        {{ post_form.csrf_token }}
-                                        <div class="form-floating">
-                                            {{post_form.email(class="form-control border-1 shadow-m",type="email",
-                                            id="email",placeholder="")}}
-                                            <label for="email">Your Email:*</label>
-                                        </div>
-                                        <br>
-                                        <div class="form-floating">
-                                            {{post_form.message(class="form-control border-2 shadow-m",type="text",
-                                            id="message",placeholder="Your message here:*")}}
-                                            <label for="message">Your message here:*</label>
-                                        </div>
-                                        <br>
-                                        <div class="modal-footer">
-                                            <button type="submit" class="btn close btn-primary">Send message</button>
-                                            <a href="{{url_request}}"><button type="button" class="btn close btn-danger"
-                                                    data-bs-dismiss="modal">Cancel</button></a>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                     <div class="modal fade" tabindex="-1" id="message-user">
                         <div class="modal-dialog">
                             <div class="modal-content" role="">
@@ -139,7 +103,7 @@
                                 <div class="modal-body">
                                     <form action="{{url_for('views.send_message', username=current_user.username)}}"
                                         method="POST">
-                                        {{ message_form.csrf_token }}
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                         <br>
                                         <div class="form-floating">
                                             {{message_form.receiver(class="form-control border-1 shadow-m",type="text",

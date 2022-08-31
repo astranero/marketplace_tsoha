@@ -1,14 +1,16 @@
 from uuid import uuid4
 from flask_login import UserMixin, current_user
 from flask_sqlalchemy import SQLAlchemy
-from __init__ import app
+from website.__init__ import app
 user_db = SQLAlchemy(app)
 
 
 class User(UserMixin):
     def __init__(self, user_id, user_info,
                  profile_picture_id="default.png",
-                 authenticated=True, active=True, is_admin=False):
+                 authenticated=True,
+                 active=True,
+                 admin=False):
         self.user_id = user_id
         self.profile_picture_id = profile_picture_id
         self.password = user_info["password"]
@@ -16,11 +18,11 @@ class User(UserMixin):
         self.username = user_info["username"].lower()
         self.authenticated = authenticated
         self.active = active
-        self.is_admin = is_admin
+        self.admin = admin
 
     def get(self, user_id):
         sql = """SELECT user_id, username, password,
-            first_name, profile_picture_id, active, authenticated, is_admin
+            first_name, profile_picture_id, active, authenticated, admin
             FROM sessions WHERE
             user_id=:user_id"""
         data = user_db.session.execute(sql, {"user_id": user_id}).fetchone()
@@ -33,7 +35,7 @@ class User(UserMixin):
             profile_picture_id = data[4]
             active = data[5]
             authenticated = data[6]
-            is_admin = data[7]
+            admin = data[7]
             user_info = {
                 "password": password,
                 "first_name": first_name,
@@ -44,7 +46,7 @@ class User(UserMixin):
                         profile_picture_id=profile_picture_id,
                         active=active,
                         authenticated=authenticated,
-                        is_admin=is_admin)
+                        admin=admin)
         return None
 
     def get_id(self):
@@ -62,17 +64,17 @@ class User(UserMixin):
         return self.active
 
     @property
-    def is_superuser(self):
-        return self.issuperuser
+    def is_admin(self):
+        return self.admin
 
     def create_session(self, user):
         sql = """INSERT INTO sessions
         (user_id, username, password,
-        profile_picture_id, first_name, active, authenticated, is_admin)
+        profile_picture_id, first_name, active, authenticated, admin)
         VALUES
         (:user_id, :username, :password,
         :profile_picture_id, :first_name,
-        :active, :authenticated, :is_admin );"""
+        :active, :authenticated, :admin );"""
         user_db.session.execute(sql,
                                 {"user_id": user.user_id,
                                  "username": user.username,
@@ -81,7 +83,7 @@ class User(UserMixin):
                                  "active": user.active,
                                  "profile_picture_id": user.profile_picture_id,
                                  "authenticated": user.authenticated,
-                                 "is_admin": user.is_admin})
+                                 "admin": user.is_admin})
         user_db.session.commit()
 
     def delete_session(self):
@@ -123,7 +125,7 @@ class UserManager():
         return self.fetch_user()
 
     def fetch_user(self):
-        sql = """SELECT password, profile_picture_id, first_name, active, is_admin 
+        sql = """SELECT password, profile_picture_id, first_name, active, admin
         FROM users
         WHERE username=:username;"""
         data = user_db.session.execute(sql,
@@ -133,7 +135,7 @@ class UserManager():
             profile_picture_id = data[1]
             first_name = data[2]
             active = data[3]
-            is_admin = data[4]
+            admin = data[4]
             user_info = {
                 "password": password,
                 "first_name": first_name,
@@ -142,7 +144,7 @@ class UserManager():
                         user_info=user_info,
                         profile_picture_id=profile_picture_id,
                         active=active,
-                        is_admin=is_admin)
+                        admin=admin)
         return None
 
     def get_user_information(self):
@@ -255,7 +257,7 @@ class UserManager():
                                 {"password": password,
                                  "username": self.username})
         user_db.session.commit()
-    
+
     def update_activity(self, active):
         sql = """UPDATE users
         SET active=:active
@@ -264,14 +266,13 @@ class UserManager():
                                 {"active": active,
                                  "username": self.username})
         user_db.session.commit()
-    
-    
-    def update_is_admin(self, is_admin):
+
+    def update_is_admin(self, admin):
         sql = """UPDATE users
-        SET is_admin=:is_admin
+        SET admin=:admin
         WHERE username=:username;"""
         user_db.session.execute(sql,
-                                {"is_admin": is_admin,
+                                {"admin": admin,
                                  "username": self.username})
         user_db.session.commit()
 

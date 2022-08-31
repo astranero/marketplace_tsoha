@@ -27,14 +27,14 @@ def create_tables():
                 first_name TEXT,
                 last_name TEXT,
                 street_address TEXT,
-                phone_number TEXT NOT NULL,
+                phone_number TEXT,
                 country TEXT,
                 city TEXT,
                 province TEXT,
                 postal_code TEXT,
-                birthday DATE NOT NULL,
+                birthday DATE,
                 last_seen DATE,
-                is_admin BOOLEAN DEFAULT FALSE,
+                admin BOOLEAN DEFAULT FALSE,
                 active BOOLEAN DEFAULT TRUE,
                 creation_date date DEFAULT NOW(),
                 profile_picture_id TEXT DEFAULT 'default.png' NOT NULL);
@@ -48,7 +48,7 @@ def create_tables():
                 profile_picture_id TEXT,
                 active BOOLEAN,
                 authenticated BOOLEAN,
-                is_admin BOOLEAN);
+                admin BOOLEAN);
                 """)
 
     cur.execute("""CREATE TABLE IF NOT EXISTS products(

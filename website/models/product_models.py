@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-from __init__ import app
+from website.__init__ import app
 marketplace_db = SQLAlchemy(app)
 
 

@@ -8,7 +8,7 @@ from wtforms import(
     EmailField
 )
 from flask_login import current_user
-from models.user_model import UserManager, check_email, check_username
+from website.models.user_model import UserManager, check_email, check_username
 
 
 class RegistrationForm(FlaskForm):

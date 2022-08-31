@@ -1,10 +1,10 @@
 from flask_sqlalchemy import SQLAlchemy
-from __init__ import app
+from website.__init__ import app
 message_db = SQLAlchemy(app)
 
 
 class MessageManager():
-    def __init__(self, sender=None, message_id=None, message=None, receiver="admin", tag="normal"):
+    def __init__(self, sender=None, receiver=None, message_id=None, message=None, tag="normal"):
         self.sender = sender
         self.receiver = receiver
         self.message = message
@@ -32,13 +32,6 @@ class MessageManager():
         data = message_db.session.execute(sql, {"sender": self.sender,
                                                 "receiver": self.receiver}).fetchall()
         message_db.session.commit()
-        return data
-
-    def fetch_contact_messages(self):
-        sql = """SELECT message_id, sender, receiver, message, creation_date
-        FROM messages WHERE tag='contact-us'
-        ORDER BY creation_date ASC;"""
-        data = message_db.session.execute(sql).fetchall()
         return data
 
     def fetch_report_messages(self):

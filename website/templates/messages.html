@@ -83,7 +83,7 @@
                         </div>
                         <div class="modal-body">
                             <form action="{{url_for('views.send_message', username=sender)}}" method="POST">
-                                {{ message_form.csrf_token }}
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                 <br>
                                 {{ message_form.sender(class="form-control",type="hidden", id="sender",
                                 value=current_user.username)}}

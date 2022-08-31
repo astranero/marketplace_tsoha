@@ -2,7 +2,7 @@
 {% block body %}
 
 <form action="/edit_product" enctype="multipart/form-data" method="POST">
-    {{ post_form.csrf_token }}
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
     <div class="card">
         <div class="row">
             <div class="col-3 mt-3">

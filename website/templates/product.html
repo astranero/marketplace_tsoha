@@ -92,7 +92,7 @@
                                     <div class="modal-body">
                                         <form action="{{url_for('views.product_edit', product_id=product.id)}}"
                                             enctype="multipart/form-data" method="POST">
-                                            {{ post_form.csrf_token }}
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                             <div class="row">
                                                 <div class="col-3 mt-3">
                                                     <p class="product-box-text">Select product images (Old images are
@@ -245,7 +245,7 @@
                 </div>
                 <div class="modal-body">
                     <form action="{{url_for('views.send_message', username=username)}}" method="POST">
-                        {{ message_form.csrf_token }}
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                         <br>
                         {{message_form.sender(class="form-control",type="hidden",
                         id="sender",value=current_user.username)}}
@@ -322,7 +322,7 @@
                             </div>
                             <div class="modal-body">
                                 <form action="{{url_for('views.report')}}" method="POST">
-                                    {{ report_form.csrf_token }}
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                     <br>
                                     {{report_form.sender(class="form-control",type="hidden",
                                     id="sender",value=current_user.username)}}

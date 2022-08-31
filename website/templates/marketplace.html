@@ -16,6 +16,7 @@
                 </div>
                 <div class="col-sm-4">
                     <form action="{{url_for('views.set_search')}}" method="GET">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                         <input id="search" name="search" type="search"
                             class="fw-bold form-control border-white bg-black text-white" placeholder="Search..."
                             aria-label="Search">
@@ -150,7 +151,7 @@
                         </div>
                         <div class="modal-body">
                             <form action="{{url_for('views.product_add')}}" enctype="multipart/form-data" method="POST">
-                                {{ post_form.csrf_token }}
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                 <div class="row">
                                     <div class="col-3 mt-3">
                                         <p class="product-box-text">Select product images (Try to highlight as many

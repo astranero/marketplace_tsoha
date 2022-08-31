@@ -8,8 +8,8 @@ from wtforms import(
 
 from flask_login import current_user
 from markupsafe import Markup
-from models.messaging_models import MessageManager
-from models.user_model import check_username
+from website.models.messaging_models import MessageManager
+from website.models.user_model import check_username
 
 class MessageForm(FlaskForm):
     sender = StringField("sender", [validators.Length(
@@ -75,19 +75,4 @@ class CommentReportForm(FlaskForm):
 
     def send_report(self, sender, message):
         message = MessageManager(sender=sender, message=message, tag="report")
-        message.insert_message()
-
-
-class ContactForm(FlaskForm):
-    email = StringField("Email",
-                        [validators.Length(min=4, max=40),
-                         validators.Email(
-                             message="Email address format is incorrect."),
-                         validators.DataRequired()])
-    message = TextAreaField("message", [validators.Length(
-        min=4)])
-
-    def send_message(self, sender, message):
-        message = MessageManager(
-            sender=sender, message=message, tag="contact-us")
         message.insert_message()

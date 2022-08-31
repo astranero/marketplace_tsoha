@@ -26,7 +26,7 @@
                         </div>
                         <div class="modal-body justify-content-center">
                             <form action="/uploader" enctype="multipart/form-data" method="POST">
-                                {{ post_form.csrf_token }}
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                 <div class="card">
                                     <div class="row">
                                         <div class="col-5">

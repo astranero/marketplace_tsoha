@@ -8,21 +8,20 @@ from flask import Blueprint, render_template, redirect, flash, url_for, request,
 from flask_login import current_user, login_required, login_user, logout_user
 from flask_wtf.csrf import CSRFProtect
 from flask_sqlalchemy import SQLAlchemy
-from __init__ import app, login_manager
-from forms.messaging_form import (
+from website.__init__ import app, login_manager
+from website.forms.messaging_form import (
     MessageForm,
-    CommentReportForm,
-    ContactForm
+    CommentReportForm
 )
-from forms.login_form import LoginForm
-from forms.registration_form import (RegistrationForm, ProfileForm)
-from models.user_model import(
+from website.forms.login_form import LoginForm
+from website.forms.registration_form import (RegistrationForm, ProfileForm)
+from website.models.user_model import(
     UserManager,
     ProfileManager,
     User,
     check_username
 )
-from models.product_models import(
+from website.models.product_models import(
     FilterManager,
     ProductManager,
     delete_product,
@@ -37,8 +36,8 @@ from models.product_models import(
     update_issold,
     count_sold_products
 )
-from models.messaging_models import CommentManager, MessageManager, count_messages
-from forms.password_change_form import PasswordChangeForm
+from website.models.messaging_models import CommentManager, MessageManager, count_messages
+from website.forms.password_change_form import PasswordChangeForm
 db = SQLAlchemy(app)
 login_manager.init_app(app)
 csrf = CSRFProtect(app)
@@ -64,10 +63,10 @@ def create_admin(username, password):
             "province": None,
             "postal_code": None,
             "birthday": None,
-            "profile_picture_id": "default.png",
-            "is_admin": True
+            "profile_picture_id": "default.png"
     }
-    user = user.create_user(registration_info)
+    user.create_user(registration_info)
+    user.update_is_admin(True)
 
 ALLOWED_PROFILE_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
@@ -128,7 +127,7 @@ def register():
             "postal_code": form.postal_code.data,
             "birthday": form.birthday.data,
             "profile_picture_id": "default.png",
-            "is_admin": False
+            "admin": False
         }
         user = user.create_user(registration_info)
         if user:
@@ -144,10 +143,9 @@ def register():
 @app.context_processor
 def post_injection():
     return dict(
-        post_form=ContactForm(),
+        message_form=MessageForm(),
         profile_form=ProfileForm(),
         password_change_form=PasswordChangeForm(),
-        message_form=MessageForm(),
         report_form=CommentReportForm(),
         message_manager=MessageManager,
         profile_manager=ProfileManager(),
@@ -427,16 +425,6 @@ def about():
     return render_template("about.html")
 
 
-@views.route("/contact", methods=["POST"])
-def contact():
-    contact_data = ContactForm()
-    if contact_data.validate_on_submit:
-        contact_data.send_message(
-            contact_data.email.data, contact_data.message.data)
-        flash("Your message has been sent.")
-    return redirect(url_for("views.home"))
-
-
 @login_required
 @views.route("/send_message", methods=["POST", "GET"])
 def send_message():
@@ -577,16 +565,6 @@ def admin():
     if current_user.is_admin:
         return render_template("admin.html")
     return abort(404)
-
-@app.errorhandler(404)
-def error_404():
-    return render_template("404.html"), 404
-
-
-@app.errorhandler(500)
-def error_500():
-    return render_template("500.html"), 500
-
 
 @login_manager.unauthorized_handler
 def unauthorized():
