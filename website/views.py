@@ -416,6 +416,13 @@ def profile_edit(username):
 @views.route("/delete_profile")
 @login_required
 def delete_profile():
+    products = fetch_user_products(current_user.username)
+    for item in products:
+        imgs = fetch_product_imgs(item.id)
+        if imgs is not None:
+            for img in imgs:
+                if path.exists(app.root_path+"static/images/"+img[0]):
+                    remove(path.join(app.root_path, "static/images/"+img[0]))
     ProfileManager().delete_profile(current_user.username)
     current_user.delete_session()
     logout_user()
