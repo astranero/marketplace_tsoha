@@ -4,7 +4,7 @@ message_db = SQLAlchemy(app)
 
 
 class MessageManager():
-    def __init__(self, sender=None, receiver=None, message_id=None, message=None, tag="normal"):
+    def __init__(self, sender=None, receiver="admin", message_id=None, message=None, tag="normal"):
         self.sender = sender
         self.receiver = receiver
         self.message = message
@@ -35,12 +35,11 @@ class MessageManager():
         return data
 
     def fetch_report_messages(self):
-        sql = """SELECT message_id, sender, receiver, message, creation_date
+        sql = """SELECT id, sender, receiver, message, creation_date
         FROM messages
         WHERE tag='report'
         ORDER BY creation_date ASC;"""
         data = message_db.session.execute(sql).fetchall()
-        message_db.session.commit()
         return data
 
     def delete_messages(self):

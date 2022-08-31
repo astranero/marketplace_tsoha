@@ -1,3 +1,4 @@
+import json
 from uuid import uuid4
 from os import remove, path
 import click
@@ -89,10 +90,14 @@ def login():
     if current_user.is_authenticated:
         return redirect(url_for("views.home"))
     form = LoginForm()
+    
     if form.validate_on_submit():
+        
         user = UserManager(username=form.username.data).fetch_user()
         login_user(user, remember=True)
         user.create_session(user)
+        if not current_user.is_active:
+            flash("You can't access this page since you have been banned.")
         return redirect(url_for("views.home"))
     return render_template("/login.html", form=form)
 
@@ -177,9 +182,6 @@ def home():
 @views.route("/market", methods=["GET"])
 @login_required
 def marketplace():
-    if not current_user.is_active:
-        flash("You can't access this page since you have been banned.")
-        return redirect(url_for("views.logout"))
     products = filter_manager.fetch_products()
     return render_template("marketplace.html", products=products)
 
@@ -436,26 +438,31 @@ def send_message():
                 receiver=message_data.receiver.data):
             flash("You can't message yourself.")
             redirect(url_for("views.messages", username=current_user.username))
-        flash("Your message has been sent.")
+        else: flash("Your message has been sent.")
     return redirect(url_for("views.messages", username=current_user.username))
 
 
 @login_required
-@views.route("/report", methods=["POST"])
-def report():
+@views.route("/report/<product_id>", methods=["POST"])
+def report(product_id):
     message_data = CommentReportForm()
     if message_data.validate_on_submit:
         sender = message_data.sender.data
         reported = message_data.reported.data
         new_message = message_data.message.data
-        new_comment = message_data.comment.data
+        comment = message_data.comment.data
         comment_id = message_data.comment_id.data
         product_id = message_data.product_id.data
-        new_data = f"""In product_id={product_id}
-        comment_id:{comment_id} user {reported}
-        commented: {new_comment}. {sender}
-        reported this with message: {new_message}."""
-        message_data.send_report(sender, new_data)
+
+        json_packet = {"product_id":product_id,
+        "comment_id":comment_id,
+        "sender":sender,
+        "reported":reported,
+        "commented":comment,
+        "new_message":new_message
+        }
+        json_data = json.dumps(json_packet)
+        message_data.send_report(sender, json_data)
         flash("Report has been sent.")
     return redirect(url_for("views.product", product_id=product_id))
 
@@ -522,6 +529,13 @@ def delete_message(username, message_id):
         MessageManager(message_id=message_id).delete_message()
     return redirect(url_for("views.messages", username=current_user.username))
 
+@login_required
+@views.route("delete_report/<message_id>")
+def delete_report(message_id):
+    if current_user.is_admin:
+        MessageManager(message_id=message_id).delete_message()
+    return redirect(url_for("views.admin"))
+
 
 @views.route("/uploader", methods=["POST"])
 @login_required
@@ -563,8 +577,26 @@ def picture_uploader():
 @login_required
 def admin():
     if current_user.is_admin:
-        return render_template("admin.html")
+        messages = MessageManager().fetch_report_messages()
+        datas = []
+        for message in messages:
+            data = {}
+            data["id"] = message[0]
+            data["sender"] = message[1]
+            try:
+                data["message"] = json.loads(message[3])
+            except json.JSONDecodeError:
+                pass
+            data["creation_date"] = message[4]
+            datas.append(data)
+        return render_template("admin.html", messages=datas)
     return abort(404)
+
+@login_required
+@views.route("/ban/<username>")
+def ban(username):
+    UserManager(username=username).update_activity(False)
+    return redirect(url_for("views.admin"))
 
 @login_manager.unauthorized_handler
 def unauthorized():

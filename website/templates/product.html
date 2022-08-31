@@ -53,7 +53,7 @@
                             <p class="product-box-text"> Seller: {{ product.username.capitalize() }}</p>
                         </a>
                         <br>
-                        {% if product.username != current_user.username %}
+                        {% if (product.username != current_user.username and not current_user.is_admin) %}
                         {% with isSold = fetch_issold(product.id) %}
                         {% if isSold %}
                         <a href="{{url_for('views.buy_product', product_id=product.id)}}"
@@ -73,7 +73,7 @@
                                 Contact Seller</button></a>
                         <br>
                         <br>
-                        {% else %}
+                        {% elif current_user.username == product.username or current_user.is_admin %}
                         {% with isSold = fetch_issold(product.id) %}
                         {% if isSold %}
                         <a href="#"><button class="mt-0 btn btn btn-success fw-bold" data-bs-toggle="modal"
@@ -92,7 +92,7 @@
                                     <div class="modal-body">
                                         <form action="{{url_for('views.product_edit', product_id=product.id)}}"
                                             enctype="multipart/form-data" method="POST">
-                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                                             <div class="row">
                                                 <div class="col-3 mt-3">
                                                     <p class="product-box-text">Select product images (Old images are
@@ -245,7 +245,7 @@
                 </div>
                 <div class="modal-body">
                     <form action="{{url_for('views.send_message', username=username)}}" method="POST">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                         <br>
                         {{message_form.sender(class="form-control",type="hidden",
                         id="sender",value=current_user.username)}}
@@ -321,8 +321,8 @@
                                 <h5 class="modal-title">Report user {{comment.commentor_username.capitalize()}}</h5>
                             </div>
                             <div class="modal-body">
-                                <form action="{{url_for('views.report')}}" method="POST">
-                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                <form action="{{url_for('views.report', product_id=product_id)}}" method="POST">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                                     <br>
                                     {{report_form.sender(class="form-control",type="hidden",
                                     id="sender",value=current_user.username)}}

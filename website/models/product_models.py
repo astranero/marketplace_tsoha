@@ -204,7 +204,6 @@ def fetch_product_imgs(product_id):
     marketplace_db.session.commit()
     return data
 
-
 def fetch_product_img(product_id):
     sql = """
     SELECT image_id

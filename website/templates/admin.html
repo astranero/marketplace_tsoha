@@ -1,48 +1,47 @@
 {% extends "base.html" %}
-
 {% block head %}
 {% endblock %}
-
 {% block body %}
-    <h1>Admin page</h1>
-
-    <div>
-        <div class="card">
-            <table class="table">
-                <thead>
-                  <tr>
+<h1>Admin page</h1>
+<br>
+<div>
+    <div class="card">
+        <table class="table">
+            <thead>
+                <tr>
                     <th scope="col">#</th>
-                    <th scope="col">First</th>
-                    <th scope="col">Last</th>
-                    <th scope="col">Handle</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <th scope="row">1</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">2</th>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>@fat</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">3</th>
-                    <td colspan="2">Larry the Bird</td>
-                    <td>@twitter</td>
-                  </tr>
-                </tbody>
-              </table>
-        </div>
-        <div class="card">
-
-        </div>
-        <div class="card">
-
-        </div>
+                    <th scope="col">Sender</th>
+                    <th scope="col">Message</th>
+                    <th scope="col">Info</th>
+                    <th scope="col">Report date</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for data in messages %}
+                <tr>
+                    <th scope="row">{{data.id}}</th>
+                    <td><a href="{{url_for('views.profile', username=sender)}}">{{data.sender}}</a></td>
+                    <td>{{data.message.new_message}}</td>
+                    <td>{% set info = data.message %}
+                        <ul>
+                            <li>Product:<a class="info" href="{{url_for('views.product', product_id=info.product_id)}}">
+                                    {{info.product_id}}</a></li>
+                            <li>Reported user: {{info.reported}} </li>
+                            <li>Comment id: {{info.comment_id}}</li>
+                            <li>User {{info.reported.capitalize()}} commented: {{info.commented}}</li>
+                        </ul>
+                    </td>
+                    <td>{{data.creation_date}}</td>
+                    <td>
+                        <p><a class="info" href="{{url_for('views.ban', username=info.reported)}}">Ban {{info.reported}}</a></p>
+                        <p><a class="info" href="{{url_for('views.product_delete', product_id=info.product_id)}}">Delete the product</p>
+                        <p><a class="info" href="{{url_for('views.delete_report', message_id=data.id)}}">Delete the report</a></p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
+</div>
 {% endblock %}
