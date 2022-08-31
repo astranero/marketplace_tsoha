@@ -9,20 +9,20 @@ from flask import Blueprint, render_template, redirect, flash, url_for, request,
 from flask_login import current_user, login_required, login_user, logout_user
 from flask_wtf.csrf import CSRFProtect
 from flask_sqlalchemy import SQLAlchemy
-from website.__init__ import app, login_manager
-from website.forms.messaging_form import (
+from src.__init__ import app, login_manager
+from src.forms.messaging_form import (
     MessageForm,
     CommentReportForm
 )
-from website.forms.login_form import LoginForm
-from website.forms.registration_form import (RegistrationForm, ProfileForm)
-from website.models.user_model import(
+from src.forms.login_form import LoginForm
+from src.forms.registration_form import (RegistrationForm, ProfileForm)
+from src.models.user_model import(
     UserManager,
     ProfileManager,
     User,
     check_username
 )
-from website.models.product_models import(
+from src.models.product_models import(
     FilterManager,
     ProductManager,
     check_product_exists,
@@ -39,8 +39,8 @@ from website.models.product_models import(
     count_sold_products,
     check_product_exists
 )
-from website.models.messaging_models import CommentManager, MessageManager, count_messages
-from website.forms.password_change_form import PasswordChangeForm
+from src.models.messaging_models import CommentManager, MessageManager, count_messages
+from src.forms.password_change_form import PasswordChangeForm
 db = SQLAlchemy(app)
 login_manager.init_app(app)
 csrf = CSRFProtect(app)
