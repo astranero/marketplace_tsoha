@@ -204,6 +204,7 @@ def fetch_product_imgs(product_id):
     marketplace_db.session.commit()
     return data
 
+
 def fetch_product_img(product_id):
     sql = """
     SELECT image_id
@@ -216,6 +217,12 @@ def fetch_product_img(product_id):
     if data is not None and data.image_id is not None:
         return data.image_id
     return "default.png"
+
+
+def check_product_exists(product_id):
+    sql = """SELECT exists (SELECT id FROM products WHERE id=:product_id);"""
+    return marketplace_db.session.execute(sql,
+                                          {"product_id": product_id}).fetchone()[0]
 
 
 def fetch_product(product_id):

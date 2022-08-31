@@ -25,6 +25,7 @@ from website.models.user_model import(
 from website.models.product_models import(
     FilterManager,
     ProductManager,
+    check_product_exists,
     delete_product,
     delete_product_images,
     fetch_issold,
@@ -35,7 +36,8 @@ from website.models.product_models import(
     fetch_sold_products,
     fetch_user_products,
     update_issold,
-    count_sold_products
+    count_sold_products,
+    check_product_exists
 )
 from website.models.messaging_models import CommentManager, MessageManager, count_messages
 from website.forms.password_change_form import PasswordChangeForm
@@ -163,6 +165,7 @@ def post_injection():
         fetch_product_img=fetch_product_img,
         fetch_product=fetch_product,
         fetch_profile_picture=ProfileManager().fetch_profile_picture,
+        check_product_exists=check_product_exists,
         fetch_bought_products=fetch_bought_products,
         fetch_sold_products=fetch_sold_products,
         fetch_user_products=fetch_user_products,
@@ -540,10 +543,10 @@ def delete_message(username, message_id):
 
 
 @login_required
-@views.route("delete_report/<message_id>")
-def delete_report(message_id):
+@views.route("hide_report/<message_id>")
+def hide_report(message_id):
     if current_user.is_admin:
-        MessageManager(message_id=message_id).delete_message()
+        MessageManager(message_id=message_id).update_tag("solved")
     return redirect(url_for("views.admin"))
 
 

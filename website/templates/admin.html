@@ -25,8 +25,12 @@
                     <td>{{data.message.new_message}}</td>
                     <td>{% set info = data.message %}
                         <ul>
-                            <li>Product:<a class="info" href="{{url_for('views.product', product_id=info.product_id)}}">
-                                    {{info.product_id}}</a></li>
+                            <li>Product:
+                                {% if check_product_exists(info.product_id) %}
+                                <a class="info" href="{{url_for('views.product', product_id=info.product_id)}}">
+                                    {% endif %}
+                                    {{info.product_id}}</a>
+                            </li>
                             <li>Reported user: {{info.reported}} </li>
                             <li>Comment id: {{info.comment_id}}</li>
                             <li>User {{info.reported.capitalize()}} commented: {{info.commented}}</li>
@@ -34,9 +38,12 @@
                     </td>
                     <td>{{data.creation_date}}</td>
                     <td>
-                        <p><a class="info" href="{{url_for('views.ban', username=info.reported)}}">Ban {{info.reported}}</a></p>
-                        <p><a class="info" href="{{url_for('views.product_delete', product_id=info.product_id)}}">Delete the product</p>
-                        <p><a class="info" href="{{url_for('views.delete_report', message_id=data.id)}}">Delete the report</a></p>
+                        <p><a class="info" href="{{url_for('views.ban', username=info.reported)}}">Ban
+                                {{info.reported}}</a></p>
+                        <p><a class="info" href="{{url_for('views.product_delete', product_id=info.product_id)}}">Delete
+                                the product</p>
+                        <p><a class="info" href="{{url_for('views.hide_report', message_id=data.id)}}">Tag as solved</a>
+                        </p>
                     </td>
                 </tr>
                 {% endfor %}
