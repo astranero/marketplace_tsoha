@@ -44,7 +44,7 @@
                     <a {% if current_user.is_anonymous %} href="{{ url_for('views.home') }}" {% else %}
                         href="{{ url_for('views.marketplace') }}" {% endif %}
                         class="d-flex align-items-center col-md-3 mb-2 text-dark text-decoration-none">
-                        <h1>AsraMarket</h1>
+                        <h1>AstraMarket</h1>
                     </a>
 
                     {% if current_user.is_authenticated %}

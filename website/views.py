@@ -425,7 +425,7 @@ def delete_profile():
         if imgs is not None:
             for img in imgs:
                 if path.exists(app.root_path+"static/images/"+img[0]):
-                    remove(path.join(app.root_path, "static/images/"+img[0]))
+                    remove(path.join(app.root_path+"static/images/"+img[0]))
     ProfileManager().delete_profile(current_user.username)
     current_user.delete_session()
     logout_user()

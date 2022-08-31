@@ -40,8 +40,6 @@
                     <td>
                         <p><a class="info" href="{{url_for('views.ban', username=info.reported)}}">Ban
                                 {{info.reported}}</a></p>
-                        <p><a class="info" href="{{url_for('views.product_delete', product_id=info.product_id)}}">Delete
-                                the product</p>
                         <p><a class="info" href="{{url_for('views.hide_report', message_id=data.id)}}">Tag as solved</a>
                         </p>
                     </td>
