@@ -52,22 +52,23 @@ def create_admin(username, password):
     password_hash = generate_password_hash(password)
     user = UserManager(username=username)
     registration_info = {
-            "username": None,
-            "password": password_hash,
-            "first_name": None,
-            "email": str(uuid4())+"@admin.admin",
-            "last_name": None,
-            "street_address": None,
-            "phone_number": 000000000,
-            "country": None,
-            "city": None,
-            "province": None,
-            "postal_code": None,
-            "birthday": None,
-            "profile_picture_id": "default.png"
+        "username": None,
+        "password": password_hash,
+        "first_name": None,
+        "email": str(uuid4())+"@admin.admin",
+        "last_name": None,
+        "street_address": None,
+        "phone_number": 000000000,
+        "country": None,
+        "city": None,
+        "province": None,
+        "postal_code": None,
+        "birthday": None,
+        "profile_picture_id": "default.png"
     }
     user.create_user(registration_info)
     user.update_is_admin(True)
+
 
 ALLOWED_PROFILE_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
@@ -90,9 +91,9 @@ def login():
     if current_user.is_authenticated:
         return redirect(url_for("views.home"))
     form = LoginForm()
-    
+
     if form.validate_on_submit():
-        
+
         user = UserManager(username=form.username.data).fetch_user()
         login_user(user, remember=True)
         user.create_session(user)
@@ -438,7 +439,8 @@ def send_message():
                 receiver=message_data.receiver.data):
             flash("You can't message yourself.")
             redirect(url_for("views.messages", username=current_user.username))
-        else: flash("Your message has been sent.")
+        else:
+            flash("Your message has been sent.")
     return redirect(url_for("views.messages", username=current_user.username))
 
 
@@ -450,17 +452,17 @@ def report(product_id):
         sender = message_data.sender.data
         reported = message_data.reported.data
         new_message = message_data.message.data
-        comment = message_data.comment.data
+        reported_comment = message_data.comment.data
         comment_id = message_data.comment_id.data
         product_id = message_data.product_id.data
 
-        json_packet = {"product_id":product_id,
-        "comment_id":comment_id,
-        "sender":sender,
-        "reported":reported,
-        "commented":comment,
-        "new_message":new_message
-        }
+        json_packet = {"product_id": product_id,
+                       "comment_id": comment_id,
+                       "sender": sender,
+                       "reported": reported,
+                       "commented": reported_comment,
+                       "new_message": new_message
+                       }
         json_data = json.dumps(json_packet)
         message_data.send_report(sender, json_data)
         flash("Report has been sent.")
@@ -529,6 +531,7 @@ def delete_message(username, message_id):
         MessageManager(message_id=message_id).delete_message()
     return redirect(url_for("views.messages", username=current_user.username))
 
+
 @login_required
 @views.route("delete_report/<message_id>")
 def delete_report(message_id):
@@ -573,13 +576,14 @@ def picture_uploader():
                 flash("Acceptable extensions are: png, jpg, jpeg and gif.")
     return redirect(url_for("views.profile_edit", username=current_user.username))
 
+
 @views.route("/admin", methods=["GET"])
 @login_required
 def admin():
     if current_user.is_admin:
-        messages = MessageManager().fetch_report_messages()
+        fetched_messages = MessageManager().fetch_report_messages()
         datas = []
-        for message in messages:
+        for message in fetched_messages:
             data = {}
             data["id"] = message[0]
             data["sender"] = message[1]
@@ -592,11 +596,13 @@ def admin():
         return render_template("admin.html", messages=datas)
     return abort(404)
 
+
 @login_required
 @views.route("/ban/<username>")
 def ban(username):
     UserManager(username=username).update_activity(False)
     return redirect(url_for("views.admin"))
+
 
 @login_manager.unauthorized_handler
 def unauthorized():
