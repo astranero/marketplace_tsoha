@@ -24,7 +24,7 @@ AstraMarket is web-application for selling and buying products.
 
 ### Configuration:
 
-In the root of application create `.env` file. 
+In the root folder of the application create `.env` file. 
 In .env file set variable `SQLALCHEMY_DATABASE_URI` as path to postgresql database, and secret key to `SECRET_KEY` variable.
 Also set variables `UPLOAD_FOLDER=src/static` and `FLASK_APP=src/app.py`
 
