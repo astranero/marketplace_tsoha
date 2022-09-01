@@ -14,3 +14,10 @@ AstraMarket is web-application for selling and buying products.
 * Users can like each others profiles.
 * In marketplace products can be searched for with search bar. Category, condition and sorting order of the products can also be specified.
 
+## Installation instruction
+
+## Host
+
+## What I learned & What application is lacking?
+
+* I learned how to use css, html and bootstrap in depth. I also tried to learn flask methods and extensions as much as possible. I learned to implement flask in my own ways, but at the risk of there being some security issues. I am not sure if post_injection of database methods with context_processor is safe yet, and have to find out more about that. But I found it useful in fetching information to jinga.
