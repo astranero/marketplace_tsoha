@@ -64,8 +64,9 @@ This application can be accessed in heroku:
 https://marketplacetsoha.herokuapp.com/login
 
 To try admin functionalities use following credentials:
-
+<br>
 Username=admin
+<br>
 Password=admin
 
 ## What I learned & What application is lacking?
