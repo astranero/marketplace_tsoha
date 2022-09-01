@@ -6,7 +6,7 @@ from wtforms import (PasswordField,
                      )
 from flask_login import current_user
 from werkzeug.security import check_password_hash
-from src.models.user_model import UserManager
+from models.user_model import UserManager
 
 
 class PasswordChangeForm(FlaskForm):

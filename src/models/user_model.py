@@ -1,7 +1,7 @@
 from uuid import uuid4
 from flask_login import UserMixin, current_user
 from flask_sqlalchemy import SQLAlchemy
-from src.__init__ import app
+from __init__ import app
 user_db = SQLAlchemy(app)
 
 

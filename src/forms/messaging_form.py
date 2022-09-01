@@ -8,8 +8,8 @@ from wtforms import(
 
 from flask_login import current_user
 from markupsafe import Markup
-from src.models.messaging_models import MessageManager
-from src.models.user_model import check_username
+from models.messaging_models import MessageManager
+from models.user_model import check_username
 
 class MessageForm(FlaskForm):
     sender = StringField("sender", [validators.Length(
