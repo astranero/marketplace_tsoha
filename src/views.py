@@ -266,7 +266,7 @@ def product_delete(product_id):
     if imgs is not None:
         for img in imgs:
             if path.exists(app.root_path+"static/images/"+img[0]):
-                remove(path.join(app.root_path, "static/images/"+img[0]))
+                remove(path.join(app.root_path+"static/images/"+img[0]))
     delete_product(product_id)
     return redirect(url_for("views.marketplace"))
 
