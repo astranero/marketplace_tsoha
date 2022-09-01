@@ -60,7 +60,13 @@ To initiate database just run schema.py file.
 ## Host
 
 This application can be accessed in heroku:
+
 https://marketplacetsoha.herokuapp.com/login
+
+To try admin functionalities use following credentials:
+
+Username=admin
+Password=admin
 
 ## What I learned & What application is lacking?
 
