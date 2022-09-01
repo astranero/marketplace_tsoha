@@ -444,6 +444,9 @@ def about():
 def send_message():
     message_data = MessageForm()
     if message_data.validate_on_submit:
+        if not check_username(message_data.receiver.data):
+            flash("This user does not exist.")
+            return redirect(url_for("views.home"))
         if not message_data.send_message(
                 sender=message_data.sender.data,
                 message=message_data.message.data,
