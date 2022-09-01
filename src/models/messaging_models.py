@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-from __init__ import app
+from src.__init__ import app
 message_db = SQLAlchemy(app)
 
 

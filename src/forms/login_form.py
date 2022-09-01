@@ -4,7 +4,7 @@ from wtforms import (
     validators, ValidationError)
 from werkzeug.security import check_password_hash
 from markupsafe import Markup
-from models.user_model import UserManager, check_username
+from src.models.user_model import UserManager, check_username
 
 
 class LoginForm(FlaskForm):
