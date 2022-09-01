@@ -43,11 +43,17 @@ FLASK_APP=src/app.py
 ### Running the program
 
 1. Install requirements from requirement.txt file with pip.
-```pip3 install -r requirement.txt```
+```
+pip3 install -r requirement.txt
+```
 2. In root directory of application first activate venv.
-```Source venv/bin/activate```
+```
+Source venv/bin/activate
+```
 3. Now run flask.
-```flask run```
+```
+flask run
+```
 
 To initiate database just run schema.py file.
 
