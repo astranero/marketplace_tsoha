@@ -199,10 +199,8 @@ def update_issold(sold_to, is_sold: bool, product_id):
 
 def fetch_product_imgs(product_id):
     sql = "SELECT image_id FROM product_images WHERE product_id=:product_id;"
-    data = marketplace_db.session.execute(
+    return marketplace_db.session.execute(
         sql, {"product_id": product_id}).fetchall()
-    marketplace_db.session.commit()
-    return data
 
 
 def fetch_product_img(product_id):

@@ -264,6 +264,7 @@ def product(product_id):
 def product_delete(product_id):
     imgs = fetch_product_imgs(product_id)
     if imgs is not None:
+        flash(app.root_path)
         for img in imgs:
             if path.exists(app.root_path+"static/images/"+img[0]):
                 remove(path.join(app.root_path+"static/images/"+img[0]))
