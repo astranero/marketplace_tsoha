@@ -59,6 +59,9 @@ To initiate database just run schema.py file.
 
 ## Host
 
+This application can be access in heroku:
+
+
 ## What I learned & What application is lacking?
 
 I learned how to use css, html and bootstrap in depth. I also tried to learn flask methods and extensions as much as possible. I learned to implement flask in my own ways, but at the risk of there being some security issues. I am not sure if post_injection of database methods with context_processor is safe yet, and have to find out more about that. I found post_injection useful in fetching information data to jinga.
