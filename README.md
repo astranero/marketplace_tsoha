@@ -29,7 +29,7 @@ In .env file set path to postgresql database in variable `SQLALCHEMY_DATABASE_UR
 Also set variables as `UPLOAD_FOLDER=src/static` and `FLASK_APP=src/app.py`
 
 Example:
-`
+```
 SECRET_KEY=Strong_secret_key
 SQLALCHEMY_DATABASE_URI=postgresql://database_name:password@localhost/database_user
 DB_HOST=localhost
@@ -38,16 +38,16 @@ DB_USER=database_user
 DB_PASSWORD=password
 UPLOAD_FOLDER=src/static
 FLASK_APP=src/app.py
-`
+```
 
 ### Running the program
 
 1. Install requirements from requirement.txt file with pip.
-`pip3 install -r requirement.txt`
+```pip3 install -r requirement.txt```
 2. In root directory of application first activate venv.
-`Source venv/bin/activate`
+```Source venv/bin/activate```
 3. Now run flask.
-`flask run`
+```flask run```
 
 To initiate database just run schema.py file.
 
