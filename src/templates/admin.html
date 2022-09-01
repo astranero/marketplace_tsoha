@@ -21,7 +21,7 @@
                 {% for data in messages %}
                 <tr>
                     <th scope="row">{{data.id}}</th>
-                    <td><a href="{{url_for('views.profile', username=sender)}}">{{data.sender}}</a></td>
+                    <td><a href="{{url_for('views.profile', username=data.sender)}}">{{data.sender}}</a></td>
                     <td>{{data.message.new_message}}</td>
                     <td>{% set info = data.message %}
                         <ul>
