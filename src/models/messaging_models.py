@@ -74,7 +74,7 @@ class MessageManager():
         sql = "DELETE FROM messages WHERE id=:id;"
         message_db.session.execute(sql, {"id": self.message_id})
         message_db.session.commit()
-    
+
     def update_tag(self, tag):
         sql = "UPDATE messages SET tag=:tag WHERE id=:message_id;"
         message_db.session.execute(

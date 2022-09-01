@@ -36,8 +36,7 @@ from src.models.product_models import(
     fetch_sold_products,
     fetch_user_products,
     update_issold,
-    count_sold_products,
-    check_product_exists
+    count_sold_products
 )
 from src.models.messaging_models import CommentManager, MessageManager, count_messages
 from src.forms.password_change_form import PasswordChangeForm
