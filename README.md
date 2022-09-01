@@ -59,7 +59,7 @@ To initiate database just run schema.py file.
 
 ## Host
 
-This application can be access in heroku:
+This application can be accessed in heroku:
 
 
 ## What I learned & What application is lacking?
