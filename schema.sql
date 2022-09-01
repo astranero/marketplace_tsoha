@@ -1,12 +1,12 @@
-'''DROP TABLE IF EXISTS sessions''' 
-'''DROP TABLE IF EXISTS comments''' 
-'''DROP TABLE IF EXISTS product_images''' 
-'''DROP TABLE IF EXISTS messages''' 
-'''DROP TABLE IF EXISTS likes''' 
-'''DROP TABLE IF EXISTS products''' 
-'''DROP TABLE IF EXISTS users''' 
+DROP TABLE IF EXISTS sessions;
+DROP TABLE IF EXISTS comments;
+DROP TABLE IF EXISTS product_images;
+DROP TABLE IF EXISTS messages;
+DROP TABLE IF EXISTS likes;
+DROP TABLE IF EXISTS products;
+DROP TABLE IF EXISTS users;
 
-"""CREATE TABLE IF NOT EXISTS users(
+CREATE TABLE IF NOT EXISTS users(
                 username TEXT Unique NOT NULL,
                 email TEXT Unique,
                 password TEXT NOT NULL,
@@ -24,10 +24,10 @@
                 active BOOLEAN DEFAULT TRUE,
                 creation_date date DEFAULT NOW(),
                 profile_picture_id TEXT DEFAULT 'default.png' NOT NULL);
-                """ 
                 
                 
-"""CREATE TABLE IF NOT EXISTS sessions(
+                
+CREATE TABLE IF NOT EXISTS sessions(
                 user_id uuid,
                 username TEXT NOT NULL,
                 password TEXT,
@@ -36,7 +36,8 @@
                 active BOOLEAN,
                 authenticated BOOLEAN,
                 admin BOOLEAN);
-                """ """CREATE TABLE IF NOT EXISTS products(
+
+CREATE TABLE IF NOT EXISTS products(
                 id TEXT UNIQUE PRIMARY KEY,
                 title TEXT NOT NULL,
                 details TEXT NOT NULL,
@@ -49,16 +50,16 @@
                 sold_to TEXT,
                 FOREIGN KEY(sold_to) REFERENCES users(username) ON DELETE CASCADE,
                 FOREIGN KEY(username) REFERENCES users(username) ON DELETE CASCADE);
-                """ 
+             
 
-"""CREATE TABLE IF NOT EXISTS product_images(
+CREATE TABLE IF NOT EXISTS product_images(
         image_id TEXT NOT NULL Unique,
         creation_date timestamptz DEFAULT NOW(),
         product_id TEXT,
         FOREIGN KEY(product_id) REFERENCES products(id) ON DELETE CASCADE);
-        """ 
+ 
 
-"""CREATE TABLE IF NOT EXISTS comments(
+CREATE TABLE IF NOT EXISTS comments(
         id SERIAL PRIMARY KEY,
         user_comment TEXT,
         product_id TEXT,
@@ -67,18 +68,17 @@
         FOREIGN KEY(commentor_username) REFERENCES users(username) ON DELETE CASCADE,
         FOREIGN KEY(product_id) REFERENCES products(id) ON DELETE CASCADE
         );
-        """ 
 
-"""CREATE TABLE IF NOT EXISTS likes(
+CREATE TABLE IF NOT EXISTS likes(
         id  SERIAL Primary Key,
         liker_username TEXT,
         profile_username TEXT,
         islike boolean,
         FOREIGN KEY(liker_username) REFERENCES users(username) ON DELETE CASCADE,
         FOREIGN KEY(profile_username) REFERENCES users(username) ON DELETE CASCADE);
-        """ 
+     
 
-"""CREATE TABLE IF NOT EXISTS messages(
+CREATE TABLE IF NOT EXISTS messages(
         id  SERIAL Primary Key,
         receiver TEXT,
         sender TEXT,
@@ -88,4 +88,3 @@
         FOREIGN KEY(sender) REFERENCES users(username) ON DELETE CASCADE,
         creation_date timestamptz DEFAULT NOW(),
         message TEXT);
-        """
