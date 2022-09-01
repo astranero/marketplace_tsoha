@@ -27,8 +27,7 @@ class MessageForm(FlaskForm):
     def validate_receiver(self, receiver):
         username_exists = check_username(receiver)
         if not username_exists:
-            raise ValidationError(
-                Markup("Username doesn't exist"))
+            raise ValidationError("Username doesn't exist")
 
     def validate_sender(self, sender):
         username = current_user.username
