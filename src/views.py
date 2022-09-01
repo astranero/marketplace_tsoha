@@ -241,8 +241,8 @@ def product_add():
                 file_extension = file.filename.rsplit('.', 1)[1].lower()
                 file.filename = filename+"."+file_extension
                 secured_filename = secure_filename(file.filename)
-                file.save(path.join(app.root_path,
-                          "static/images/"+secured_filename))
+                file.save(path.join(app.root_path+
+                          "/static/images/"+secured_filename))
                 new_product.insert_product_imgs(img_id=secured_filename)
             else:
                 flash("Acceptable extensions are: png, jpg, jpeg and gif.")
@@ -264,10 +264,9 @@ def product(product_id):
 def product_delete(product_id):
     imgs = fetch_product_imgs(product_id)
     if imgs is not None:
-        flash(app.root_path)
         for img in imgs:
-            if path.exists(app.root_path+"static/images/"+img[0]):
-                remove(path.join(app.root_path+"static/images/"+img[0]))
+            if path.exists(app.root_path+"/static/images/"+img[0]):
+                remove(path.join(app.root_path+"/static/images/"+img[0]))
     delete_product(product_id)
     return redirect(url_for("views.marketplace"))
 
@@ -322,8 +321,8 @@ def product_edit(product_id):
                     file_extension = file.filename.rsplit('.', 1)[1].lower()
                     file.filename = filename+"."+file_extension
                     secured_filename = secure_filename(file.filename)
-                    file.save(path.join(app.root_path,
-                              "static/images/"+secured_filename))
+                    file.save(path.join(app.root_path+
+                              "/static/images/"+secured_filename))
                     product_mgr.insert_product_imgs(img_id=secured_filename)
                 else:
                     flash("Acceptable extensions are: png, jpg, jpeg and gif.")
@@ -425,8 +424,8 @@ def delete_profile():
         imgs = fetch_product_imgs(item.id)
         if imgs is not None:
             for img in imgs:
-                if path.exists(app.root_path+"static/images/"+img[0]):
-                    remove(path.join(app.root_path+"static/images/"+img[0]))
+                if path.exists(app.root_path+"/static/images/"+img[0]):
+                    remove(path.join(app.root_path+"/static/images/"+img[0]))
     ProfileManager().delete_profile(current_user.username)
     current_user.delete_session()
     logout_user()
@@ -573,8 +572,7 @@ def picture_uploader():
                 secured_filename = secure_filename(file.filename)
                 file.save(
                     path.join(
-                        app.root_path,
-                        "static/images/"+secured_filename)
+                        app.root_path+"/static/images/"+secured_filename)
                 )
                 profile_mgr.update_profile_picture(
                     current_user.username,
@@ -582,8 +580,8 @@ def picture_uploader():
                 flash("Profile picture has been uploaded.")
                 try:
                     if profile_picture != "default.png":
-                        remove(path.join(app.root_path,
-                               "static/images/"+profile_picture))
+                        remove(path.join(app.root_path+
+                               "/static/images/"+profile_picture))
                 except FileNotFoundError:
                     pass
             else:
