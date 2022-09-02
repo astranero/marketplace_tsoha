@@ -83,9 +83,6 @@
                                 data-bs-target="#edit-item">Edit</button></a>
                         {% endif %}
                         {% endwith %}
-                        <a href="{{request_url}}"><button
-                            class="mt-0 btn btn-lg btn-success fw-bold">
-                            Go Back</button></a>
                         <div class="modal fade" tabindex="-1" id="edit-item" role="dialog">
                             <div class="modal-dialog modal-lg">
                                 <div class="modal-content">
@@ -235,6 +232,9 @@
                         {% endif %}
                         {% endwith %}
                         {% endif %}
+                        <a href="{{url_for('views.market')}}"><button
+                            class="mt-0 btn btn-lg btn-success fw-bold">
+                            Go Back</button></a>
                     </div>
                 </div>
             </div>
