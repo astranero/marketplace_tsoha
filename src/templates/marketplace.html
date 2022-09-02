@@ -107,9 +107,9 @@
                         <div class="hovereffect">
                             {% if data.id != None %}
                             {% with image_id = fetch_product_img(data.id) %}
-                            <img class="img-responsive shadow-1-strong img-fluid img-thumbnail card-shadow d-block mx-auto mb-2"
+                            <a class="info" href="{{url_for('views.product', product_id=data.id)}}"><img class="img-responsive shadow-1-strong img-fluid img-thumbnail card-shadow d-block mx-auto mb-2"
                                 src="{{url_for('static', filename='/images/'+image_id)}}"
-                                alt="product with title: {{data.title}}">
+                                alt="product with title: {{data.title}}"></a>
                             {% endwith %}
                             {% endif %}
                             <div class="overlay">
