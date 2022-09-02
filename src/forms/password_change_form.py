@@ -24,7 +24,7 @@ class PasswordChangeForm(FlaskForm):
         "Repeat Password", [validators.DataRequired()])
 
     def validate_new_password(self, new_password):
-        if re.fullmatch(r"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{1,}$",
+        if re.fullmatch(r"^(?=.*[A-Öa-ö])(?=.*\d)(?=.*[@$!%*#?&])[A-Öa-ö\d@$!%*#?&]{1,}$",
                         new_password.data) is None:
             raise ValidationError(
                 """Your password should contain at

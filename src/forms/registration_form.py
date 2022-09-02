@@ -52,7 +52,7 @@ class RegistrationForm(FlaskForm):
             raise ValidationError("This username is already taken.")
 
     def validate_password(self, password):
-        if re.fullmatch(r"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{1,}$",
+        if re.fullmatch(r"^(?=.*[A-Öa-ö])(?=.*\d)(?=.*[@$!%*#?&])[A-Öa-ö\d@$!%*#?&]{1,}$",
                         password.data) is None:
             raise ValidationError(
                 """Your password should contain at
@@ -60,12 +60,12 @@ class RegistrationForm(FlaskForm):
                 one special character.""")
 
     def validate_first_name(self, first_name):
-        if re.fullmatch(r"^(\s)*[A-Za-z]+((\s)?((\'|\-|\.)?([A-Za-z])+))*(\s)*$",
+        if re.fullmatch(r"^(\s)*[A-Öa-ö]+((\s)?((\'|\-|\.)?([A-Öa-ö])+))*(\s)*$",
                         first_name.data) is None:
             raise ValidationError("Please insert a first name.")
 
     def validate_last_name(self, last_name):
-        if re.fullmatch(r"^(\s)*[A-Za-z]+((\s)?((\'|\-|\.)?([A-Za-z])+))*(\s)*$",
+        if re.fullmatch(r"^(\s)*[A-Öa-ö]+((\s)?((\'|\-|\.)?([A-Öa-ö])+))*(\s)*$",
                         last_name.data) is None:
             raise ValidationError("Please insert a last name.")
 
