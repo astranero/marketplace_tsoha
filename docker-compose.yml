@@ -7,7 +7,7 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      SECRET: BmIzZV-0M4KRAyfdrCB4mA
+      SECRET_KEY: BmIzZV-0M4KRAyfdrCB4mA
       FLASK_APP: src/app.py
       DB_NAME: database     
       DB_PASSWORD: StrongestPasswordPfft
