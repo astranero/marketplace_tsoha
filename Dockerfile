@@ -9,7 +9,7 @@ RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/*
 
 
-RUN pip3 install --upgrade pip
+RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
