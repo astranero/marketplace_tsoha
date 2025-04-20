@@ -9,8 +9,9 @@ RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/*
 
 
-RUN pip3 install --upgrade pip
-RUN pip install --no-cache-dir -r requirements.txt
+RUN python3 -m pip install --upgrade pip && \
+    python3 -m pip install --no-cache-dir -r requirements.txt
+
 
 COPY . .
 
