@@ -1,13 +1,8 @@
-FROM ubuntu:latest
+FROM python:3.12-slim
 
 WORKDIR /usr/src/app
 
-COPY requirements.txt ./
-RUN apt-get update
-RUN apt-get install -y python3 python3-pip
-RUN apt-get clean
-RUN rm -rf /var/lib/apt/lists/*
-
+COPY requirements.txt .
 
 RUN python3 -m pip install --upgrade pip && \
     python3 -m pip install --no-cache-dir -r requirements.txt
