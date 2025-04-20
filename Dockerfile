@@ -1,10 +1,6 @@
 FROM python:3.8.1
 
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-      build-essential libpq-dev libffi-dev \
-    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /usr/src/app
 COPY requirements.txt ./
